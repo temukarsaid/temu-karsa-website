@@ -1,0 +1,3515 @@
+/* ==========================================================================
+   Temu Karsa — Homepage stylesheet
+   Palet diambil langsung dari logo utama: #003399 / #0058FF / #009DFD
+   ========================================================================== */
+
+/* --------------------------------------------------------------- 1. Tokens */
+:root {
+  /* brand */
+  --navy:        #003399;
+  --navy-deep:   #041C4F;
+  --blue:        #0058FF;
+  --cyan:        #009DFD;
+
+  /* neutrals */
+  --ink:         #08152F;
+  --body:        #5C6272;
+  --muted:       #8A90A0;
+  --line:        #E4E7EE;
+  --surface:     #FFFFFF;
+  --canvas:      #F4F5F8;
+  --canvas-alt:  #EDEFF5;
+
+  /* accents */
+  --gold:        #F0B429;
+  --mint:        #05A87C;
+
+  /* type */
+  --font: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+
+  /* shape */
+  --r-sm: 12px;
+  --r-md: 18px;
+  --r-lg: 26px;
+  --r-xl: 34px;
+
+  /* rhythm */
+  --gutter: 40px;
+  --max: 1280px;
+  --section-y: 96px;
+  /* margin kartu foto hero — dipakai juga oleh .header supaya navbar
+     selalu sejajar persis dengan tepi kartu hero di semua breakpoint */
+  --hero-margin: 20px;
+
+  /* elevation */
+  --sh-sm: 0 2px 10px rgba(8, 21, 47, .05);
+  --sh-md: 0 14px 40px rgba(8, 21, 47, .08);
+  --sh-lg: 0 30px 80px rgba(8, 21, 47, .14);
+
+  --ease: cubic-bezier(.22, 1, .36, 1);
+}
+
+/* ----------------------------------------------------------- 2. Base reset */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--body);
+  background: var(--canvas);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+body.is-locked { overflow: hidden; }
+
+h1, h2, h3, h4, h5 {
+  margin: 0;
+  color: var(--ink);
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -.025em;
+}
+
+h1 { font-size: clamp(2.4rem, 5vw, 4.1rem); }
+h2 { font-size: clamp(1.95rem, 3.5vw, 3rem); }
+h3 { font-size: clamp(1.22rem, 1.8vw, 1.55rem); line-height: 1.25; }
+h4 { font-size: 1.08rem; line-height: 1.35; }
+
+p  { margin: 0; }
+a  { color: inherit; text-decoration: none; }
+img, svg { display: block; max-width: 100%; }
+ul { margin: 0; padding: 0; list-style: none; }
+button, input, select, textarea { font: inherit; color: inherit; }
+
+::selection { background: var(--blue); color: #fff; }
+
+/* --------------------------------------------------------- 3. Layout utils */
+.wrap {
+  width: 100%;
+  max-width: var(--max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+.wrap--narrow { max-width: 760px; }
+
+.section { padding-block: var(--section-y); position: relative; }
+.section--tight { padding-block: 90px; }
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--navy);
+  margin-bottom: 22px;
+}
+.eyebrow::before {
+  content: '';
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 0 4px rgba(0, 157, 253, .18);
+}
+.eyebrow--light { color: rgba(255, 255, 255, .82); }
+
+.lede { font-size: 1.05rem; max-width: 56ch; }
+
+.section-head { max-width: 720px; margin-bottom: 60px; }
+.section-head--split {
+  max-width: none;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 400px);
+  gap: 48px;
+  align-items: end;
+}
+
+/* ------------------------------------------------------------- 4. Buttons */
+.btn {
+  --btn-bg: var(--navy);
+  --btn-fg: #fff;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 14px 14px 27px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  font-size: .94rem;
+  font-weight: 600;
+  letter-spacing: -.01em;
+  cursor: pointer;
+  overflow: hidden;
+  isolation: isolate;
+  transition: transform .3s var(--ease), box-shadow .3s var(--ease), color .3s;
+}
+.btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(115deg, var(--blue), var(--cyan));
+  transform: translateY(101%);
+  transition: transform .45s var(--ease);
+}
+.btn:hover { transform: translateY(-2px); box-shadow: var(--sh-md); }
+.btn:hover::before { transform: translateY(0); }
+.btn:focus-visible { outline: 3px solid var(--cyan); outline-offset: 3px; }
+
+.btn i {
+  display: grid;
+  place-items: center;
+  width: 33px; height: 33px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .16);
+  transition: transform .4s var(--ease), background .3s;
+}
+.btn:hover i { transform: rotate(45deg); }
+.btn i svg { width: 14px; height: 14px; }
+
+/* CTA utama — biru sesuai logo, ganti warna langsung (bukan slide) ke biru
+   muda saat hover: ::before dimatikan, background-color yang ditransisikan. */
+.btn--light {
+  --btn-bg: var(--blue);
+  --btn-fg: #fff;
+  transition: background-color .35s var(--ease), transform .3s var(--ease), box-shadow .3s var(--ease);
+}
+.btn--light::before { content: none; }
+/* diam di tempat — cuma warna yang berubah, tanpa efek naik/shadow */
+.btn--light:hover { --btn-bg: var(--cyan); transform: none; box-shadow: none; }
+.btn--light i { background: rgba(255, 255, 255, .18); }
+.btn--light:hover i { background: rgba(255, 255, 255, .28); }
+
+/* Tombol sekunder — putih dengan border abu, warna berubah langsung
+   (bukan slide) jadi biru saat hover: ::before dimatikan juga. */
+.btn--ghost {
+  --btn-bg: #fff;
+  --btn-fg: var(--ink);
+  box-shadow: inset 0 0 0 1.5px var(--line);
+  transition: background-color .35s var(--ease), box-shadow .35s var(--ease), transform .3s var(--ease);
+}
+.btn--ghost::before { content: none; }
+.btn--ghost i { background: rgba(8, 21, 47, .06); }
+.btn--ghost:hover {
+  --btn-bg: var(--blue);
+  --btn-fg: #fff;
+  box-shadow: inset 0 0 0 1.5px transparent;
+  transform: none;
+}
+.btn--ghost:hover i { background: rgba(255, 255, 255, .2); }
+
+/* Tombol sekunder di atas foto — tetap kaca, hover cuma menaikkan brightness
+   (bukan berubah jadi biru): ::before dimatikan juga. */
+.btn--on-dark {
+  --btn-bg: rgba(255, 255, 255, .1);
+  --btn-fg: #fff;
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, .26);
+  backdrop-filter: blur(8px);
+  will-change: backdrop-filter;
+  transition: filter .35s var(--ease), transform .3s var(--ease), box-shadow .3s var(--ease);
+}
+.btn--on-dark::before { content: none; }
+/* diam di tempat — ring kaca aslinya dipertahankan, cuma dinaikkan brightness-nya */
+.btn--on-dark:hover {
+  filter: brightness(1.35);
+  transform: none;
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, .26);
+}
+
+.btn--sm { padding: 10px 10px 10px 21px; font-size: .875rem; }
+.btn--sm i { width: 28px; height: 28px; }
+
+.link-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: .89rem;
+  color: var(--navy);
+}
+.link-arrow svg { width: 15px; height: 15px; transition: transform .35s var(--ease); }
+.link-arrow:hover svg { transform: translate(3px, -3px); }
+
+/* -------------------------------------------------------------- 6. Header */
+/* Floating pill putih — selalu putih (demi keterbacaan di atas foto hero),
+   posisinya diam total baik di awal maupun saat sticky (cuma shadow yang
+   menebal saat discroll, tanpa geser). */
+.header {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 100;
+  /* inset kiri/kanan = gutter section + margin kartu hero, jadi pill
+     navbar selalu pas sejajar dengan tepi konten & kartu hero */
+  padding: 40px calc(var(--gutter) + var(--hero-margin)) 0;
+}
+
+.header__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  padding: 10px 10px 10px 28px;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 14px 36px rgba(8, 21, 47, .12), 0 2px 10px rgba(8, 21, 47, .06);
+  transition: box-shadow .35s var(--ease);
+  /* di layar lebar, .wrap otomatis nge-center di max-width 1280 — pill ini
+     dipersempit 2×gutter supaya tepi pill-nya jatuh tepat di titik yang
+     sama dengan awal teks section lain (yang punya padding gutter sendiri
+     di dalam .wrap), bukan di tepi .wrap itu sendiri. */
+  max-width: calc(var(--max) - 2 * var(--gutter));
+}
+.header.is-stuck .header__bar {
+  box-shadow: 0 18px 44px rgba(8, 21, 47, .16), 0 3px 12px rgba(8, 21, 47, .08);
+}
+
+.brand { flex: none; }
+.brand img { height: 36px; width: auto; }
+
+.nav { display: flex; align-items: center; gap: 4px; }
+.nav a,
+.nav__trigger {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 15px;
+  border: 0;
+  background: none;
+  font-family: inherit;
+  font-size: .92rem;
+  font-weight: 600;
+  color: var(--ink);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: color .25s;
+}
+.nav a:hover,
+.nav__item:hover .nav__trigger,
+.nav__item.is-open .nav__trigger { color: var(--blue); }
+
+.nav-ai {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 15px;
+  font-size: .92rem;
+  font-weight: 600;
+  color: var(--ink);
+  transition: color .25s;
+}
+.nav-ai svg { width: 15px; height: 15px; color: var(--blue); }
+.nav-ai:hover { color: var(--blue); }
+
+/* -------------------------------------------------- dropdown "Layanan" */
+.nav__item { position: relative; }
+.nav__trigger svg { width: 15px; height: 15px; transition: transform .3s var(--ease); }
+.nav__item:hover .nav__trigger svg,
+.nav__item.is-open .nav__trigger svg { transform: rotate(180deg); }
+
+.nav__dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 14px;
+  min-width: 540px;
+  padding: 26px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 32px;
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  box-shadow: var(--sh-lg);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px);
+  transition: opacity .25s var(--ease), transform .25s var(--ease), visibility .25s;
+  z-index: 20;
+}
+.nav__item:hover .nav__dropdown,
+.nav__item.is-open .nav__dropdown {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.nav__dd-col { display: flex; flex-direction: column; }
+.nav__dropdown .nav__dd-title {
+  display: block;
+  padding: 8px 12px 12px;
+  border-radius: 0;
+  font-size: .92rem;
+  font-weight: 700;
+  color: var(--body);
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 8px;
+  transition: color .25s;
+}
+a.nav__dd-title::after { content: none; }
+a.nav__dd-title:hover { color: var(--blue); }
+.nav__dd-col a {
+  padding: 9px 12px;
+  font-size: .93rem;
+  font-weight: 500;
+  color: var(--body);
+  transition: color .2s;
+}
+.nav__dd-col a:hover { color: var(--navy); }
+
+.header__cta { display: flex; align-items: center; gap: 14px; flex: none; }
+
+.burger {
+  display: none;
+  position: relative;
+  width: 44px; height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--canvas-alt);
+  cursor: pointer;
+  padding: 0;
+  transition: background-color .3s var(--ease);
+}
+.burger:hover { background: var(--line); }
+/* Ketiga baris di-absolute-kan ke titik pusat tombol (left/top 50% +
+   translate(-50%,-50%)), lalu disebar naik/turun lewat properti `top`
+   — BUKAN lewat translateY di dalam transform. Alasannya: dengan cara ini
+   bagian translate di `transform` nilainya TETAP (selalu -50%,-50%) dan
+   satu-satunya yang berubah saat menu dibuka cuma sudut rotate-nya. Jadi
+   browser menginterpolasi rotasi murni di tempat — barisnya berputar dari
+   titik pusat, bukan "meluncur sambil miring" seperti kalau translateY dan
+   rotate dianimasikan barengan dalam satu matriks transform. Perpindahan
+   posisi ke tengah ditangani properti `top` yang dianimasikan terpisah. */
+.burger span {
+  position: absolute;
+  left: 50%;
+  width: 18px; height: 2px;
+  margin: 0;
+  border-radius: 2px;
+  background: var(--ink);
+  transform-origin: center;
+  transform: translate(-50%, -50%) rotate(0deg);
+  transition: top .3s var(--ease), transform .3s var(--ease), opacity .2s;
+}
+.burger span:nth-child(1) { top: calc(50% - 6px); }
+.burger span:nth-child(2) { top: 50%; }
+.burger span:nth-child(3) { top: calc(50% + 6px); }
+
+.burger.is-open span:nth-child(1) { top: 50%; transform: translate(-50%, -50%) rotate(45deg); }
+.burger.is-open span:nth-child(2) { opacity: 0; }
+.burger.is-open span:nth-child(3) { top: 50%; transform: translate(-50%, -50%) rotate(-45deg); }
+
+/* ----------------------------------------------------------------- 7. Hero */
+.hero {
+  position: relative;
+  min-height: 88vh;
+  display: flex;
+  align-items: center;
+  padding: 180px 0 90px;
+  margin: var(--hero-margin);
+  border-radius: var(--r-xl);
+  overflow: hidden;
+}
+.hero__bg {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background-image: url('../img/hero-handshake.jpg');
+  background-size: cover;
+  background-position: center 42%;
+}
+/* varian foto per halaman kategori — struktur hero tetap identik, cuma foto
+   latarnya yang beda supaya sesuai konteks layanan */
+.hero__bg--legalitas { background-image: url('../img/legalitas/hero-legalitas.jpg'); background-position: center; }
+.hero__bg--workspace { background-image: url('../img/workspace/hero-workspace.jpg'); background-position: center; }/* varian hero satu kolom — dipakai halaman yang tidak punya kartu kaca
+   statistik (mis. artikel.html), .hero__copy jadi satu-satunya isi & dikunci
+   lebar bacanya supaya tidak melebar penuh 1280px */
+.hero__inner--single { grid-template-columns: minmax(0, 1fr); }
+.hero__inner--single .hero__copy { max-width: 62ch; }
+/* Overlay gelap di atas foto agar teks putih tetap kontras & selaras brand */
+.hero__bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(2, 12, 39, .58) 0%, rgba(4, 20, 58, .42) 42%, rgba(2, 10, 32, .74) 100%),
+    linear-gradient(100deg, rgba(0, 51, 153, .38) 0%, rgba(0, 20, 60, .16) 55%, rgba(0, 51, 153, .34) 100%);
+}
+
+.hero__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, .8fr);
+  gap: 60px;
+  align-items: end;
+  /* padding atas hero lebih besar dari bawah (untuk jarak dari header fixed),
+     jadi kontainer digeser naik sedikit supaya secara visual tetap center */
+  margin-top: -44px;
+}
+.hero__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 7px 20px 7px 7px;
+  margin-bottom: 28px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .1);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .2);
+  backdrop-filter: blur(10px);
+  will-change: backdrop-filter;
+  color: #fff;
+  font-size: .85rem;
+  font-weight: 600;
+}
+.avatars { display: flex; flex: none; }
+.avatars img {
+  width: 30px; height: 30px;
+  margin-right: -9px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, .85);
+  object-fit: cover;
+  background: var(--navy-deep);
+}
+
+.hero h1 { color: #fff; max-width: 16ch; }
+
+/* breadcrumb di atas foto hero — dipakai di halaman kategori (L1/L2) untuk
+   nunjukin posisi halaman di hierarki situs, bukan di homepage */
+.breadcrumb { margin-bottom: 16px; }
+.breadcrumb ol {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: .82rem;
+  font-weight: 500;
+}
+.breadcrumb li { display: flex; align-items: center; color: rgba(255, 255, 255, .55); }
+.breadcrumb li:not(:last-child)::after {
+  content: '/';
+  margin: 0 8px;
+  color: rgba(255, 255, 255, .3);
+}
+.breadcrumb a { color: rgba(255, 255, 255, .7); transition: color .25s; }
+.breadcrumb a:hover { color: #fff; }
+.breadcrumb li[aria-current] { color: rgba(255, 255, 255, .92); font-weight: 700; }
+
+/* versi latar terang — dipakai di halaman L2 yang tidak punya hero foto */
+.breadcrumb--light li { color: var(--muted); }
+.breadcrumb--light li:not(:last-child)::after { color: var(--line); }
+.breadcrumb--light a { color: var(--body); }
+.breadcrumb--light a:hover { color: var(--blue); }
+.breadcrumb--light li[aria-current] { color: var(--ink); }
+
+.rotator {
+  position: relative;
+  display: inline-grid;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+.rotator > span {
+  grid-area: 1 / 1;
+  background: linear-gradient(100deg, var(--cyan), #7FD0FF);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  opacity: 0;
+  transform: translateY(105%);
+  transition: opacity .5s var(--ease), transform .6s var(--ease);
+  white-space: nowrap;
+}
+.rotator > span.is-active { opacity: 1; transform: translateY(0); }
+.rotator > span.is-out { opacity: 0; transform: translateY(-105%); }
+
+/* highlight gradasi statis — sama seperti .rotator tapi tanpa animasi ganti
+   kata, dipakai untuk menegaskan 1-2 kata kunci dalam judul */
+.text-gradient {
+  background: linear-gradient(100deg, var(--cyan), #7FD0FF);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+.hero__text {
+  margin-top: 24px;
+  max-width: 54ch;
+  color: rgba(255, 255, 255, .82);
+  font-size: 1.05rem;
+}
+.hero__actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 36px; }
+
+.hero__cards { display: grid; gap: 18px; }
+
+.glass-card {
+  padding: 26px;
+  border-radius: var(--r-lg);
+  background: rgba(255, 255, 255, .1);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .2);
+  backdrop-filter: blur(18px);
+  will-change: backdrop-filter;
+  color: #fff;
+}
+.glass-card__label {
+  font-size: .73rem;
+  font-weight: 700;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, .66);
+}
+.glass-card__stat {
+  margin: 8px 0 6px;
+  font-size: 2.9rem;
+  font-weight: 800;
+  letter-spacing: -.04em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.glass-card p { font-size: .87rem; color: rgba(255, 255, 255, .72); line-height: 1.55; }
+
+/* kartu metrik mini — dipakai di hero halaman kategori sebagai baris 4 kartu
+   glass terpisah berjajar horizontal (bukan satu kartu gabungan) */
+.glass-card--mini { padding: 18px; }
+.glass-stat__num {
+  font-size: 1.7rem;
+  font-weight: 800;
+  letter-spacing: -.03em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.glass-stat__num small { font-size: 1rem; color: var(--cyan); font-weight: 700; }
+.glass-card--mini p { margin-top: 8px; font-size: .78rem; line-height: 1.4; color: rgba(255, 255, 255, .68); }
+
+.pill-stack { display: grid; gap: 10px; }
+.pill-stack li {
+  padding: 13px 18px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .07);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .14);
+  font-size: .89rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, .8);
+  transition: background .4s var(--ease), color .4s var(--ease), box-shadow .4s var(--ease);
+}
+.pill-stack li.is-active {
+  background: linear-gradient(110deg, var(--blue), var(--cyan));
+  color: #fff;
+  box-shadow: 0 10px 26px rgba(0, 88, 255, .35);
+}
+
+/* ------------------------------------------------------------- 8. Marquee */
+.marquee-band { padding-block: 44px; background: var(--surface); }
+.marquee-band__label {
+  text-align: center;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 26px;
+}
+.marquee {
+  display: flex;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+}
+.marquee__track {
+  display: flex;
+  align-items: center;
+  gap: 58px;
+  padding-right: 58px;
+  flex: none;
+  animation: slide 34s linear infinite;
+}
+.marquee:hover .marquee__track { animation-play-state: paused; }
+@keyframes slide { to { transform: translateX(-100%); } }
+.marquee__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: none;
+  font-size: 1.02rem;
+  font-weight: 700;
+  letter-spacing: -.02em;
+  color: #A9AFBE;
+  white-space: nowrap;
+  transition: color .3s;
+}
+.marquee__item:hover { color: var(--navy); }
+.marquee__item svg { width: 21px; height: 21px; flex: none; }
+
+/* --------------------------------------------------------------- 9. Cards */
+.card {
+  position: relative;
+  padding: 32px;
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  box-shadow: var(--sh-sm);
+  transition: transform .45s var(--ease), box-shadow .45s var(--ease);
+}
+.card:hover { transform: translateY(-6px); box-shadow: var(--sh-md); }
+
+.card__icon {
+  display: grid;
+  place-items: center;
+  width: 54px; height: 54px;
+  margin-bottom: 22px;
+  border-radius: var(--r-sm);
+  background-color: rgba(0, 88, 255, .12);
+  color: var(--navy);
+  transition: background-color .3s var(--ease), color .3s var(--ease);
+}
+.card__icon svg { width: 25px; height: 25px; }
+.card:hover .card__icon { background-color: var(--blue); color: #fff; }
+.card p { margin-top: 12px; font-size: .93rem; }
+.card .link-arrow { margin-top: 20px; }
+
+/* --------------------------------------------------- 9b. Intro heading
+   Satu behavior/style dipakai bersama oleh section Tentang & Layanan:
+   kalimat bold (lead) menyambung ke kalimat abu-abu (penjelasan), tanpa
+   pemisah — bukan heading+paragraf terpisah seperti sebelumnya. */
+.section-kicker {
+  display: block;
+  margin-bottom: 14px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--blue);
+}
+.intro-heading {
+  font-size: clamp(1.5rem, 2.6vw, 2.1rem);
+  line-height: 1.4;
+  font-weight: 700;
+}
+.intro-heading__strong { color: var(--ink); }
+.intro-heading__soft { color: var(--muted); font-weight: 500; }
+.intro-heading__strong::after { content: ' '; }
+
+/* ------------------------------------------------------------- 10. About */
+/* dipakai lagi di FAQ (section-head + accordion) */
+.about__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  gap: 70px;
+  align-items: center;
+}
+
+.about-intro__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 40px;
+}
+.about-intro__col { max-width: 780px; }
+.about-intro__rating {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  text-align: right;
+  padding-top: 4px;
+}
+.about-intro__rating .stars { margin-bottom: 0; justify-content: flex-end; }
+.about-intro__rating span { font-size: .85rem; color: var(--muted); white-space: nowrap; }
+.about-intro__rating span b { color: var(--ink); font-weight: 700; }
+
+.about-intro__mid {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+  margin-top: 30px;
+}
+.about-intro__mid .btn { flex: none; }
+
+.about-intro__stats {
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  justify-content: space-between;
+  margin-top: 52px;
+  padding-top: 36px;
+  border-top: 1px solid var(--line);
+}
+.about-intro__stat {
+  padding-inline: 30px;
+  border-left: 1px solid var(--line);
+}
+.about-intro__stat:first-child { padding-left: 0; border-left: 0; }
+.about-intro__stat:last-child { padding-right: 0; }
+.about-intro__stat-num {
+  font-size: clamp(2.4rem, 4.2vw, 3.6rem);
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -.03em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.about-intro__stat-num small { font-size: 1.5rem; color: var(--blue); font-weight: 700; }
+.about-intro__stat-cap { margin-top: 10px; font-size: .85rem; color: var(--muted); line-height: 1.45; max-width: 20ch; }
+
+/* --------------------------------------------------- 10b. Layanan showcase
+   Terinspirasi dari kartu ilustrasi di linear.app (bukan aset mereka) —
+   ilustrasi line-art isometric orisinal, layer yang "mengembang" saat
+   kartu di-hover, murni CSS (custom property --n menentukan urutan/jarak). */
+.showcase { background: var(--surface); }
+
+.showcase__intro {
+  margin-bottom: 64px;
+}
+
+.showcase__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.showcase__card {
+  position: relative;
+  padding: 28px 40px 40px;
+  border-left: 1px solid var(--line);
+}
+.showcase__card:first-child { border-left: 0; }
+
+.showcase__art {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 11 / 9;
+  margin-block: 24px 12px;
+}
+.showcase__svg { width: 88%; height: 88%; overflow: visible; }
+
+.showcase__svg path,
+.showcase__svg line {
+  stroke: var(--line);
+  stroke-width: 1.75;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+/* fill OPAK (bukan transparan) supaya kolom/kubus depan benar-benar
+   menutupi yang di belakangnya — ini yang bikin bentuknya terbaca solid */
+.showcase__svg .iso-face { stroke: var(--line); stroke-width: 1.75; }
+.showcase__svg .iso-face--top { fill: #EFF5FE; }
+.showcase__svg .iso-face--left { fill: #F4F6FA; }
+.showcase__svg .iso-face--right { fill: #E7ECF4; }
+
+/* ilustrasi bergerak sendiri terus-menerus; hover cuma menegaskan garisnya */
+.showcase__art:hover .showcase__svg .iso-face { stroke: var(--navy); }
+
+/* Card 1 — tiap kolom memanjang lalu memendek bergantian, membentuk
+   gelombang yang menyapu dari kiri ke kanan. Titik tumpunya di dasar kolom
+   (--ox/--oy) supaya tumbuh ke atas, bukan melayang; --d jadi jedanya. */
+.iso-col {
+  transform-box: view-box;
+  transform-origin: var(--ox) var(--oy);
+  animation: iso-wave 2.4s var(--ease) infinite;
+  animation-delay: calc(var(--d, 0s) * -1);
+}
+@keyframes iso-wave {
+  0%, 100% { transform: scaleY(1); }
+  50%      { transform: scaleY(1.17); }
+}
+
+/* Card 2 — potongan kubus mulai menyatu di takiknya, meluncur keluar,
+   lalu masuk lagi. Jarak geseran persis sebesar offset di markup. */
+.iso-piece { animation: iso-piece-slide 3.4s var(--ease) infinite; }
+@keyframes iso-piece-slide {
+  0%, 10%   { transform: translate(-43.5px, -21.75px); }
+  45%, 62%  { transform: translate(0, 0); }
+  97%, 100% { transform: translate(-43.5px, -21.75px); }
+}
+
+.showcase__body h3 { font-size: 1.25rem; }
+.showcase__body p { margin-top: 10px; font-size: .95rem; max-width: 42ch; }
+.showcase__body .btn { margin-top: 22px; }
+
+/* ------------------------------------------------------------ 9c. Cards */
+.why__intro { margin-bottom: 52px; }
+.why__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+/* kartu info, bukan tombol/link — diam saat hover, tanpa efek terangkat */
+.why__grid .card:hover { transform: none; box-shadow: var(--sh-sm); }
+.why__grid .card h3 { font-size: 1.15rem; }
+
+/* kartu layanan di halaman kategori (mis. legalitas-perizinan.html) — sama
+   seperti .why__grid tapi kartunya benar link/tombol, jadi boleh naik */
+.service-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+.service-cards .card h3 { font-size: 1.15rem; }
+.card--service .btn { margin-top: 22px; }
+/* kartu info, bukan tombol/link utuh — tombol "Pelajari Selengkapnya" di
+   dalamnya sudah punya hover sendiri, jadi kartunya diam saat di-hover */
+.service-cards .card:hover { transform: none; box-shadow: var(--sh-sm); }
+
+@media (max-width: 1180px) {
+  .service-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 680px) {
+  .service-cards { grid-template-columns: 1fr; }
+}
+
+/* varian 4 kartu (mis. Virtual/Private Office, Coworking, Meeting Room) —
+   4 kolom di desktop lebar supaya rapi rata, bukan 3+1 sisa sebaris sendiri */
+.service-cards--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (max-width: 1180px) {
+  .service-cards--4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 680px) {
+  .service-cards--4 { grid-template-columns: 1fr; }
+}
+
+/* ------------------------------------------------- 9f. Halaman Tentang Kami
+   Section kepala tanpa hero foto (sama seperti pola blog-detail) — kicker +
+   heading besar RATA TENGAH, diikuti dua paragraf sejajar dua kolom. Semua
+   background section tetap flat (--surface/--canvas berselang-seling),
+   TIDAK ADA bentuk melengkung/wavy seperti referensi. */
+.about-head { padding-top: 180px; }
+.about-head__intro { max-width: 900px; }
+
+/* Baris judul: heading besar di kiri, paragraf pendek + 1 tombol di pojok
+   kanan atas (sejajar heading) — persis pola referensi. */
+.about-hero2 {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 40px;
+  margin-bottom: 40px;
+}
+.about-hero2__title { flex: 1; max-width: none; }
+.about-hero2__side { flex: none; width: 320px; padding-top: 6px; text-align: left; }
+.about-hero2__side p { font-size: .92rem; line-height: 1.6; color: var(--body); margin-bottom: 20px; }
+
+.about-hero2__photo {
+  height: 420px;
+  border-radius: var(--r-xl);
+  overflow: hidden;
+  margin-bottom: 52px;
+}
+.about-hero2__photo img { width: 100%; height: 100%; object-fit: cover; }
+
+@media (max-width: 980px) {
+  .about-hero2 { flex-direction: column; gap: 20px; }
+  /* width:320px tetap kebawa dari base rule (dibuat utk kolom sempit di
+     samping heading) — begitu jadi 1 kolom (flex-direction:column) lebar
+     itu bikin paragraf ke-pojokin sempit, ga fill lebar penuh. */
+  .about-hero2__side { width: auto; max-width: none; text-align: left; }
+}
+@media (max-width: 680px) {
+  .about-hero2__photo { height: 260px; }
+}
+
+/* Section Visi — badge pill kecil + heading + paragraf + tombol di kiri,
+   foto rounded di kanan. */
+/* align-items:stretch — sama seperti .mission, foto ikut memanjang
+   menyamai tinggi natural teks di sampingnya, bukan tinggi tetap. */
+.vision { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 60px; align-items: stretch; }
+.vision__title { margin-bottom: 16px; }
+.vision__text { font-size: .95rem; line-height: 1.75; color: var(--body); max-width: 46ch; margin-bottom: 28px; }
+.vision__photo { position: relative; height: 100%; min-height: 520px; border-radius: var(--r-xl); overflow: hidden; }
+.vision__photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+@media (max-width: 980px) {
+  .vision { grid-template-columns: 1fr; gap: 32px; }
+  .vision__photo { height: 280px; min-height: 0; }
+}
+
+/* Section Misi — kebalikan Visi (foto kiri, konten kanan): heading lalu
+   grid 2 kolom kartu, reuse .card/.card__icon yang sama persis dengan
+   "Kenapa Pilih Kami" di homepage, bukan komponen baru. */
+/* align-items:stretch — kolom foto ikut memanjang menyamai tinggi natural
+   grid kartu di sampingnya (bukan kartu yang dipotong/di-clamp menyesuaikan
+   tinggi foto tetap). */
+.mission { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 60px; align-items: stretch; }
+.mission__photo { position: relative; height: 100%; min-height: 520px; border-radius: var(--r-xl); overflow: hidden; }
+.mission__photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.mission__title { margin-bottom: 32px; }
+.mission__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+/* kartu info, bukan tombol/link — diam saat hover, sama seperti .why__grid.
+   Dipadatkan (padding/ikon/teks lebih kecil) supaya tetap ringkas, tapi
+   teks TIDAK di-clamp/dipotong — tinggi kartu mengalir natural. */
+.mission__grid .card { padding: 22px; }
+.mission__grid .card:hover { transform: none; box-shadow: var(--sh-sm); }
+.mission__grid .card__icon { width: 38px; height: 38px; margin-bottom: 12px; }
+.mission__grid .card__icon svg { width: 18px; height: 18px; }
+.mission__grid .card h3 { font-size: .92rem; margin-bottom: 6px; }
+.mission__grid .card p { font-size: .8rem; line-height: 1.45; margin-top: 0; }
+@media (max-width: 980px) {
+  .mission { grid-template-columns: 1fr; gap: 32px; }
+  .mission__photo { height: 280px; min-height: 0; }
+  /* Misi Kami: foto ada SEBELUM copy di HTML (desktop = foto kiri), jadi
+     kalau cuma ditumpuk 1 kolom foto nongol duluan di atas judul/kartu.
+     Komitmen Utama Kami urutan HTML-nya udah kebalik (copy dulu baru
+     foto) jadi otomatis foto di bawah — di sini disamakan lewat `order`. */
+  #misi-kami .mission__photo { order: 2; }
+  #misi-kami .mission__copy { order: 1; }
+}
+@media (max-width: 680px) {
+  .mission__grid { grid-template-columns: 1fr; }
+}
+
+/* Header dua-kolom yang dipakai berulang di halaman ini: judul+intro di
+   kiri, paragraf pendukung di kanan — reuse pola about__grid tapi rasio
+   lebih longgar buat teks pendek. */
+.about-section__head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, .8fr);
+  gap: 60px;
+  align-items: end;
+  margin-bottom: 48px;
+}
+.about-section__head p { font-size: 1rem; line-height: 1.75; color: var(--body); }
+
+/* Kartu nilai — foto dengan scrim gelap, dipakai untuk "Kenapa Pilih Kami"
+   di halaman ini (beda dari .why__grid homepage yang bg putih+ikon, di sini
+   sengaja foto gelap biar variatif dan cocok dengan kartu foto lain di
+   sepanjang halaman, tapi TETAP kotak/rounded biasa — bukan bentuk wavy). */
+.value-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.value-card {
+  position: relative;
+  height: 320px;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+}
+.value-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(4,28,79,.15) 0%, rgba(4,28,79,.75) 100%);
+}
+.value-card__arrow {
+  position: absolute;
+  top: 20px; right: 20px;
+  display: grid;
+  place-items: center;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.16);
+  color: #fff;
+  backdrop-filter: blur(4px);
+}
+.value-card__arrow svg { width: 17px; height: 17px; }
+.value-card__body { position: absolute; left: 24px; right: 24px; bottom: 22px; }
+.value-card__title { font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 8px; }
+.value-card__text { font-size: .86rem; line-height: 1.55; color: rgba(255,255,255,.78); }
+
+/* Section keahlian — reuse .about-intro__stats untuk baris angka, ditambah
+   satu kartu terakhir berwarna solid sebagai CTA ("Mulai Sekarang"). */
+.expertise__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, .85fr);
+  gap: 60px;
+  align-items: center;
+  margin-bottom: 56px;
+}
+.expertise__media {
+  height: 340px;
+  border-radius: var(--r-xl);
+  overflow: hidden;
+  background: var(--canvas-alt);
+}
+.expertise__media img { width: 100%; height: 100%; object-fit: cover; }
+.expertise__row .btn { margin-top: 28px; }
+
+.stat-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; }
+.stat-card {
+  padding: 28px 26px;
+  border-radius: var(--r-lg);
+  background: var(--canvas);
+}
+.stat-card__num {
+  font-size: clamp(2rem, 3vw, 2.6rem);
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -.02em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.stat-card__num small { font-size: 1.2rem; color: var(--blue); font-weight: 700; }
+.stat-card__cap { margin-top: 10px; font-size: .85rem; color: var(--muted); line-height: 1.45; }
+.stat-card--cta {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: var(--navy);
+  color: #fff;
+}
+.stat-card--cta p { font-size: .92rem; font-weight: 700; line-height: 1.4; }
+.stat-card--cta .link-arrow { margin-top: 16px; color: #fff; }
+
+/* Section Tim Kami — kicker+heading+paragraf rata tengah, lalu grid kartu
+   foto. Beda dari .team-card lama (overlay "Visit site" saat hover): di
+   sini nama/peran/LinkedIn selalu tampil sebagai baris di bawah foto (statis,
+   persis referensi), dan yang berubah saat hover cuma foto (scale) + warna
+   nama (jadi biru) — bukan reveal overlay. */
+.team-head { max-width: none; margin-bottom: 56px; }
+
+.team-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; }
+.team-grid--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 60px; }
+.team-card { text-align: left; }
+.team-card__photo {
+  height: 520px;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.team-card__photo img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s var(--ease); }
+.team-card:hover .team-card__photo img { transform: scale(1.06); }
+.team-card__foot { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.team-card__name { font-size: 1.05rem; font-weight: 700; color: var(--ink); transition: color .3s var(--ease); }
+.team-card:hover .team-card__name { color: var(--blue); }
+.team-card__role { margin-top: 4px; font-size: .85rem; color: var(--muted); }
+.team-card__linkedin {
+  display: grid;
+  place-items: center;
+  width: 32px; height: 32px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--canvas-alt);
+  color: var(--ink);
+  transition: background .3s, color .3s;
+}
+.team-card__linkedin svg { width: 15px; height: 15px; }
+.team-card__linkedin:hover { background: var(--blue); color: #fff; }
+
+@media (max-width: 980px) {
+  .about-head__cols { grid-template-columns: 1fr; gap: 20px; }
+  .about-section__head { grid-template-columns: 1fr; gap: 20px; align-items: start; }
+  .value-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .expertise__row { grid-template-columns: 1fr; }
+  .expertise__media { height: 260px; }
+  .stat-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .team-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 680px) {
+  .value-grid { grid-template-columns: 1fr; }
+  .stat-row { grid-template-columns: 1fr; }
+  .team-grid { grid-template-columns: 1fr; }
+}
+
+/* -------------------------------------------------- 9e. Detail layanan (L2)
+   Halaman satu layanan spesifik. Beda total dari homepage/L1: tidak ada hero
+   foto — halaman dibuka langsung dengan judul + tombol di atas latar polos,
+   lalu baris-baris dua kolom (judul bagian di kiri, isinya di kanan) dalam
+   kolom teks yang dipersempit supaya enak dibaca seperti dokumen. */
+/* 180px, samain persis dengan pola #artikel-intro/#kuis-intro/#blog-head
+   supaya jarak breadcrumb-ke-navbar konsisten di semua halaman */
+.service-single { padding-top: 180px; }
+/* Konten L2 disejajarkan ke tepi PIL navbar, bukan cuma gutter section biasa.
+   Pill navbar = lebar min(viewport - 2*(gutter+hero-margin), max - 2*gutter)
+   lalu di-center. Supaya kotak teks di sini persis menghasilkan geometri itu:
+   padding = gutter + hero-margin, dan max-width dinaikkan sebesar padding
+   ekstra tsb (max + 2*hero-margin) supaya lebar KONTEN-nya tetap max - 2*gutter
+   di layar lebar. Tanpa penyesuaian max-width, konten meleset 20px per sisi
+   begitu viewport melewati batas 1280px. */
+.service-single__wrap,
+.pricing__wrap {
+  max-width: calc(var(--max) + 2 * var(--hero-margin));
+  padding-inline: calc(var(--gutter) + var(--hero-margin));
+}
+
+/* dipersempit tanpa direcenter — max-width tanpa margin:auto supaya tepi
+   kirinya tetap sejajar persis dengan navbar/logo (yang pakai .wrap penuh) */
+.service-single__top,
+.service-single__row {
+  max-width: 980px;
+}
+/* baris berisi grid kartu dilepas dari batas 980px supaya kartu paling
+   kanan tetap sejajar dengan tepi kanan navbar, bukan berhenti di tengah */
+.service-single__row--wide { max-width: none; }
+
+.service-single__top {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 28px;
+}
+.service-single__title {
+  max-width: 18ch;
+  color: var(--ink);
+}
+
+.service-single__row {
+  display: grid;
+  /* kolom kiri lebar TETAP (bukan fr) supaya kolom kanan selalu mulai di
+     titik x yang sama persis di semua baris — termasuk baris kartu yang
+     lebarnya beda (--wide, lepas dari batas 980px) */
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 24px;
+  margin-top: 56px;
+}
+/* samain dgn .intro-heading (dipakai "Bukan sekadar mengurus dokumen" dll)
+   supaya ukuran judul section konsisten di seluruh page */
+.service-single__row h2 { font-size: clamp(1.5rem, 2.6vw, 2.1rem); line-height: 1.3; font-weight: 700; color: var(--ink); }
+.service-single__content p { font-size: 1.02rem; line-height: 1.75; color: var(--body); }
+
+/* grid kartu untuk merinci cakupan/fasilitas — tiap poin jadi kartu sendiri
+   (ikon di atas, wording di bawah), pakai ulang persis komponen .card/
+   .card__icon yang sama dengan "Kenapa Pilih Kami", bukan komponen baru. */
+.check-grid,
+.dot-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+.check-card,
+.dot-card {
+  padding: 26px;
+}
+.check-card p,
+.dot-card p {
+  margin: 0;
+  font-size: .96rem;
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--ink);
+}
+/* kartu info, bukan tombol/link — diam saat hover seperti kartu sejenis lain */
+.check-grid .card:hover,
+.dot-grid .card:hover { transform: none; box-shadow: var(--sh-sm); }
+
+@media (max-width: 980px) {
+  /* judul bagian pindah ke atas isinya, bukan di kolom kiri */
+  .service-single__row { grid-template-columns: 1fr; gap: 14px; margin-top: 44px; }
+  .check-grid, .dot-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 680px) {
+  .check-grid, .dot-grid { grid-template-columns: 1fr; }
+  .service-single { padding-top: 140px; }
+}
+
+/* ------------------------------------------------- 9c-2. Investasi & Harga
+   Layout mengikuti referensi pricing: kolom kiri = kicker + heading besar +
+   paragraf + garis + checklist; kolom kanan = SATU kartu harga (Temu Karsa
+   cuma punya satu paket) yang di dalamnya terbagi dua lagi — harga + CTA di
+   kiri, daftar isi paket di kanan — dengan badge menempel di tepi atas kartu. */
+.pricing { background: var(--surface); }
+.pricing__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 43fr) minmax(0, 57fr);
+  gap: 64px;
+  align-items: center;
+}
+.pricing__intro .intro-heading { margin-top: 4px; line-height: 1.25; }
+.pricing__lead {
+  margin: 20px 0 0;
+  font-size: .95rem;
+  line-height: 1.75;
+  color: var(--body);
+}
+.pricing__rule {
+  margin: 30px 0;
+  height: 1px;
+  border: 0;
+  background: var(--line);
+}
+.pricing__points {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.pricing__points li {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: .95rem;
+  color: var(--body);
+}
+.pricing__check {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: var(--blue);
+  color: #fff;
+}
+.pricing__check svg { width: 12px; height: 12px; }
+
+/* Satu kolom vertikal: harga besar-bold jadi fokus utama di atas, lalu
+   deskripsi, lalu 7 item cakupan paket (2 kolom biar ringkas), tombol
+   CTA menutup di paling bawah. */
+.pricing-card {
+  position: relative;
+  padding: 40px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+}
+/* badge menumpang di tepi atas kartu, rata dengan sisi kanannya */
+.pricing-card__badge {
+  position: absolute;
+  top: -15px; right: 0;
+  padding: 7px 18px;
+  border-radius: 999px;
+  background: #BFE1FF;
+  color: var(--blue);
+  font-size: .8rem;
+  font-weight: 700;
+}
+.pricing-card__label {
+  display: block;
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+/* fokus utama kartu — angka harga dibesarkan & ditebalkan supaya mata
+   pengunjung langsung jatuh ke sini, bukan ke wording di sekitarnya */
+.pricing-card__price {
+  margin-top: 6px;
+  font-size: clamp(2.6rem, 4vw, 3.4rem);
+  font-weight: 800;
+  letter-spacing: -.02em;
+  line-height: 1.1;
+  color: var(--ink);
+}
+/* suffix opsional untuk paket berlangganan (mis. "/tahun") — jauh lebih
+   kecil & abu, sama seperti pola "kecil di sebelah angka besar" yang
+   dipakai di glass-stat hero (small tag setelah data-count) */
+.pricing-card__period {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: 0;
+}
+.pricing-card__desc {
+  margin: 14px 0 28px;
+  max-width: 46ch;
+  font-size: .95rem;
+  line-height: 1.65;
+  color: var(--body);
+}
+.pricing-card__list {
+  list-style: none;
+  margin: 0 0 32px;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 28px;
+  row-gap: 14px;
+}
+.pricing-card__list li {
+  position: relative;
+  padding-left: 20px;
+  font-size: .92rem;
+  line-height: 1.45;
+  color: var(--ink);
+}
+.pricing-card__list li::before {
+  content: '';
+  position: absolute;
+  left: 0; top: .55em;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--blue);
+}
+.pricing-card .btn { width: 100%; justify-content: center; }
+
+@media (max-width: 1180px) {
+  .pricing__grid { grid-template-columns: 1fr; gap: 40px; }
+}
+@media (max-width: 680px) {
+  .pricing-card { padding: 28px; }
+  .pricing-card__list { grid-template-columns: 1fr; }
+  .pricing-card__badge { right: 20px; }
+}
+
+.section-divider {
+  height: 1px;
+  margin: 0;
+  border: 0;
+  background: var(--line);
+}
+
+/* --------------------------------------------------- 9d. Process timeline */
+.process__track {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 24px;
+  margin-top: 56px;
+}
+.process__line {
+  position: absolute;
+  top: 15px;
+  left: 10%;
+  right: 10%;
+  height: 2px;
+  background: var(--line);
+  z-index: 0;
+}
+.process__step {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+.process__marker {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  margin: 0 auto 22px;
+}
+.process__dot {
+  position: relative;
+  z-index: 1;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #C7CCD8;
+  transition: background-color .35s var(--ease);
+}
+.process__dot::before {
+  content: '';
+  position: absolute;
+  inset: -9px;
+  border-radius: 50%;
+  background: var(--blue);
+  opacity: 0;
+  transform: scale(.4);
+}
+.process__step:hover .process__dot { background-color: var(--blue); }
+.process__step:hover .process__dot::before {
+  animation: process-pulse 1.6s var(--ease) infinite;
+}
+.process__step h3 {
+  font-size: 1.02rem;
+  margin-bottom: 8px;
+  transition: color .3s var(--ease);
+}
+.process__step:hover h3 { color: var(--blue); }
+.process__step p {
+  font-size: .9rem;
+  color: var(--muted);
+}
+
+@keyframes process-pulse {
+  0%   { opacity: .35; transform: scale(.4); }
+  70%  { opacity: 0;   transform: scale(1.5); }
+  100% { opacity: 0;   transform: scale(1.5); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .process__step:hover .process__dot::before { animation: none; }
+}
+
+/* ------------------------------------------------------------- 9e. AI tool */
+.ai-tool { background: var(--surface); }
+.ai-tool__wrap {
+  max-width: 760px;
+  text-align: center;
+}
+.ai-tool__title {
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0 0 12px;
+}
+.ai-tool__subtitle {
+  font-size: 1rem;
+  color: var(--muted);
+  margin: 0 0 36px;
+}
+
+.ai-box {
+  text-align: left;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--sh-sm);
+  overflow: hidden;
+}
+.ai-box__field { position: relative; }
+
+.ai-box__input {
+  display: block;
+  width: 100%;
+  border: 0;
+  outline: 0;
+  resize: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: .98rem;
+  color: var(--ink);
+  padding: 22px 22px 10px;
+  box-sizing: border-box;
+}
+.ai-box__input::placeholder { color: var(--muted); }
+
+/* Placeholder palsu yang mengetik & menghapus bergantian antar contoh
+   pertanyaan — placeholder asli statis, jadi efek ini dibuat manual lewat
+   overlay yang disembunyikan begitu ada isi/fokus (initAiBox di main.js). */
+.ai-box__placeholder {
+  position: absolute;
+  inset: 0;
+  padding: 22px 22px 10px;
+  box-sizing: border-box;
+  font-size: .98rem;
+  color: var(--muted);
+  pointer-events: none;
+  white-space: pre-wrap;
+}
+.ai-box__caret {
+  display: inline-block;
+  width: 1px;
+  height: 1.05em;
+  margin-left: 1px;
+  background: var(--muted);
+  vertical-align: text-bottom;
+  animation: ai-caret-blink 1s step-end infinite;
+}
+@keyframes ai-caret-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.ai-box__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--line);
+}
+.ai-box__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.ai-chip {
+  padding: 7px 15px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--canvas);
+  color: var(--muted);
+  font-size: .82rem;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color .3s var(--ease), color .3s var(--ease), background-color .3s var(--ease);
+}
+.ai-chip:hover { border-color: var(--blue); color: var(--blue); background: var(--surface); }
+
+.ai-box__meta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.ai-box__count {
+  font-size: .78rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.ai-box__send {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--canvas-alt);
+  color: var(--muted);
+  cursor: not-allowed;
+  transition: background-color .3s var(--ease), color .3s var(--ease);
+}
+.ai-box__send svg { width: 17px; height: 17px; }
+.ai-box__send.is-ready { background: var(--blue); color: #fff; cursor: pointer; }
+.ai-box__send.is-ready:hover { background: var(--navy); }
+
+.ai-tool__disclaimer {
+  margin: 20px 0 0;
+  font-size: .82rem;
+  color: var(--muted);
+  text-align: center;
+}
+.ai-tool__disclaimer a { color: var(--muted); text-decoration: underline; }
+.ai-tool__disclaimer a:hover { color: var(--blue); }
+
+@media (max-width: 680px) {
+  .ai-box__bar { flex-direction: column; align-items: stretch; }
+  .ai-box__meta { justify-content: space-between; }
+}
+
+/* ------------------------------------------------------- 9e-2. Instagram */
+/* Ganti section AI tool (di atas, ARCHIVED) — kartu profil Instagram statis
+   (bukan live embed, lihat design.md utk alasannya). */
+.instagram { background: var(--surface); }
+.instagram__intro { margin-bottom: 44px; }
+
+.instagram-card {
+  padding: 32px;
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  /* box-shadow doang (pola .card) ga cukup kontras di section yg bg-nya
+     putih juga (.instagram { background: var(--surface) }) — kartunya
+     jadi nyaris nyatu sama section. Border tipis balik dipasang, TAPI
+     inset (bareng shadow, bukan `border` terpisah) biar tetep halus. */
+  box-shadow: var(--sh-sm), inset 0 0 0 1px var(--line);
+}
+.instagram-card__top {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+.instagram-card__avatar {
+  flex: none;
+  width: 68px;
+  height: 68px;
+  padding: 14px;
+  border-radius: 50%;
+  background: var(--canvas-alt);
+  object-fit: contain;
+}
+.instagram-card__body { flex: 1 1 220px; min-width: 220px; }
+.instagram-card__handle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+.instagram-card__handle svg { width: 20px; height: 20px; color: var(--blue); flex: none; }
+.instagram-card__bio { margin: 0; font-size: .95rem; line-height: 1.6; color: var(--body); max-width: 46ch; }
+.instagram-card__cta { flex: none; white-space: nowrap; }
+/* ikon Instagram bukan panah — muter 45° kayak tombol lain jadi ganjil,
+   badge lingkarannya tetap ada, cuma rotate-nya dimatikan */
+.instagram-card__cta:hover i { transform: none; }
+
+/* grid 3 postingan terbaru — thumbnail persegi, zoom halus pas hover sama
+   kayak pola foto kartu lain di situs ini (mis. .article-tile__img) */
+.instagram-card__posts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 24px;
+}
+.instagram-card__post {
+  position: relative;
+  display: block;
+  aspect-ratio: 1 / 1;
+  border-radius: var(--r-md);
+  overflow: hidden;
+  background: var(--canvas-alt);
+  /* Border pakai --line (sama kayak border .instagram-card) — WAJIB ada:
+     foto yg kebetulan background-nya putih (mis. post template) nyambung
+     sama bg kartu yg juga putih, jadi lengkung sudutnya nggak kebaca sama
+     sekali tanpa garis pembatas, keliatan kayak masih kotak padahal
+     radius-nya jalan. */
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.instagram-card__post img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .5s var(--ease);
+}
+/* Post yang "isinya" ada di bagian ATAS gambar (mis. template judul + foto
+   pembanding + pertanyaan, sisanya ilustrasi) — crop tengah bawaan cover
+   motong judulnya. Fokus crop digeser ke atas biar bagian pentingnya yang
+   kelihatan. Dipasang per-post di HTML, bukan global: tiap post framing-nya
+   beda-beda, jadi dinilai manual pas ganti gambar. */
+.instagram-card__post--focus-top img { object-position: center 11%; }
+.instagram-card__post:hover img { transform: scale(1.08); }
+
+@media (max-width: 680px) {
+  .instagram-card { padding: 24px; }
+  .instagram-card__top { flex-direction: column; align-items: flex-start; }
+  /* .instagram-card__body punya `flex: 1 1 220px` buat layout ROW di
+     desktop (220px = flex-basis LEBAR minimum). Begitu .instagram-card__top
+     jadi flex-direction:column di atas, flex-basis itu kepake ke arah
+     TINGGI (bukan lebar lagi) — body jadi maksa tinggi minimal 220px lalu
+     boleh grow makin tinggi, bikin jarak kosong raksasa sebelum tombol
+     Follow di bawahnya. Reset ke auto/0 khusus mobile. */
+  .instagram-card__body { flex: 0 0 auto; min-width: 0; }
+  /* grid 3 thumbnail kecil susah dibaca di layar sempit — ditumpuk 1
+     kolom, tiap thumbnail full lebar kartu */
+  .instagram-card__posts { grid-template-columns: 1fr; gap: 12px; margin-top: 20px; }
+}
+
+/* --------------------------------------------------------- 9f. Testimoni */
+.testi__intro { margin-bottom: 44px; }
+
+.testi__grid {
+  columns: 4;
+  column-gap: 20px;
+}
+.testi__card {
+  break-inside: avoid;
+  margin-bottom: 20px;
+  padding: 26px;
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  box-shadow: var(--sh-sm);
+}
+.testi__card strong { display: block; font-size: .96rem; color: var(--ink); }
+.testi__role { display: block; font-size: .82rem; color: var(--muted); margin-top: 2px; }
+
+.testi__person {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.testi__avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex: none;
+}
+.testi__quote {
+  margin: 0;
+  font-size: .92rem;
+  line-height: 1.6;
+  color: var(--body);
+}
+
+.testi__rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: var(--canvas-alt);
+  font-size: .78rem;
+  font-weight: 700;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.testi__rating svg { width: 12px; height: 12px; color: #F5A623; }
+
+.testi__card--tag .testi__tagrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 22px;
+}
+.testi__mark {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  background: var(--blue);
+  transform: rotate(45deg);
+  flex: none;
+}
+.testi__brand {
+  flex: 1;
+  font-weight: 700;
+  font-size: .9rem;
+  color: var(--ink);
+}
+.testi__card--tag .testi__rating { background: var(--canvas); }
+
+.testi__card--blue,
+.testi__card--navy {
+  color: #fff;
+  box-shadow: none;
+}
+.testi__card--blue { background: var(--blue); }
+.testi__card--navy { background: var(--blue); }
+.testi__card--blue strong, .testi__card--navy strong { color: #fff; }
+.testi__card--blue .testi__role, .testi__card--navy .testi__role,
+.testi__card--blue .testi__quote, .testi__card--navy .testi__quote { color: rgba(255, 255, 255, .94); }
+
+.testi__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.testi__card--blue .testi__rating,
+.testi__card--navy .testi__rating {
+  background: rgba(255, 255, 255, .16);
+  color: #fff;
+}
+
+.testi__wordmark {
+  display: block;
+  margin-top: 18px;
+  font-weight: 800;
+  font-size: 1rem;
+  color: #fff;
+}
+
+@media (max-width: 1180px) {
+  .testi__grid { columns: 3; }
+}
+@media (max-width: 980px) {
+  .testi__grid { columns: 2; }
+}
+@media (max-width: 680px) {
+  .testi__grid { columns: 1; }
+}
+
+/* ---------------------------------------------------------- 11. Services */
+.services { background: var(--surface); }
+.service-list { border-top: 1px solid var(--line); }
+.service-row {
+  display: grid;
+  grid-template-columns: 58px minmax(0, 290px) minmax(0, 1fr) auto;
+  gap: 30px;
+  align-items: center;
+  padding: 32px 24px;
+  border-bottom: 1px solid var(--line);
+  border-radius: var(--r-md);
+  transition: background .4s var(--ease), transform .4s var(--ease);
+}
+.service-row:hover { background: var(--canvas); transform: translateX(6px); }
+.service-row__no {
+  font-size: .82rem;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: .05em;
+}
+.service-row__title { display: flex; align-items: center; gap: 14px; }
+.service-row__title svg { width: 26px; height: 26px; flex: none; color: var(--blue); }
+.service-row__desc { font-size: .94rem; }
+.service-row .link-arrow { justify-self: end; white-space: nowrap; }
+
+.tag-row { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 12px; }
+.tag {
+  padding: 5px 13px;
+  border-radius: 999px;
+  background: var(--canvas-alt);
+  font-size: .75rem;
+  font-weight: 600;
+  color: var(--navy);
+}
+
+/* --------------------------------------------------------- 12. Workspace */
+.space-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 22px;
+}
+.space-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 400px;
+  padding: 28px;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  color: #fff;
+  isolation: isolate;
+  transition: transform .5s var(--ease);
+}
+.space-card:hover { transform: translateY(-8px); }
+.space-card::before {
+  content: '';
+  position: absolute; inset: 0; z-index: -2;
+  background: linear-gradient(165deg, #06276E, #041C4F);
+}
+.space-card::after {
+  content: '';
+  position: absolute; inset: 0; z-index: -1;
+  background: linear-gradient(180deg, transparent 30%, rgba(4, 12, 34, .82) 100%);
+}
+.space-card--a::before { background: linear-gradient(165deg, #0058FF, #003399); }
+.space-card--b::before { background: linear-gradient(165deg, #009DFD, #0058FF); }
+.space-card--c::before { background: linear-gradient(165deg, #05A87C, #009DFD); }
+.space-card--d::before { background: linear-gradient(165deg, #1B2C5E, #041C4F); }
+
+.space-card__photo {
+  position: absolute; inset: 0; z-index: -2;
+  background-image: var(--photo, none);
+  background-size: cover; background-position: center;
+  opacity: .4; mix-blend-mode: luminosity;
+}
+.space-card__no {
+  position: absolute;
+  top: 24px; right: 26px;
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  color: rgba(255, 255, 255, .55);
+}
+.space-card h3 { color: #fff; }
+.space-card p {
+  margin-top: 10px;
+  font-size: .88rem;
+  color: rgba(255, 255, 255, .78);
+  line-height: 1.55;
+}
+.space-card__price {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, .2);
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: -.03em;
+}
+.space-card__price small { font-size: .78rem; font-weight: 500; opacity: .72; }
+
+/* --------------------------------------------------------- 13. CTA banner */
+/* jarak ke section Artikel di atasnya dikunci 80px total (40+40) di semua
+   breakpoint, bukan ikut skala --section-y yang jauh lebih lebar */
+.article-section { padding-bottom: 40px; }
+/* pengecualian: carousel "Ruang Kerja" di L1 workspace diikuti section-divider
+   biasa (bukan CTA seperti Artikel di homepage), jadi jarak bawahnya balik
+   ke default section-y, bukan ikut dirapatkan 40px */
+#ruang-kerja-galeri.article-section { padding-bottom: var(--section-y); }
+.cta-section { padding-top: 40px; }
+
+.cta-band {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.15fr .85fr;
+  align-items: center;
+  gap: 32px;
+  padding: 28px;
+  border-radius: var(--r-xl);
+  overflow: hidden;
+  color: #fff;
+  isolation: isolate;
+}
+.cta-band::before {
+  content: '';
+  position: absolute; inset: 0; z-index: -1;
+  background:
+    radial-gradient(70% 120% at 15% 0%, rgba(0, 157, 253, .5), transparent 60%),
+    linear-gradient(120deg, #003399, #041C4F);
+}
+.cta-band__mark {
+  position: absolute;
+  left: -40px; bottom: -50px;
+  width: 260px;
+  opacity: .08;
+  z-index: -1;
+  filter: brightness(0) invert(1);
+}
+.cta-band__copy { padding: 36px 8px 36px 28px; }
+.cta-band h2 {
+  color: #fff;
+  font-size: clamp(1.7rem, 2.9vw, 2.3rem);
+  max-width: 16ch;
+}
+.cta-band p {
+  margin: 18px 0 30px;
+  max-width: 46ch;
+  color: rgba(255, 255, 255, .78);
+}
+.cta-band__photo {
+  height: 340px;
+  border-radius: calc(var(--r-xl) - 12px);
+  overflow: hidden;
+}
+/* foto aslinya lebar (16:9) sementara box CTA lebih sempit — cover default
+   (center) memotong simetris kiri-kanan dari titik tengah FOTO, padahal
+   kedua orangnya sendiri berdiri agak ke kiri dari tengah foto. Geser
+   fokus crop ke kiri supaya kedua orang itu yang jadi tengah box, bukan
+   tengah foto aslinya. */
+.cta-band__photo img { width: 100%; height: 100%; object-fit: cover; object-position: left center; }
+
+/* ---------------------------------------------------------- 14. Process */
+.step-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px;
+}
+.step {
+  position: relative;
+  padding-top: 32px;
+  border-top: 2px solid var(--line);
+  transition: border-color .4s var(--ease);
+}
+.step:hover { border-color: var(--blue); }
+.step__no {
+  display: grid;
+  place-items: center;
+  width: 44px; height: 44px;
+  margin-bottom: 20px;
+  border-radius: 50%;
+  background: var(--navy);
+  color: #fff;
+  font-size: .94rem;
+  font-weight: 700;
+}
+.step h4 { margin-bottom: 10px; }
+.step p { font-size: .91rem; }
+
+/* ------------------------------------------------------- 15. Testimonials */
+.quote-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+}
+.quote {
+  display: flex;
+  flex-direction: column;
+  padding: 30px;
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  box-shadow: var(--sh-sm);
+  transition: transform .45s var(--ease), box-shadow .45s var(--ease);
+}
+.quote:hover { transform: translateY(-6px); box-shadow: var(--sh-md); }
+.quote--feature { background: linear-gradient(150deg, #003399, #041C4F); }
+.quote--feature .quote__text { color: rgba(255, 255, 255, .9); }
+.quote--feature .quote__role { color: rgba(255, 255, 255, .6); }
+.quote--feature .quote__name { color: #fff; }
+
+.stars { display: flex; gap: 3px; margin-bottom: 16px; }
+.stars svg { width: 16px; height: 16px; color: var(--gold); }
+.quote__text { font-size: .99rem; line-height: 1.65; color: var(--body); }
+.quote__foot {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+.quote--feature .quote__foot { border-color: rgba(255, 255, 255, .18); }
+.quote__ava {
+  display: grid;
+  place-items: center;
+  width: 44px; height: 44px;
+  flex: none;
+  border-radius: 50%;
+  background: linear-gradient(140deg, var(--blue), var(--cyan));
+  color: #fff;
+  font-weight: 800;
+  font-size: .88rem;
+}
+.quote__name { font-weight: 700; color: var(--ink); font-size: .94rem; }
+.quote__role { font-size: .81rem; color: var(--muted); }
+
+/* -------------------------------------------------------------- 16. FAQ */
+.faq-section__intro { margin-bottom: 44px; }
+.faq { display: grid; gap: 14px; }
+.faq__item {
+  border-radius: var(--r-md);
+  background: var(--surface);
+  box-shadow: var(--sh-sm);
+  overflow: hidden;
+  transition: box-shadow .35s var(--ease);
+}
+.faq__item.is-open { box-shadow: var(--sh-md); }
+.faq__q {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  width: 100%;
+  padding: 22px 26px;
+  border: 0;
+  background: none;
+  text-align: left;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -.01em;
+  cursor: pointer;
+}
+.faq__q i {
+  display: grid;
+  place-items: center;
+  width: 32px; height: 32px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--canvas-alt);
+  color: var(--navy);
+  font-style: normal;
+  transition: background .3s var(--ease), color .3s var(--ease);
+}
+.faq__q i svg { width: 16px; height: 16px; }
+.faq__q i svg .faq__icon-v {
+  transform-origin: center;
+  transition: transform .35s var(--ease), opacity .35s var(--ease);
+}
+.faq__item.is-open .faq__q i {
+  background: var(--blue);
+  color: #fff;
+}
+.faq__item.is-open .faq__q i svg .faq__icon-v { transform: scaleY(0); opacity: 0; }
+.faq__a { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .45s var(--ease); }
+.faq__item.is-open .faq__a { grid-template-rows: 1fr; }
+.faq__a > div { overflow: hidden; }
+.faq__a p { padding: 0 66px 24px 26px; font-size: .94rem; }
+
+/* ------------------------------------------------------------ 17. Artikel */
+.article-section__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+.article-section__intro { margin: 0; }
+
+.article-section__nav {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 14px;
+  flex: none;
+}
+.article-section__all { white-space: nowrap; }
+.article-section__arrows { display: flex; gap: 10px; }
+.article-nav-btn {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+  transition: background-color .3s var(--ease), border-color .3s var(--ease), color .3s var(--ease);
+}
+.article-nav-btn:hover { background: var(--blue); border-color: var(--blue); color: #fff; }
+.article-nav-btn svg { width: 18px; height: 18px; }
+
+.article-carousel { margin-bottom: 40px; overflow: hidden; }
+.article-carousel__track {
+  display: flex;
+  height: 380px;
+}
+
+/* Kartu berperilaku seperti dek yang membuka: kartu aktif melebar mengisi sisa
+   ruang, kartu berikutnya jadi strip yang makin menyempit, dan kartu yang sudah
+   dilewati menyusut sampai 0 (hilang) — lebar & flex-grow yang ditransisikan. */
+.acard {
+  position: relative;
+  display: block;
+  flex: 0 0 auto;
+  width: 196px;
+  margin-right: 16px;
+  height: 100%;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  transition:
+    width .55s var(--ease),
+    flex-grow .55s var(--ease),
+    margin-right .55s var(--ease),
+    opacity .4s var(--ease);
+}
+
+/* Kartu aktif satu-satunya yang fleksibel, jadi setiap kali strip di kanan
+   melebar (mis. saat dihover) kartu aktif otomatis memendek mengisi sisanya. */
+.acard[data-pos="active"] { width: 40%; flex-grow: 1; }
+.acard[data-pos="past"]   { width: 0; margin-right: 0; opacity: 0; pointer-events: none; }
+.acard[data-pos="2"] { width: 96px; }
+.acard[data-pos="3"] { width: 52px; }
+.acard[data-pos="4"] { width: 26px; }
+.acard[data-pos="5"] { width: 14px; }
+
+.acard[data-pos="2"]:hover { width: 148px; }
+.acard[data-pos="3"]:hover { width: 92px; }
+.acard[data-pos="4"]:hover { width: 58px; }
+.acard[data-pos="5"]:hover { width: 38px; }
+
+.acard__bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+}
+.acard__bg--1 { background-color: var(--navy); background-image: linear-gradient(150deg, var(--navy), var(--blue) 60%, var(--cyan)); }
+.acard__bg--2 { background: linear-gradient(150deg, var(--blue), var(--cyan)); }
+.acard__bg--3 { background: linear-gradient(150deg, var(--navy-deep), var(--blue)); }
+.acard__bg--4 { background: linear-gradient(160deg, var(--cyan), var(--navy)); }
+.acard__bg--5 { background: linear-gradient(160deg, var(--blue), var(--navy-deep)); }
+
+/* gradasi gelap di bawah supaya chip/judul tetap kebaca di atas foto */
+.acard__scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, rgba(4, 12, 32, .78), rgba(4, 12, 32, 0) 55%);
+  pointer-events: none;
+}
+
+.acard__caption,
+.acard__title {
+  opacity: 0;
+  transition: opacity .4s var(--ease);
+}
+.acard[data-pos="active"] .acard__caption,
+.acard[data-pos="active"] .acard__title { opacity: 1; transition-delay: .25s; }
+
+/* chip + judul digabung dalam 1 kolom flex yang ditempel dari bawah, jadi
+   jaraknya (gap) selalu konsisten walau judulnya 1 vs 3 baris — sebelumnya
+   chip dikasih `bottom` angka tetap dan gampang overlap/ngambang jauh
+   tergantung panjang judul tiap kartu. */
+.acard__caption {
+  position: absolute;
+  left: 28px; right: 28px; bottom: 26px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+.acard__chip {
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: #BFE1FF;
+  color: var(--blue);
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .01em;
+}
+.acard__title {
+  color: #fff;
+  font-size: 1.55rem;
+  font-weight: 700;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+.acard__title--long {
+  white-space: normal;
+  font-size: 1.15rem;
+  max-width: 78%;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.article-section__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  padding-top: 28px;
+  border-top: 1px solid var(--line);
+}
+.article-section__foot p {
+  max-width: 640px;
+  margin: 0;
+  font-size: .98rem;
+  color: var(--body);
+  /* ruang dikunci 3 baris: teks tiap kartu beda panjang, tanpa ini section
+     di bawahnya ikut naik-turun setiap kartu berganti */
+  min-height: 5.1em;
+  transition: opacity .3s var(--ease);
+  /* flex:1 + min-width:0 supaya teks yang menyusut duluan di layar sempit,
+     tombol di sebelahnya jangan sampai ikut kegencet/pecah */
+  flex: 1;
+  min-width: 0;
+}
+.article-section__foot p.is-swapping { opacity: 0; }
+.article-section__foot strong { color: var(--ink); }
+.article-section__foot .btn { flex-shrink: 0; white-space: nowrap; }
+
+@media (max-width: 980px) {
+  .article-carousel__track { height: 320px; }
+  .acard { width: 120px; }
+  .acard[data-pos="active"] { width: 60%; }
+  .acard[data-pos="2"] { width: 64px; }
+  .acard[data-pos="3"] { width: 34px; }
+  .acard[data-pos="4"] { width: 18px; }
+  .acard[data-pos="5"] { width: 10px; }
+  .acard[data-pos="2"]:hover { width: 104px; }
+  .acard[data-pos="3"]:hover { width: 62px; }
+  .acard[data-pos="4"]:hover { width: 38px; }
+  .acard[data-pos="5"]:hover { width: 26px; }
+  .acard__title { font-size: 1.25rem; }
+}
+
+/* KHUSUS tablet (681-980px) & KHUSUS section "Artikel Terbaru Lainnya" di
+   halaman artikel — nav-nya cuma berisi 1 link (tanpa tombol panah
+   carousel kayak versi homepage), jadi lebih pendek dari blok judul+
+   subjudul di sebelahnya. align-items:flex-end (bawaan .article-section__head)
+   bikin dia nempel di baris subjudul, bukan sejajar judul. Tidak menyentuh
+   breakpoint/section lain. */
+@media (max-width: 980px) and (min-width: 681px) {
+  #artikel-terbaru .article-section__head { align-items: flex-start; }
+}
+
+@media (max-width: 680px) {
+  .article-section__head { flex-direction: column; align-items: flex-start; gap: 16px; }
+  /* link "Lihat Semua Artikel" (kalau ada) & 2 tombol panah disejajarkan
+     1 baris — link rata kiri, panah rata kanan. margin-left:auto di
+     .article-section__arrows (bukan justify-content:space-between di sini)
+     supaya tetap rata kanan juga di section yang nav-nya cuma isi panah
+     doang tanpa link teks (mis. carousel "Ruang Kerja") — space-between
+     dgn 1 anak malah nempel ke KIRI. */
+  .article-section__nav {
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+  }
+  .article-section__arrows { margin-left: auto; }
+  .article-carousel__track { height: 260px; }
+  .acard { margin-right: 10px; }
+  .acard[data-pos="active"] { width: 74%; }
+  .acard[data-pos="2"] { width: 40px; }
+  .acard[data-pos="3"] { width: 22px; }
+  .acard[data-pos="4"] { width: 12px; }
+  .acard[data-pos="5"] { width: 8px; }
+  .acard__caption { left: 20px; right: 20px; bottom: 20px; gap: 8px; }
+  .acard__title { font-size: 1.1rem; }
+  .acard__title--long { font-size: 1rem; max-width: 100%; -webkit-line-clamp: 2; }
+  .acard__chip { font-size: .72rem; padding: 5px 12px; }
+  .article-section__foot { flex-direction: column; align-items: flex-start; }
+  .article-section__foot p { min-height: 8.5em; }   /* 5 baris di lebar mobile */
+}
+
+/* artikel.html dibuka tanpa hero foto (langsung heading polos di atas
+   canvas biasa) — butuh padding-top sendiri sebesar itu supaya breadcrumb
+   & judul tidak ketutup navbar fixed, alasan sama persis dengan
+   .service-single di L2 */
+#artikel-intro { padding-top: 180px; padding-bottom: 0; }
+#artikel-daftar { padding-top: 64px; }
+#kuis-intro { padding-top: 180px; padding-bottom: 0; }
+#kuis-daftar { padding-top: 64px; }
+#kontak-intro { padding-bottom: 0; }
+#kontak-intro + #kontak { padding-top: 64px; }
+@media (max-width: 680px) {
+  #artikel-intro { padding-top: 140px; }
+  #kuis-intro { padding-top: 140px; }
+}
+
+/* ---------------------------------------------- 17a2. Jarak antar-section
+   Satu aturan konsisten dipakai di semua halaman: section "heading doang"
+   (breadcrumb+judul, gak ada konten lain) dipasangkan sama section
+   sesudahnya pakai pola gap: 64px. .why__intro sendiri punya
+   margin-bottom:52px yang aslinya buat jarak heading→card DALAM satu
+   section (kayak di section .why) — kalau section itu cuma isinya heading
+   doang, margin ini bocor jadi jarak ekstra ke section BERIKUTNYA di luar
+   pola 64px. Di-nolin khusus buat section yang gak punya konten lain
+   setelah heading-nya. */
+#artikel-intro .why__intro,
+#kuis-intro .why__intro,
+#kontak-intro .why__intro { margin-bottom: 0; }
+
+/* Section "konten ke konten" (dua-duanya bukan cuma heading, background
+   sama-sama polos/gak ada kartu warna) — dirapatin ke 64px juga di sisi
+   atas biar gak numpuk full --section-y dobel (240px sebelum ini). */
+.pricing,       /* nyusul .service-single (#ringkasan) */
+#kata-kunci,    /* nyusul #blog-head */
+#artikel-terbaru, /* nyusul #kata-kunci */
+.why,           /* nyusul showcase / ringkasan / layanan sebelumnya */
+.process,       /* nyusul .why */
+.testi,         /* nyusul instagram/ai-tool */
+.faq-section,   /* nyusul .testi */
+.article-section, /* nyusul .faq-section (homepage) / .pricing (L2 workspace) */
+#visi-kami,
+#misi-kami,
+#komitmen-kami {
+  padding-top: 64px;
+}
+
+/* --------------------------------------------------- 17b. Artikel (listing)
+   Beda dari carousel Artikel di homepage — ini grid kartu statis biasa untuk
+   halaman `artikel.html` sendiri (bukan dek yang menyempit/melebar). */
+.article-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 56px;
+}
+.article-filter {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 10px;
+}
+.article-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 0 1 300px;
+  padding: 11px 20px;
+  border-radius: 999px;
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1.5px var(--line);
+  color: var(--muted);
+  transition: box-shadow .25s;
+}
+.article-search:focus-within { box-shadow: inset 0 0 0 1.5px var(--blue); }
+.article-search svg { flex-shrink: 0; width: 18px; height: 18px; }
+.article-search input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  outline: none;
+  font: inherit;
+  color: var(--ink);
+}
+.article-search input::placeholder { color: var(--muted); }
+.article-search input::-webkit-search-cancel-button { cursor: pointer; }
+.article-filter__btn {
+  padding: 11px 24px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--canvas);
+  color: var(--body);
+  font-size: .92rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .25s, color .25s;
+}
+.article-filter__btn:hover { color: var(--blue); }
+.article-filter__btn.is-active { background: var(--blue); color: #fff; }
+
+.article-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 44px 32px;
+}
+.article-tile[hidden] { display: none; }
+/* Kartu bukan link utuh — cuma tombol "Baca Selengkapnya" di bawah yang
+   klikabel, tapi tetap dikasih affordance hover di gambar & judul (foto
+   zoom halus + judul jadi biru) supaya kartunya kebaca sebagai satu
+   kesatuan yang bisa dieksplor, senada dengan tombolnya. Flex-column +
+   tombol margin-top:auto supaya semua tombol dalam satu baris grid tetap
+   rata bawah walau judulnya 1 vs 2 baris. */
+.article-tile { display: flex; flex-direction: column; }
+.article-tile__img {
+  position: relative;
+  height: 220px;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.article-tile__img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .5s var(--ease);
+}
+.article-tile:hover .article-tile__img img { transform: scale(1.08); }
+/* chip menumpang di pojok kiri-atas foto, sama seperti .acard__chip di
+   carousel — bukan lagi baris teks terpisah di bawah foto */
+.article-tile__chip {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: #BFE1FF;
+  color: var(--blue);
+  font-size: .78rem;
+  font-weight: 700;
+}
+.article-tile__meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: .82rem;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+.article-tile__title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--ink);
+  margin: 0 0 12px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  transition: color .25s;
+}
+.article-tile:hover .article-tile__title { color: var(--blue); }
+/* deskripsi singkat di bawah judul — dipotong (truncate) di baris ke-5
+   kalau lebih panjang, bukan bikin tinggi kartu jadi tidak rata sebaris */
+.article-tile__desc {
+  font-size: .92rem;
+  line-height: 1.6;
+  color: var(--body);
+  margin: 0 0 22px;
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.article-tile .btn { margin-top: auto; align-self: flex-start; }
+/* hover di mana pun pada kartu ikut memicu state hover tombolnya juga
+   (bukan cuma saat kursor persis di atas tombol) — meniru persis
+   .btn--ghost:hover supaya konsisten dengan tombol yang sama di halaman lain */
+.article-tile:hover .btn--ghost {
+  --btn-bg: var(--blue);
+  --btn-fg: #fff;
+  box-shadow: inset 0 0 0 1.5px transparent;
+}
+.article-tile:hover .btn--ghost i { background: rgba(255, 255, 255, .2); }
+
+.article-empty {
+  text-align: center;
+  color: var(--muted);
+  padding: 40px 0;
+}
+
+.article-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 48px;
+}
+.article-pagination__btn {
+  min-width: 40px;
+  height: 40px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--canvas);
+  color: var(--body);
+  font-size: .92rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .25s, color .25s;
+}
+.article-pagination__btn:hover:not(:disabled) { color: var(--blue); }
+.article-pagination__btn.is-active { background: var(--blue); color: #fff; }
+.article-pagination__btn:disabled { opacity: .4; cursor: not-allowed; }
+
+@media (max-width: 1180px) {
+  .article-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 780px) {
+  .article-toolbar { flex-direction: column; align-items: stretch; }
+  .article-search { flex-basis: auto; }
+}
+@media (max-width: 680px) {
+  .article-grid { grid-template-columns: 1fr; }
+  .article-filter { justify-content: flex-start; }
+}
+
+/* --------------------------------------------------- 17c. Detail Artikel
+   Halaman satu artikel penuh (rujukan layout: halaman blog single Glowdent).
+   Tanpa hero foto — dibuka langsung dengan baris judul + info penulis, lalu
+   banner foto terbelah dua, baru isi artikel. */
+#blog-head { padding-top: 180px; padding-bottom: 0; }
+@media (max-width: 680px) {
+  #blog-head { padding-top: 140px; }
+}
+
+.blog-detail__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+.blog-detail__head-left { max-width: 60ch; }
+.blog-detail__eyebrow {
+  display: block;
+  margin-bottom: 14px;
+  font-size: .86rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+.blog-detail__title {
+  font-size: clamp(1.9rem, 3.6vw, 2.9rem);
+  line-height: 1.2;
+  color: var(--ink);
+}
+.blog-detail__head-right {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding-bottom: 6px;
+}
+.blog-detail__author { display: flex; align-items: center; gap: 12px; }
+.blog-detail__author-avatar {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: var(--canvas-alt);
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+.blog-detail__author-avatar img { width: 20px; height: 20px; }
+.blog-detail__author span { font-size: .92rem; font-weight: 700; color: var(--ink); }
+
+/* banner foto terbelah dua — satu unit rounded, garis tipis di tengah
+   sebagai pemisah alami dari gap kecil antar kolom grid */
+.blog-detail__hero {
+  height: 460px;
+  margin-top: 48px;
+  border-radius: var(--r-xl);
+  overflow: hidden;
+}
+.blog-detail__hero img { width: 100%; height: 100%; object-fit: cover; }
+
+@media (max-width: 680px) {
+  .blog-detail__head-right { width: 100%; justify-content: space-between; }
+  .blog-detail__hero { height: 220px; }
+}
+
+.blog-detail__body { max-width: none; padding-top: 64px; }
+/* dipakai di halaman tanpa .blog-detail__hero (mis. Kebijakan Privasi) —
+   64px jaraknya pas kalau ada foto hero di antaranya, tapi kalau langsung
+   nempel ke judul jadi kelihatan kejauhan */
+.blog-detail__body--no-hero { padding-top: 24px; }
+.blog-detail__lead {
+  font-size: clamp(1.15rem, 1.8vw, 1.4rem);
+  font-weight: 600;
+  line-height: 1.6;
+  color: var(--ink);
+  max-width: 90ch;
+  margin-bottom: 48px;
+}
+.blog-detail__section { max-width: 78ch; margin-bottom: 40px; }
+.blog-detail__section h2 {
+  font-size: clamp(1.25rem, 2vw, 1.55rem);
+  color: var(--ink);
+  margin-bottom: 14px;
+}
+.blog-detail__section p { font-size: 1rem; line-height: 1.8; color: var(--body); margin: 0 0 18px; }
+.blog-detail__section p:last-child { margin-bottom: 0; }
+.blog-detail__section ul {
+  margin: 18px 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.blog-detail__section li {
+  position: relative;
+  padding-left: 24px;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--body);
+}
+.blog-detail__section li::before {
+  content: '';
+  position: absolute;
+  left: 0; top: .6em;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--blue);
+}
+.blog-detail__section li strong { color: var(--ink); }
+
+.blog-detail__section--wide { max-width: none; }
+.blog-detail__section { scroll-margin-top: 130px; }
+
+.blog-detail__layout { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 60px; align-items: start; }
+
+.blog-toc { position: sticky; top: 130px; margin-top: 64px; }
+.blog-toc__inner {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  padding: 24px;
+  box-shadow: 0 20px 40px rgba(8, 21, 47, .06);
+}
+.blog-toc__head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 16px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+  font-size: .92rem;
+  font-weight: 700;
+  color: var(--ink);
+  text-transform: uppercase;
+  letter-spacing: .02em;
+}
+.blog-toc__head svg { width: 18px; height: 18px; color: var(--blue); flex: none; }
+.blog-toc__nav { display: flex; flex-direction: column; gap: 2px; }
+.blog-toc__link {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border-left: 2px solid transparent;
+  font-size: .88rem;
+  line-height: 1.4;
+  color: var(--muted);
+  transition: background .2s, color .2s, border-color .2s;
+}
+.blog-toc__link:hover { color: var(--ink); }
+.blog-toc__link.is-active {
+  background: rgba(0, 88, 255, .08);
+  border-left-color: var(--blue);
+  color: var(--blue);
+  font-weight: 700;
+}
+
+@media (max-width: 980px) {
+  /* Daftar Isi cuma tampil di desktop (>980px) — di tablet/mobile
+     kolomnya cukup sempit sehingga sidebar sticky ini lebih ganggu
+     daripada membantu, jadi disembunyikan (bukan cuma static) di sini.
+     `minmax(0, 1fr)` (bukan `1fr` polos) tetap dipakai walau kolom ke-2
+     hilang, supaya .blog-table (min-width:640px) yang lebih lebar dari
+     kolom tidak ikut melebarkan track-nya — dia discroll di dalam
+     .blog-table__wrap sendiri, bukan bikin seluruh halaman overflow
+     horizontal. */
+  .blog-detail__layout { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+  .blog-toc { display: none; }
+}
+
+.blog-table__wrap {
+  margin-top: 20px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  overflow-x: auto;
+}
+.blog-table { width: 100%; border-collapse: collapse; min-width: 640px; }
+/* tabel 2 kolom (mis. "Pilih CV jika... / Pilih PT jika...") — auto table
+   layout bikin kolom kanan lebih sempit kalau teks kolom kiri lebih
+   panjang. Dipaksa fixed 50/50 biar seimbang kiri-kanan. */
+.blog-table--split { table-layout: fixed; }
+.blog-table--split th,
+.blog-table--split td { width: 50%; }
+.blog-table th {
+  text-align: left;
+  padding: 16px 20px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: .9rem;
+  font-weight: 700;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+.blog-table td {
+  padding: 16px 20px;
+  color: var(--body);
+  font-size: .9rem;
+  line-height: 1.55;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+.blog-table td:first-child { color: var(--ink); font-weight: 700; white-space: nowrap; }
+/* kolom pertama tabel biasa (Aspek/CV/PT) sengaja nowrap krn isinya cuma
+   label pendek — tabel "split" ini isinya kalimat panjang di kolom 1, jadi
+   nowrap bikin teksnya meluber nabrak kolom 2. Wajib wrap normal. */
+.blog-table--split td:first-child { white-space: normal; }
+.blog-table tbody tr:last-child td { border-bottom: none; }
+.blog-table tbody tr:nth-child(even) { background: var(--canvas); }
+
+.blog-detail__quote {
+  max-width: 62ch;
+  margin: 8px 0 48px 24px;
+  padding-left: 24px;
+  border-left: 3px solid var(--blue);
+  font-size: clamp(1.15rem, 1.9vw, 1.45rem);
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+.related-articles__title { font-size: clamp(1.5rem, 2.4vw, 1.9rem); color: var(--ink); margin: 0 0 10px; }
+.related-articles__subtitle { margin: 0; max-width: 52ch; font-size: 1rem; line-height: 1.6; color: var(--body); }
+
+.blog-detail__share {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-top: 8px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid var(--line);
+}
+.blog-detail__share-label { font-size: .92rem; font-weight: 700; color: var(--ink); }
+.blog-detail__share .socials { margin-top: 0; }
+
+.keyword-list { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px; }
+.keyword-chip {
+  padding: 8px 18px;
+  border-radius: 999px;
+  background: var(--canvas-alt);
+  color: var(--navy);
+  font-size: .88rem;
+  font-weight: 600;
+  transition: background .25s, color .25s;
+}
+.keyword-chip:hover { background: var(--blue); color: #fff; }
+
+/* ------------------------------------------------------------ 18. Contact */
+.contact { background: var(--surface); }
+.contact__grid {
+  display: grid;
+  grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
+  gap: 60px;
+  align-items: start;
+}
+
+.info-list { display: grid; gap: 6px; margin-top: 32px; }
+.info-list li {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  padding: 16px;
+  border-radius: var(--r-md);
+  transition: background .3s;
+}
+.info-list li:hover { background: var(--canvas); }
+.info-list i {
+  display: grid;
+  place-items: center;
+  width: 44px; height: 44px;
+  flex: none;
+  border-radius: var(--r-sm);
+  background: linear-gradient(140deg, rgba(0, 88, 255, .12), rgba(0, 157, 253, .12));
+  color: var(--navy);
+}
+.info-list i svg { width: 20px; height: 20px; }
+.info-list b { display: block; color: var(--ink); font-size: .94rem; }
+.info-list span { font-size: .91rem; }
+
+.form-card {
+  padding: 38px;
+  border-radius: var(--r-xl);
+  background: var(--canvas);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+.field { display: grid; gap: 8px; }
+.field--full { grid-column: 1 / -1; }
+.field label { font-size: .83rem; font-weight: 600; color: var(--ink); }
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  padding: 13px 16px;
+  border: 1.5px solid var(--line);
+  border-radius: var(--r-sm);
+  background: var(--surface);
+  font-size: .94rem;
+  transition: border-color .25s, box-shadow .25s;
+}
+.field textarea { resize: vertical; min-height: 104px; }
+/* panah dropdown bawaan browser nempel mepet ke tepi kanan tanpa jarak —
+   ganti pakai chevron custom yang dikasih ruang napas dari tepi field */
+.field select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 44px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238A90A0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  background-size: 18px;
+  cursor: pointer;
+}
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  outline: 0;
+  border-color: var(--blue);
+  box-shadow: 0 0 0 4px rgba(0, 88, 255, .12);
+}
+.field input::placeholder, .field textarea::placeholder { color: #AEB4C2; }
+.form-note {
+  grid-column: 1 / -1;
+  font-size: .81rem;
+  line-height: 1.6;
+  color: var(--muted);
+}
+.form-note a { color: var(--muted); text-decoration: underline; }
+.form-note a:hover { color: var(--blue); }
+.form-status {
+  grid-column: 1 / -1;
+  display: none;
+  padding: 14px 18px;
+  border-radius: var(--r-sm);
+  background: rgba(5, 168, 124, .1);
+  color: #04795A;
+  font-size: .9rem;
+  font-weight: 600;
+}
+.form-status.is-shown { display: block; }
+
+.contact__info .intro-heading { margin-top: 14px; }
+.contact__submit { width: 100%; justify-content: center; }
+
+/* ------------------------------------------------------------- 19. Footer */
+.footer {
+  padding: 84px 0 32px;
+  background: var(--navy);
+  color: rgba(255, 255, 255, .74);
+  border-radius: var(--r-xl);
+  margin: 0 var(--hero-margin) var(--hero-margin);
+}
+.footer__top {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) repeat(3, minmax(0, .8fr));
+  gap: 50px;
+  padding-bottom: 50px;
+  border-bottom: 1px solid rgba(255, 255, 255, .12);
+}
+.footer__brand img { height: 40px; filter: brightness(0) invert(1); margin-bottom: 22px; }
+.footer__brand p { font-size: .92rem; max-width: 40ch; }
+.footer__brand h5 { margin-top: 28px; }
+
+.newsletter { display: flex; gap: 10px; margin-top: 24px; max-width: 380px; }
+.newsletter input {
+  flex: 1;
+  min-width: 0;
+  padding: 13px 18px;
+  border: 1px solid rgba(255, 255, 255, .18);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .07);
+  color: #fff;
+  font-size: .9rem;
+}
+.newsletter input::placeholder { color: rgba(255, 255, 255, .45); }
+.newsletter input:focus { outline: 0; border-color: var(--cyan); }
+.newsletter button {
+  display: grid;
+  place-items: center;
+  width: 48px; height: 48px;
+  flex: none;
+  border: 0;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--blue);
+  cursor: pointer;
+  transition: transform .3s var(--ease);
+}
+.newsletter button:hover { transform: rotate(45deg); }
+.newsletter button svg { width: 17px; height: 17px; }
+
+.footer h5 {
+  color: #fff;
+  font-size: .8rem;
+  font-weight: 700;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+  margin-bottom: 22px;
+}
+.footer__links { display: grid; gap: 12px; }
+.footer__links a { font-size: .92rem; transition: color .25s, padding-left .25s; }
+.footer__links a:hover { color: #fff; padding-left: 5px; }
+
+.footer__contact {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  gap: 32px;
+  padding: 42px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, .12);
+}
+.footer__contact-title {
+  color: var(--cyan);
+  font-size: .8rem;
+  font-weight: 700;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+.contact-info-list { display: grid; gap: 16px; }
+.contact-info-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: .92rem;
+  line-height: 1.5;
+}
+.contact-info-list svg { width: 18px; height: 18px; flex: none; margin-top: 1px; color: var(--cyan); }
+
+.footer__map { border-radius: var(--r-lg); overflow: hidden; min-height: 220px; }
+.footer__map iframe { display: block; width: 100%; height: 100%; min-height: 220px; border: 0; }
+
+.footer__bottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding-top: 28px;
+  font-size: .85rem;
+}
+.socials { display: flex; gap: 10px; }
+.socials a {
+  display: grid;
+  place-items: center;
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .08);
+  transition: background .3s, transform .3s var(--ease);
+}
+.socials a:hover { background: #fff; }
+.socials svg { width: 16px; height: 16px; color: #fff; transition: color .3s var(--ease); }
+.socials a:hover svg { color: var(--blue); }
+
+/* ikon sosial versi latar terang — icon .socials aslinya didesain untuk
+   footer gelap (lingkaran putih transparan + ikon putih), di sini dibalik
+   jadi navy di atas lingkaran abu, biru solid saat hover, tanpa lift */
+.contact__socials { margin-top: 32px; }
+.contact__socials a { background: var(--canvas-alt); transition: background-color .3s var(--ease); }
+.contact__socials a:hover { background: var(--blue); transform: none; }
+.contact__socials svg { color: var(--navy); transition: color .3s var(--ease); }
+.contact__socials a:hover svg { color: #fff; }
+
+/* ------------------------------------------------------ 19b. Kuis Pebisnis (KarsaBiz)
+   Layout ala "konsultasi": maskot di kiri "ngomong" pertanyaan lewat bubble,
+   kartu jawaban di sebelahnya — bukan kartu tunggal typeform kayak versi
+   sebelumnya. Warna/komponen tetap full token Temu Karsa (biru/navy, radius,
+   shadow yang sama dengan tombol & card lain di situs). Konten (pertanyaan/
+   hasil) di-render oleh assets/js/quiz.js dari data di assets/js/quiz-data.js
+   — CSS di sini cuma nata style-nya, gak nyimpen teks apapun. */
+.quiz-chrome { margin-bottom: 28px; }
+.quiz-chrome__row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* progress bar — nunjuk seberapa jauh user udah jawab dari total
+   perkiraan pertanyaan (dihitung otomatis lewat maxDepthFrom di quiz.js) */
+.quiz-progress {
+  width: min(520px, 100%);
+  height: 6px;
+  border-radius: 999px;
+  background: var(--canvas-alt);
+  overflow: hidden;
+}
+/* pakai transform:scaleX (bukan width) biar ganti progress cuma compositor
+   repaint, gak reflow — reflow di dalam overflow:hidden + border-radius
+   flex item ini pernah kejadian stuck di 0 sampai ada reflow lain */
+.quiz-progress__bar {
+  height: 100%;
+  width: 100%;
+  border-radius: 999px;
+  background: var(--blue);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .4s var(--ease);
+}
+
+/* ------------------------------------------------------- Maskot + bubble
+   Maskot & kolom (bubble pertanyaan + kartu jawaban) sama-sama flex item
+   dengan align-items:flex-start, jadi bubble+kartu numpuk rapat sesuai
+   tinggi konten masing-masing, gak kepotong nungguin maskot yang lebih
+   tinggi (itu sebabnya bukan mascot+bubble doang yang satu row, kartu
+   jawaban di row terpisah kayak sebelumnya). */
+.quiz {
+  --quiz-mascot-w: clamp(170px, 25vw, 290px);
+}
+.quiz-consult {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+}
+.quiz-consult__mascot {
+  flex: 0 0 var(--quiz-mascot-w);
+  width: var(--quiz-mascot-w);
+}
+.quiz-consult__mascot img {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 14px 18px rgba(8, 21, 47, .16));
+}
+.quiz-consult__col {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.quiz-bubble {
+  position: relative;
+  background: var(--surface);
+  border-radius: var(--r-lg);
+  box-shadow: var(--sh-sm);
+  padding: 24px 28px;
+}
+/* ekor bubble nunjuk ke arah kepala maskot di kiri-atas */
+.quiz-bubble::before {
+  content: '';
+  position: absolute;
+  left: -20px;
+  top: 24px;
+  width: 22px;
+  height: 22px;
+  background: var(--surface);
+  border-radius: 18px 0 0 0;
+}
+.quiz-bubble__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--blue);
+  margin-bottom: 12px;
+}
+.quiz-bubble__eyebrow-num {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--canvas-alt);
+  color: var(--navy);
+  font-size: .76rem;
+  font-weight: 700;
+}
+.quiz-bubble__title {
+  font-size: clamp(1.25rem, 2.4vw, 1.6rem);
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--ink);
+  margin: 0;
+}
+.quiz-bubble__subtitle {
+  font-size: .92rem;
+  color: var(--body);
+  margin: 10px 0 0;
+}
+
+/* --------------------------------------------------------- Kartu jawaban
+   Satu kolom sama persis dengan bubble pertanyaan (.quiz-consult__col),
+   jadi lebar & posisi kirinya otomatis sama — kesannya user "membalas"
+   lewat chat di kolom yang sama, nempel langsung di bawah bubble. */
+.quiz-answer-card {
+  position: relative;
+  background: var(--surface);
+  border-radius: var(--r-lg);
+  box-shadow: var(--sh-md);
+  padding: 12px 28px 24px;
+}
+/* ujung chat di kanan — kesan kartu jawaban ini "balasan" dari user */
+.quiz-answer-card::after {
+  content: '';
+  position: absolute;
+  right: -20px;
+  top: 24px;
+  width: 22px;
+  height: 22px;
+  background: var(--surface);
+  border-radius: 0 18px 0 0;
+}
+
+.quiz-options { display: flex; flex-direction: column; }
+.quiz-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  width: 100%;
+  text-align: left;
+  padding: 16px 4px;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: none;
+  cursor: pointer;
+  transition: border-color .25s;
+}
+.quiz-option:last-child { border-bottom: 0; }
+.quiz-option:hover .quiz-option__label { color: var(--blue); }
+.quiz-option.is-selected { border-color: var(--blue); border-bottom-width: 2px; }
+.quiz-option__radio {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  margin-top: 2px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1.5px var(--muted);
+  background: #fff;
+  display: grid;
+  place-items: center;
+  transition: box-shadow .25s, background-color .25s;
+}
+.quiz-option.is-selected .quiz-option__radio {
+  box-shadow: none;
+  background: var(--blue);
+}
+.quiz-option.is-selected .quiz-option__radio::after {
+  content: '';
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") center / 13px no-repeat;
+}
+.quiz-option__text { display: flex; flex-direction: column; gap: 4px; }
+.quiz-option__label { font-weight: 700; color: var(--ink); transition: color .25s; }
+.quiz-option__desc { font-size: .86rem; color: var(--muted); }
+
+/* varian checkbox — dipakai pertanyaan grup yang "boleh pilih lebih dari
+   satu" (lihat quiz-data.js: group.multi). Sama persis kayak radio, cuma
+   bentuknya kotak rounded, dan MILIH SATU GAK NGE-CLEAR yang lain (diatur
+   di quiz.js, bukan di sini). */
+.quiz-option--checkbox .quiz-option__radio { border-radius: 7px; }
+.quiz-option--checkbox.is-selected .quiz-option__radio::after { border-radius: 3px; }
+
+/* -------------------------------------------------------- Pertanyaan grup
+   Beberapa sub-pertanyaan ditampilkan sekaligus dalam satu kartu jawaban
+   (mis. "cara pengemasan" + "bahan baku" buat kategori makanan) — tiap
+   grup punya label mini sendiri, opsinya tetap pakai .quiz-option. */
+.quiz-group + .quiz-group { margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--line); }
+.quiz-group__label {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+.quiz-group__hint { font-size: .8rem; font-weight: 500; color: var(--muted); }
+
+/* "Kembali" & "Lanjut" nempel bareng rata kanan — di pertanyaan pertama
+   "Kembali" gak dirender sama sekali jadi "Lanjut" otomatis sendirian */
+.quiz-actions { display: flex; justify-content: flex-end; align-items: center; gap: 12px; margin-top: 20px; }
+.quiz-back { padding: 10px 21px; }
+.quiz-next:disabled {
+  --btn-bg: var(--line);
+  --btn-fg: var(--muted);
+  cursor: not-allowed;
+}
+.quiz-next:disabled i { background: rgba(8, 21, 47, .06); }
+.quiz-next:disabled:hover { --btn-bg: var(--line); transform: none; box-shadow: none; }
+/* panah "Lanjut" nunjuk maju terus — jangan ikut muter 45° kayak tombol
+   panah diagonal lainnya (.btn:hover i bawaan) — sama juga buat tombol
+   submit form lead di layar akhir */
+.quiz-next:hover i,
+#quizLeadSubmit:hover i { transform: none; }
+
+/* .btn--sm bawaan padding-nya sengaja asimetris (lebih lega di kiri) buat
+   nyeimbangin ikon lingkaran di kanan — tombol ini polos tanpa ikon, jadi
+   padding-nya disamain kiri-kanan biar teksnya kelihatan center */
+.quiz-restart { padding: 10px 21px; }
+
+/* --------------------------------------------------------- Layar akhir
+   Ganti nampilin hasil rekomendasi langsung — user cuma ditagih kontak
+   (nama/WA/email), rekomendasinya dihitung di belakang layar terus
+   dikirim personal sama tim (lihat submitLead di quiz.js). */
+.quiz-lead-form { display: flex; flex-direction: column; gap: 16px; padding: 4px; }
+.quiz-lead-status {
+  color: var(--body);
+  line-height: 1.75;
+  padding: 8px 4px 4px;
+}
+
+/* Layout ala Duolingo buat tablet & mobile: progress bar di atas,
+   maskot+bubble jadi satu baris kompak, dan tiap opsi jawaban jadi kartu
+   pil sendiri-sendiri (bukan satu list nyambung di dalam satu card gede
+   kayak versi desktop). Tombol "Kembali" tetap di baris aksi bawah
+   sebelah "Lanjut" (sama kayak desktop) — cuma susunannya yang beda per
+   breakpoint, lihat .quiz-actions di bawah. */
+@media (max-width: 780px) {
+  .quiz { --quiz-mascot-w: 64px; }
+
+  /* maskot + bubble: baris kompak, maskot dikecilin. Tetap flex-start
+     (bukan center) — kartu jawaban di bawahnya masih "anggota" kolom yang
+     sama (cuma ditarik keluar visual pakai margin negatif), jadi kolom
+     itu tingginya jadi tinggi banget; kalau center, maskot ikut ketarik
+     ke tengah ketinggian itu dan numpuk di atas kartu jawaban. */
+  .quiz-consult { align-items: flex-start; gap: 12px; }
+  .quiz-consult__col { gap: 12px; }
+  .quiz-bubble { padding: 14px 18px; }
+  .quiz-bubble__eyebrow { margin-bottom: 6px; }
+  .quiz-bubble__title { font-size: 1.05rem; }
+  .quiz-bubble__subtitle { display: none; }
+  .quiz-bubble::before {
+    left: -12px;
+    top: 18px;
+    width: 14px;
+    height: 14px;
+    border-radius: 12px 0 0 0;
+  }
+
+  /* kartu jawaban ditarik keluar sejajar penuh sama heading di atasnya
+     (gak lagi kesempit di kolom yang sama dengan bubble) — tiap opsi
+     jadi kartu pil sendiri kayak referensi */
+  .quiz-answer-card {
+    background: none;
+    box-shadow: none;
+    padding: 0;
+    margin-left: calc(-1 * (var(--quiz-mascot-w) + 12px));
+    width: calc(100% + var(--quiz-mascot-w) + 12px);
+  }
+  .quiz-answer-card::after { display: none; }
+  .quiz-options { gap: 12px; }
+  .quiz-option,
+  .quiz-option:last-child {
+    border: 2px solid var(--line);
+    border-radius: var(--r-lg);
+    background: var(--surface);
+    padding: 16px;
+  }
+  .quiz-option.is-selected,
+  .quiz-option.is-selected:last-child {
+    border-color: var(--blue);
+    background: rgba(0, 88, 255, .08);
+  }
+  .quiz-option.is-selected .quiz-option__label { color: var(--blue); }
+}
+
+/* Di layar sempit (HP), "Kembali" + "Lanjut" bersisian jadi kesempitan —
+   ditumpuk: "Lanjut" di atas (aksi utama, lebih gampang dijangkau jempol),
+   "Kembali" di bawah. Pakai column-reverse (bukan pindah urutan HTML)
+   biar tab-order/screen-reader tetap logis: Kembali dulu baru Lanjut. */
+@media (max-width: 480px) {
+  .quiz-actions { flex-direction: column-reverse; align-items: stretch; }
+}
+
+/* ------------------------------------------------------ 20. Scroll reveal */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity .8s var(--ease), transform .8s var(--ease);
+  /* Chromium kadang gagal me-render backdrop-filter pada elemen anak selama
+     induknya masih bertransisi transform — will-change memaksa layer-nya
+     disiapkan lebih awal, jadi kartu kaca (glass-card dkk) langsung blur
+     sejak reveal pertama, bukan baru muncul setelah transisi selesai. */
+  will-change: opacity, transform;
+}
+[data-reveal].is-in { opacity: 1; transform: none; }
+
+/* --------------------------------------------------------- 21. Responsive */
+@media (max-width: 1180px) {
+  :root { --section-y: 80px; --gutter: 30px; }
+  .space-grid, .step-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hero__inner { grid-template-columns: 1fr; gap: 44px; }
+  .hero__cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .about__grid { gap: 44px; }
+
+  /* KHUSUS tablet/mobile (≤1180px) — desktop di atas breakpoint ini TIDAK
+     disentuh sama sekali. Inset = gutter + hero-margin (bukan gutter doang)
+     supaya SEMUA section sejajar persis dengan tepi pill navbar — di lebar
+     ini sebelumnya section biasa (pakai .wrap polos) beda ~20px dari
+     section yang sudah dikasih penyesuaian sendiri (hero/footer/L2
+     service-single), kelihatan "loncat" ga sejajar pas discroll. */
+  .wrap {
+    max-width: calc(var(--max) + 2 * var(--hero-margin));
+    padding-inline: calc(var(--gutter) + var(--hero-margin));
+  }
+  /* .hero & .footer sudah dapet inset hero-margin dari margin kartunya
+     sendiri (margin: var(--hero-margin)) — kalau .wrap di dalamnya ikut
+     nambah hero-margin lagi, insetnya dobel. Balikin ke gutter polos. */
+  .hero__inner,
+  .footer > .wrap {
+    max-width: var(--max);
+    padding-inline: var(--gutter);
+  }
+  /* .header__bar (si pill) juga pakai class .wrap (<div class="wrap
+     header__bar">) — padding override di atas ikut nimpa padding
+     asimetrisnya sendiri (28px kiri ke logo, 10px kanan ke burger) jadi
+     50px rata kiri-kanan, bikin logo & burger jauh dari tepi pill.
+     Balikin ke padding aslinya. */
+  .header__bar {
+    max-width: calc(var(--max) - 2 * var(--gutter));
+    padding: 10px 10px 10px 28px;
+  }
+}
+
+@media (max-width: 980px) {
+  .nav { display: none; }
+  .burger { display: block; }
+  .header__cta .nav-ai { display: none; }
+
+  .nav.is-open {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2px;
+    position: fixed;
+    /* kiri/kanan disamakan dgn inset pill navbar di atasnya (gutter +
+       hero-margin) — sebelumnya dipatok 16px tetap, jadi lebih lebar dari
+       pill dan nggak sejajar */
+    inset: 116px calc(var(--gutter) + var(--hero-margin)) auto;
+    max-height: calc(100vh - 116px);
+    overflow-y: auto;
+    padding: 18px;
+    border-radius: var(--r-lg);
+    background: var(--surface);
+    box-shadow: var(--sh-lg);
+  }
+  .nav.is-open > a { padding: 14px 16px; font-size: 1rem; color: var(--ink); }
+  .nav.is-open > a::after { display: none; }
+
+  /* dropdown "Layanan" jadi accordion statis di dalam menu mobile */
+  .nav.is-open .nav__trigger {
+    width: 100%;
+    justify-content: space-between;
+    padding: 14px 16px;
+    font-size: 1rem;
+    color: var(--ink);
+  }
+  .nav.is-open .nav__trigger::after { display: none; }
+  .nav.is-open .nav__dropdown {
+    position: static;
+    display: none;
+    grid-template-columns: 1fr;
+    margin: 4px 0 8px;
+    padding: 8px;
+    box-shadow: none;
+    background: var(--canvas);
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    min-width: 0;
+  }
+  .nav.is-open .nav__item.is-open .nav__dropdown { display: grid; }
+  .nav.is-open .nav__dd-col:not(:last-child) { margin-bottom: 4px; }
+
+  .about__grid, .contact__grid, .section-head--split { grid-template-columns: 1fr; }
+  .quote-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .about-intro__stats { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 28px; }
+  .about-intro__stat:nth-child(2n+1) { padding-left: 0; border-left: 0; }
+  .service-row { grid-template-columns: 1fr; gap: 16px; padding: 26px 18px; }
+  .service-row .link-arrow { justify-self: start; }
+  .why__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  /* grid 3 kolom bikin baris terakhir (langkah 4 & 5) nyangkut rata kiri
+     karena cuma 2 item — pindah ke flex-wrap + justify-content:center biar
+     baris ganjil itu otomatis di tengah, bukan nempel kiri */
+  .process__track {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    row-gap: 44px;
+  }
+  .process__step { flex: 0 0 calc(33.333% - 16px); }
+  /* posisi garis per baris (kiri/kanan/top) dihitung & di-inject JS
+     (initProcessLines) karena baris ke-2 cuma 2 kartu yang di-center —
+     jaraknya nggak bisa dipatok persen tetap kayak baris pertama */
+  .cta-band { grid-template-columns: 1fr; }
+  /* left & right di-nolkan (dari 16px/12px) — .cta-band sendiri udah
+     punya padding:28px, jadi padding tambahan di copy bikin isinya
+     (termasuk button width:100% di bawah) keinset lebih dalam drpd foto
+     di bawahnya (foto cuma kena padding .cta-band, ga ada padding
+     sendiri) — kiri DAN kanannya jadi ga sejajar begitu ditumpuk 1 kolom
+     di tablet */
+  .cta-band__copy { padding: 12px 0 8px 0; }
+  .cta-band h2 { max-width: none; }
+  .cta-band__copy .btn { width: 100%; justify-content: center; }
+  .cta-band__photo { height: 260px; }
+  /* "left center" di atas dituning khusus utk kolom foto SEMPIT versi
+     desktop (2 kolom). Di tablet/mobile box-nya (597×260, rasio ~2.3)
+     jauh lebih lebar drpd foto aslinya (1200×675, rasio ~1.78) — cover
+     jadinya pas mentok di LEBAR box tanpa sisa crop horizontal sama
+     sekali, jadi object-position X percuma (ga ada ruang gesernya),
+     posisi kedua orang di foto (agak kiri dari tengah foto asli) ya
+     kebawa apa adanya. Di-zoom dulu (scale) baru ada ruang crop
+     horizontal, transform-origin dipilih supaya titik tengah kedua
+     orang itu yang jadi tengah box setelah di-zoom. */
+  .cta-band__photo img {
+    object-position: center;
+    transform: scale(1.5);
+    transform-origin: 16% 22%;
+  }
+  /* brand (isinya field newsletter) span full lebar di baris sendiri —
+     biar field-nya bisa selebar .footer__map di bawah — TAPI 3 kolom
+     link (Legalitas/Workspace/Perusahaan) tetap sebaris 3 kolom kayak
+     semula, bukan ikut ditumpuk 1 kolom. */
+  .footer__top { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 38px; }
+  .footer__brand { grid-column: 1 / -1; }
+  /* padding atas footer disamakan dengan padding bawah (32px) — 84px
+     bawaan desktop kejauhan dari card di atasnya begitu layout tablet */
+  .footer { padding-top: 32px; }
+  /* max-width:380px bawaan desktop bikin field email pendek nanggung di
+     kolom footer yg lebih lebar di tablet — lepas biar isi kolom penuh */
+  .newsletter { max-width: none; }
+}
+
+@media (max-width: 680px) {
+  :root { --section-y: 56px; --gutter: 20px; --r-xl: 24px; --hero-margin: 10px; }
+  body { font-size: 15px; }
+  /* pill lebih ramping jadi lebih sempit — konten header dipadatkan
+     supaya logo + CTA + burger tetap muat tanpa meluber dari pill */
+  .header__bar { padding: 8px 8px 8px 18px; gap: 10px; }
+  .header__cta { gap: 8px; }
+  .brand img { height: 30px; }
+  .header__cta .btn--sm { padding: 8px 8px 8px 16px; font-size: .82rem; gap: 8px; }
+  .header__cta .btn--sm i { width: 26px; height: 26px; }
+  /* min-height dipertahankan (bukan auto) supaya ada ruang kosong untuk
+     mengambangkan grup kartu statistik di tengahnya lewat margin:auto di
+     bawah — kalau kontennya lebih tinggi dari layar, tetap aman melar. */
+  .hero { padding: 142px 0 46px; }
+  .hero__inner {
+    margin-top: 0;
+    display: flex;
+    flex-direction: column;
+    /* diregangkan penuh ke tinggi .hero (bukan ikut align-items:center bawaan
+       .hero yang cuma menyusutkannya sebesar konten) supaya ada RUANG KOSONG
+       sungguhan di dalam kolom ini untuk didistribusikan margin:auto di bawah */
+    align-self: stretch;
+    /* align-items:end bawaan (dari layout 2-kolom desktop) masih kebawa —
+       di flex-column ini artinya anak-anaknya (.hero__copy dll) di-shrink
+       ke lebar kontennya sendiri lalu diratakan ke KANAN, bukan diregangkan
+       penuh. Kalau lebar konten itu > lebar kolom, sisanya meluber ke KIRI
+       (nabrak keluar viewport / ga sejajar navbar). Diregangkan penuh. */
+    align-items: stretch;
+  }
+  /* SEMUA tombol .btn fill lebar penuh kontainernya di mobile — bawaan
+     .btn itu inline-flex jadi selalu hug-content walau kontainernya udah
+     full-width. Kecuali tombol CTA kecil di dalam pill navbar (.header__cta)
+     — itu WAJIB tetap seukuran isinya, full-width bakal merusak pill-nya. */
+  .btn { width: 100%; justify-content: center; }
+  .header__cta .btn { width: auto; justify-content: flex-start; }
+  .hero__actions { flex-direction: column; }
+  /* clamp() font harga (2.6rem–3.4rem) ga pernah turun di bawah 2.6rem
+     krn acuannya vw, jadi di layar sempit "Rp 2.299.000/tahun" kepaksa
+     pecah 2 baris. Dikecilin fix supaya muat sebaris — berlaku ke semua
+     page yg pakai .pricing-card (kelasnya sama di semua) jadi otomatis
+     konsisten. */
+  .pricing-card__price { font-size: 1.9rem; }
+  /* grup kartu statistik "mengambang" di tengah sisa ruang kosong hero,
+     bukan menempel langsung di bawah tombol CTA */
+  .hero__cards--stats { margin-top: auto; margin-bottom: auto; }
+  .hero__cards, .space-grid, .step-grid, .quote-grid,
+  .form-grid { grid-template-columns: 1fr; }
+  .about-intro__top,
+  .about-intro__mid { flex-direction: column; align-items: flex-start; gap: 18px; }
+  .about-intro__rating { align-items: flex-start; text-align: left; }
+  .about-intro__rating .stars { justify-content: flex-start; }
+  .about-intro__mid .btn { align-self: flex-start; }
+  .about-intro__stats { grid-template-columns: 1fr; row-gap: 28px; }
+  .about-intro__stat { padding-left: 0; border-left: 0; }
+  .showcase__grid { grid-template-columns: 1fr; border-bottom: 0; }
+  .showcase__card { border-left: 0; border-top: 1px solid var(--line); padding: 28px 0 40px; }
+  .showcase__card:first-child { border-top: 0; }
+  .why__grid { grid-template-columns: 1fr; }
+  .process__track { flex-direction: column; row-gap: 30px; }
+  .process__step { flex-basis: auto; text-align: left; padding-left: 46px; }
+  .process__step:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    top: 32px;
+    bottom: -30px;
+    left: 15px;
+    width: 2px;
+    background: var(--line);
+    z-index: 0;
+  }
+  .process__marker { position: absolute; top: 0; left: 0; margin: 0; }
+  .form-card { padding: 24px; }
+  .footer__top { grid-template-columns: 1fr; }
+  .footer__contact { grid-template-columns: 1fr; }
+  .footer__map { min-height: 200px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+  [data-reveal] { opacity: 1; transform: none; }
+}

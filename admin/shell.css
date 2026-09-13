@@ -1,0 +1,495 @@
+/* ============================================================================
+   Shell dashboard admin Temu Karsa — dipakai bareng di admin/index.html,
+   admin/articles/index.html (bungkus Decap CMS), dan admin/leads/index.html.
+
+   Susunannya: rail navy gelap di kiri (warna yang sama dengan footer website
+   Temu Karsa) + area kerja terang di kanan. Rail gelap ini yang bikin tool
+   admin langsung kebaca sebagai produk Temu Karsa, bukan template admin
+   generik — sekaligus misahin "navigasi" dari "isi kerjaan" tanpa perlu
+   garis/kotak tambahan.
+   ============================================================================ */
+
+:root {
+  --navy: #003399; --navy-deep: #041C4F; --blue: #0058FF; --cyan: #009DFD;
+  --ink: #08152F; --body-c: #5C6272; --muted: #8A90A0; --line: #E4E7EE;
+  --surface: #FFFFFF; --canvas: #F4F5F8; --canvas-alt: #EDEFF5;
+  --blue-soft: #E8F0FF;
+  --mint: #05A87C; --mint-soft: #E3F5EF; --mint-ink: #026248;
+  --gold: #B8790A; --gold-soft: #FCF1DD;
+  --danger: #C4453B; --danger-soft: #FDEDEC;
+
+  /* Rail putih — misahin "navigasi" dari "isi kerjaan" cukup pakai border +
+     shadow tipis, warna aksennya tetap biru Temu Karsa (link aktif/hover). */
+  --rail: #FFFFFF;
+  --rail-line: var(--line);
+  --rail-text: var(--ink);
+  --rail-muted: var(--muted);
+  --rail-hover: var(--canvas);
+  --rail-active: var(--blue-soft);
+
+  --chart-1: var(--blue); --chart-2: var(--navy); --chart-3: var(--cyan);
+  --chart-4: var(--mint); --chart-5: var(--gold); --chart-6: var(--muted);
+
+  --rail-w: 252px;
+  --topbar-h: 60px;
+  --shadow: 0 1px 2px rgba(8, 21, 47, .04), 0 8px 24px rgba(8, 21, 47, .05);
+  --font: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+/* Lebar area kerja dikunci biar sama di semua halaman: halaman yang isinya
+   pendek (Artikel) vs panjang (Dashboard) bikin scrollbar muncul-hilang, dan
+   seluruh layout kelihatan geser tiap pindah menu. overflow-y:scroll nahan
+   jalur scrollbar-nya tetap ada; scrollbar-gutter buat browser yang
+   menghormatinya. */
+html { scrollbar-gutter: stable; overflow-y: scroll; }
+
+body { margin: 0; background: var(--canvas); color: var(--ink); font-family: var(--font); }
+
+::selection { background: var(--blue); color: #fff; }
+:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+* { scrollbar-color: var(--line) transparent; scrollbar-width: thin; }
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb { background: var(--line); border-radius: 999px; border: 2px solid var(--surface); }
+*::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+.shell { display: flex; min-height: 100vh; }
+.shell[hidden], .login-screen[hidden] { display: none; }
+
+/* ------------------------------------------------------------------- Rail */
+.shell__sidebar {
+  width: var(--rail-w); flex-shrink: 0; background: var(--rail); color: var(--rail-text);
+  display: flex; flex-direction: column;
+  position: sticky; top: 0; height: 100vh; overflow-y: auto;
+  border-right: 1px solid var(--rail-line);
+  /* font-family diset LANGSUNG di sini (bukan cuma warisan dari body) —
+     di halaman Artikel, Decap CMS nyuntik stylesheet sendiri yang nimpa
+     font-family bawaan `body` (jadi system-ui), dan tanpa baris ini sidebar
+     ikut kena karena teksnya cuma ngewarisin nilai body itu. */
+  font-family: var(--font);
+}
+.shell__sidebar, .shell__sidebar * { font-family: var(--font); }
+.shell__sidebar::-webkit-scrollbar-thumb { background: var(--line); border-color: var(--rail); }
+
+.shell__brand { display: flex; align-items: center; justify-content: center; padding: 28px 20px 24px; }
+.shell__brand img { height: 46px; width: auto; }
+/* Tombol tutup (X) — disuntik shell.js ke dalam .shell__brand, cuma
+   kepake pas rail jadi menu geser di mobile/tablet (lihat CSS di bawah).
+   Di desktop .shell__brand tetap nampilin logo aja kayak semula. */
+.shell__close { display: none; }
+
+/* -------------------------------------------------------------- Topbar
+   Bar tetap di ATAS konten khusus mobile/tablet — nampung tombol hamburger
+   + logo jadi satu baris rapi, gantiin tombol hamburger yang dulu
+   position:fixed ngambang sendirian (numpuk sama konten di beberapa
+   halaman, misalnya toolbar sticky form Artikel). Markup-nya
+   "<div class=shell__topbar>" polos di tiap halaman (lihat admin/*.html);
+   tombol hamburger-nya sendiri disuntik ke DALAM situ sama shell.js. */
+.shell__topbar { display: none; }
+.shell__topbar-logo { height: 26px; width: auto; }
+
+.shell__nav { flex: 1; padding: 6px 12px 20px; }
+.shell__group-label {
+  padding: 18px 12px 7px; font-size: .68rem; font-weight: 700;
+  letter-spacing: .09em; text-transform: uppercase; color: var(--rail-muted);
+}
+.shell__link {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 12px; border-radius: 9px; margin-bottom: 2px;
+  color: var(--rail-text); text-decoration: none; font-size: .875rem; font-weight: 600;
+  transition: background-color .15s ease, color .15s ease;
+}
+.shell__link svg { width: 18px; height: 18px; flex-shrink: 0; opacity: .75; }
+.shell__link:hover { background: var(--rail-hover); color: var(--ink); }
+.shell__link:hover svg { opacity: 1; }
+.shell__link.is-active { background: var(--rail-active); color: var(--blue); font-weight: 700; }
+.shell__link.is-active svg { opacity: 1; }
+
+.shell__sidebar-foot { padding: 16px 20px 20px; border-top: 1px solid var(--rail-line); }
+.shell__logout {
+  display: flex; align-items: center; gap: 9px; color: var(--ink);
+  text-decoration: none; font-size: .82rem; font-weight: 600; transition: color .15s ease;
+}
+.shell__logout:hover { color: var(--danger); }
+
+.shell__body { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.shell__main { flex: 1; padding: 40px 30px; }
+
+/* ------------------------------------------------------------ Page header
+   Judul halaman gede + subjudul di kiri, toolbar (search/tombol) di kanan —
+   duduk DI LUAR card/panel, bukan di dalamnya. Dipakai di halaman Artikel
+   dan Leads. */
+.page-header {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  flex-wrap: wrap; margin-bottom: 20px;
+  /* font-family diset langsung (bukan cuma warisan body) — sama kasusnya
+     kayak .shell__sidebar: di halaman Artikel, Decap CMS nyuntik
+     font-family system-ui ke `body`, dan tanpa baris ini judul halaman
+     ikut kena (line-height-nya jadi beda, bikin posisi vertikal geser
+     dibanding halaman lain). */
+  font-family: var(--font);
+}
+.page-header__title { font-size: 1.6rem; font-weight: 600; line-height: 1.25; margin: 0; letter-spacing: -.02em; color: var(--ink); }
+.page-header__sub { font-size: .84rem; line-height: 1.5; color: var(--muted); margin: 4px 0 0; }
+@media (max-width: 900px) { .page-header { margin-bottom: 16px; } }
+
+/* ---------------------------------------------------------------- Metrics */
+.metrics {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 20px;
+}
+.metric {
+  min-width: 0; padding: 20px 24px 22px; background: var(--surface);
+  border-radius: 14px; box-shadow: var(--shadow);
+}
+.metric__label {
+  font-size: .72rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--muted); margin: 0 0 10px;
+}
+.metric__num {
+  font-size: 3.1rem; font-weight: 800; line-height: 1; margin: 0; color: var(--ink);
+  letter-spacing: -.03em; font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 1000px) {
+  .metrics { grid-template-columns: repeat(2, 1fr); }
+  .metric__num { font-size: 2.4rem; }
+}
+@media (max-width: 520px) {
+  .metrics { grid-template-columns: 1fr; }
+}
+
+/* ------------------------------------------------------------------ Board */
+.board {
+  display: grid; grid-template-columns: minmax(0, 1.75fr) minmax(300px, 1fr);
+  gap: 20px; align-items: stretch; margin-bottom: 20px;
+}
+/* grid item default min-width itu "auto" (= lebar konten minimalnya), bukan
+   0 — jadi kalau isi card (tabel, teks panjang) gak muat, card-nya "meledak"
+   lebih lebar dari kolom grid-nya alih-alih nge-wrap/scroll di dalam.
+   min-width:0 matiin itu, biar overflow ditangani di dalam card. */
+.board > * { min-width: 0; }
+.board__side { display: grid; grid-template-rows: 1fr 1fr; gap: 20px; min-width: 0; }
+.board__side > * { min-width: 0; }
+.panel--primary { display: flex; flex-direction: column; min-width: 0; }
+@media (max-width: 1180px) { .board { grid-template-columns: 1fr; } }
+
+/* ----------------------------------------------------------------- Panels */
+.panel { background: var(--surface); border-radius: 14px; box-shadow: var(--shadow); padding: 22px 24px 10px; }
+.panel--flush { padding-bottom: 22px; }
+.panel__head {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  flex-wrap: wrap; margin-bottom: 18px;
+}
+.panel h2 { font-size: 1rem; font-weight: 800; margin: 0; color: var(--ink); letter-spacing: -.015em; }
+.panel__sub { font-size: .78rem; color: var(--muted); margin: 4px 0 0; }
+
+.panel__search {
+  padding: 9px 14px; border: 1.5px solid var(--line); border-radius: 9px;
+  font-family: var(--font); font-size: .84rem; width: 250px; max-width: 100%; color: var(--ink);
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+.panel__search::placeholder { color: var(--muted); }
+.panel__search:focus { outline: 0; border-color: var(--blue); box-shadow: 0 0 0 4px rgba(0, 88, 255, .12); }
+
+/* link "Lihat semua ..." di bawah tabel preview dashboard — kartu di
+   dashboard cuma nampilin 5 baris terbaru, ini jalan pintas ke halaman
+   penuhnya (Leads / Artikel). */
+.panel__footer { margin-top: auto; padding: 14px 0 10px; text-align: left; }
+.link-more {
+  display: inline-flex; align-items: center; gap: 6px; font-family: var(--font);
+  font-size: .84rem; font-weight: 700; color: var(--blue); text-decoration: none;
+}
+.link-more svg { width: 15px; height: 15px; transition: transform .15s ease; }
+.link-more:hover { color: var(--navy); }
+.link-more:hover svg { transform: translateX(3px); }
+
+/* ----------------------------------------------------------------- Tables */
+.panel table { width: 100%; table-layout: fixed; border-collapse: collapse; font-size: .86rem; }
+.panel th {
+  text-align: left; padding: 0 12px 10px; font-size: .68rem; font-weight: 700;
+  letter-spacing: .06em; text-transform: uppercase; color: var(--muted);
+  border-bottom: 1px solid var(--line);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.panel td {
+  padding: 13px 12px; border-bottom: 1px solid var(--line); vertical-align: middle;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--body-c);
+}
+.panel tbody tr:last-child td { border-bottom: 0; }
+/* sel yang isinya status-chip gak boleh ke-ellipsis — chip udah punya lebar
+   tetap sendiri, kalau td-nya masih mepet dikit aja munculnya ".." aneh
+   nempel di sebelah chip (pernah kejadian). */
+.panel td:has(.status-chip) { overflow: visible; text-overflow: clip; text-align: center; }
+.panel tbody tr.is-clickable { cursor: pointer; }
+.panel .cell-name { font-weight: 700; color: var(--ink); }
+.panel .cell-muted { color: var(--muted); }
+.panel .cell-num { font-variant-numeric: tabular-nums; }
+/* baris kedua di dalam satu sel (mis. email di bawah nomor WA) */
+.panel .cell-sub { display: block; font-size: .78rem; font-weight: 500; color: var(--muted); margin-top: 3px; }
+/* varian yang cuma nongol di layar kecil, pengganti kolom yang disembunyiin */
+.panel .cell-sub--sm { display: none; }
+.panel td.col-actions { width: 48px; text-align: right; overflow: visible; }
+
+.status-chip {
+  display: inline-block; padding: 4px 14px; border-radius: 999px;
+  font-size: .72rem; font-weight: 700; white-space: nowrap; text-align: center;
+}
+.status-baru { background: var(--canvas-alt); color: var(--body-c); }
+.status-pdf_siap { background: var(--mint-soft); color: var(--mint-ink); }
+
+.article-thumb {
+  width: 44px; height: 44px; border-radius: 9px; object-fit: cover;
+  background: var(--canvas-alt); display: inline-block;
+}
+
+/* -------------------------------------------------------- Loading & empty */
+.skeleton { padding: 4px 12px 18px; }
+.skeleton__row {
+  height: 13px; border-radius: 999px; margin-top: 18px;
+  background: linear-gradient(90deg, var(--canvas-alt) 20%, #F6F7FA 40%, var(--canvas-alt) 60%);
+  background-size: 300% 100%; animation: shell-shimmer 1.3s linear infinite;
+}
+.skeleton__row:nth-child(2) { width: 82%; }
+.skeleton__row:nth-child(3) { width: 66%; }
+@keyframes shell-shimmer { from { background-position: 150% 0; } to { background-position: -50% 0; } }
+@media (prefers-reduced-motion: reduce) { .skeleton__row { animation: none; } }
+
+.empty-state { padding: 34px 12px 40px; text-align: center; }
+.empty-state__title { font-size: .9rem; font-weight: 700; color: var(--ink); margin: 0 0 5px; }
+.empty-state__hint { font-size: .82rem; color: var(--muted); margin: 0 auto; max-width: 44ch; line-height: 1.6; }
+.empty-state--error .empty-state__title { color: var(--danger); }
+
+/* ----------------------------------------------------------- Row actions */
+.row-actions { position: relative; display: inline-block; white-space: nowrap; }
+.row-actions__btn {
+  width: 30px; height: 30px; border: 0; border-radius: 8px; background: transparent;
+  color: var(--muted); cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+  transition: background-color .15s ease, color .15s ease;
+}
+.row-actions__btn:hover { background: var(--canvas-alt); color: var(--ink); }
+.row-actions__menu {
+  display: none; position: absolute; top: calc(100% + 4px); right: 0; z-index: 30;
+  min-width: 210px; background: var(--surface); border-radius: 11px; padding: 6px;
+  box-shadow: 0 16px 44px rgba(8, 21, 47, .16); border: 1px solid var(--line);
+}
+.row-actions.is-open .row-actions__menu { display: block; }
+.row-actions__menu button {
+  display: flex; align-items: center; gap: 10px; width: 100%; padding: 9px 10px; border: 0;
+  background: transparent; border-radius: 7px; font-family: var(--font); font-size: .84rem;
+  color: var(--body-c); text-align: left; cursor: pointer; white-space: nowrap;
+}
+.row-actions__menu button:hover { background: var(--canvas-alt); color: var(--ink); }
+.row-actions__menu svg { width: 16px; height: 16px; flex-shrink: 0; color: var(--muted); }
+
+/* ------------------------------------------------------------ Donut chart */
+.donut-wrap { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; margin-bottom: 4px; }
+.donut {
+  width: 132px; height: 132px; border-radius: 50%; flex-shrink: 0;
+  display: grid; place-items: center; background: var(--canvas-alt);
+}
+.donut__hole {
+  width: 92px; height: 92px; border-radius: 50%; background: var(--surface);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.donut__num { font-size: 1.6rem; font-weight: 800; line-height: 1; margin: 0; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.donut__num-label { font-size: .64rem; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); margin: 0; line-height: 1; }
+
+.legend { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; flex: 1; min-width: 150px; }
+.legend li { display: flex; align-items: center; gap: 9px; font-size: .84rem; }
+.legend__dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.legend__label { flex: 1; color: var(--body-c); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.legend__value { font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
+.legend__pct { color: var(--muted); font-size: .78rem; width: 36px; text-align: right; font-variant-numeric: tabular-nums; }
+
+/* ----------------------------------------------------------- Pipeline bar */
+.pipeline-bar { display: flex; height: 9px; border-radius: 999px; overflow: hidden; background: var(--canvas-alt); margin-bottom: 20px; }
+.pipeline-bar span { height: 100%; }
+.pipeline-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 13px; }
+.pipeline-list li { display: flex; align-items: center; gap: 10px; font-size: .84rem; }
+.pipeline-list .legend__dot { width: 8px; height: 8px; }
+
+/* ------------------------------------------------- Rail versi mobile (off-canvas)
+   Di bawah 900px rail-nya digeser keluar layar dan dibuka lewat tombol menu.
+   Tombol + scrim-nya dipasang otomatis oleh shell.js, jadi markup ketiga
+   halaman admin tetap sama persis. */
+.shell__burger {
+  display: none; width: 38px; height: 38px; flex-shrink: 0; padding: 0;
+  border: 1px solid var(--line); border-radius: 10px; background: var(--surface);
+  color: var(--ink); cursor: pointer; align-items: center; justify-content: center;
+}
+.shell__burger:hover { background: var(--canvas); }
+.shell__burger svg { width: 18px; height: 18px; }
+.shell__scrim {
+  position: fixed; inset: 0; z-index: 190; background: rgba(8, 21, 47, .45);
+  opacity: 0; pointer-events: none; transition: opacity .2s ease;
+}
+
+@media (max-width: 900px) {
+  .shell__burger { display: inline-flex; }
+  /* .shell aslinya flex ROW (rail di samping konten) — di mobile rail-nya
+     position:fixed (ngambang di luar flow), jadi sisa isi .shell cuma
+     topbar + konten yang harusnya numpuk ke BAWAH, bukan ke samping.
+     display:block paling aman buat itu (flex-wrap:wrap pernah dicoba,
+     tapi flex-basis:0% punya shell__main/shell__body ketabrak logic wrap-
+     nya browser jadi malah collapse ke lebar 0 — bug nyata, bukan cuma
+     glitch preview). */
+  .shell { display: block; }
+  /* Topbar jadi elemen block biasa nempel di atas, sticky pas discroll —
+     hamburger + logo jadi satu kesatuan, bukan tombol ngambang sendirian
+     numpuk konten kayak sebelumnya. */
+  .shell__topbar {
+    display: flex; align-items: center; gap: 14px; width: 100%;
+    position: sticky; top: 0; z-index: 140; height: var(--topbar-h);
+    padding: 0 18px; background: var(--surface); border-bottom: 1px solid var(--line);
+  }
+  .shell__sidebar {
+    position: fixed; top: 0; left: 0; height: 100dvh; z-index: 200;
+    transform: translateX(-100%); transition: transform .22s ease;
+    /* Shadow tipis nempel di tepi kanan sidebar doang (bukan glow besar ke
+       segala arah) — versi lama blur 50px numpuk sama scrim di belakangnya,
+       keliatan kayak ada garis gelap "bocor" di tepi sidebar. */
+    box-shadow: 4px 0 20px rgba(8, 21, 47, .18);
+  }
+  .shell__sidebar.is-open { transform: none; }
+  .shell__scrim.is-open { opacity: 1; pointer-events: auto; }
+  body.has-rail-open { overflow: hidden; }
+  .shell__main { padding: 24px 18px 34px; }
+  /* Isi rail geser: logo diganti tombol tutup (X) di kiri-atas, sama
+     posisinya kayak hamburger di topbar — biar user gampang nutup lagi
+     tanpa nyari-nyari, gak perlu balik ke tombol hamburger yang ketutup
+     sama rail-nya sendiri. */
+  .shell__brand { justify-content: flex-start; padding: 20px 20px 16px; }
+  .shell__brand img { display: none; }
+  .shell__close {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 38px; height: 38px; flex-shrink: 0; padding: 0;
+    border: 1px solid var(--rail-line); border-radius: 10px; background: transparent;
+    color: var(--rail-text); cursor: pointer;
+  }
+  .shell__close:hover { background: var(--rail-hover); }
+  .shell__close svg { width: 18px; height: 18px; }
+  .panel { padding: 20px 18px 8px; }
+  .panel__search { width: 100%; }
+  .panel th { padding: 0 8px 10px; }
+  .panel td { padding: 12px 8px; }
+  /* Tabel di layar kecil: SEMUA kolom tetap ada (sama kayak desktop) — cuma
+     tabelnya digeser ke area yang bisa di-scroll ke samping, bukan hilangin
+     kolom atau maksa isinya wrap. table-scroll bungkus <table>-nya di tiap
+     halaman (lihat admin/index.html, leads/index.html, articles/index.html).
+     Dipakai buat tabel yang GAK dikasih class "cards-mobile" (lihat di
+     bawah) — mis. tabel-tabel kecil widget Dashboard. */
+  .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .table-scroll table { table-layout: auto; min-width: 640px; }
+
+  /* ------------------------------------------------------ Tabel jadi kartu
+     Tabel utama (daftar Artikel, daftar Leads) dikasih class "cards-mobile"
+     buat mode ini — tiap <tr> jadi satu kartu vertikal, tiap <td> jadi baris
+     label:value (labelnya dari atribut data-label, diisi pas render JS),
+     biar semua detail langsung kebaca tanpa perlu scroll ke samping sama
+     sekali (beda sama .table-scroll di atas yang masih ngandelin swipe).
+     Kolom/sel yang butuh perlakuan khusus (nomor urut, thumbnail+judul jadi
+     satu "header" kartu, kolom aksi titik tiga) dikasih class sendiri-sendiri
+     yang di-override di bawah data-label umum. */
+  .table-scroll:has(table.cards-mobile) { overflow-x: visible; }
+  table.cards-mobile { table-layout: auto; min-width: 0; }
+  table.cards-mobile thead { display: none; }
+  table.cards-mobile, table.cards-mobile tbody, table.cards-mobile tr, table.cards-mobile td {
+    display: block; width: 100%;
+  }
+  table.cards-mobile tbody tr {
+    position: relative; border: 1px solid var(--line); border-radius: 14px;
+    padding: 16px; margin-bottom: 12px; background: var(--surface);
+  }
+  table.cards-mobile tbody tr:last-child { margin-bottom: 0; }
+  table.cards-mobile td {
+    display: flex; align-items: center; justify-content: space-between; gap: 14px;
+    padding: 10px 0; border-bottom: 1px solid var(--line); text-align: right;
+    overflow: visible; text-overflow: clip; white-space: normal;
+  }
+  table.cards-mobile td:last-child { border-bottom: 0; }
+  table.cards-mobile td[data-label]::before {
+    content: attr(data-label); flex-shrink: 0; text-align: left;
+    font-size: .68rem; font-weight: 700; letter-spacing: .06em;
+    text-transform: uppercase; color: var(--muted);
+  }
+  /* Nomor urut ("No") gak terlalu berguna dalam bentuk kartu (urutannya
+     udah keliatan dari urutan kartu itu sendiri) — disembunyiin. */
+  table.cards-mobile .cell-card-no { display: none; }
+  /* Thumbnail jadi "cover" kecil di atas kartu (tanpa label), langsung
+     nempel ke judul di bawahnya (gak ada garis pemisah di antara
+     keduanya) — baru garis pemisah muncul SETELAH judul, sebelum baris
+     info lain (Kategori, Tanggal, dst). */
+  table.cards-mobile .cell-card-media {
+    justify-content: flex-start; padding-bottom: 10px; border-bottom: 0;
+  }
+  table.cards-mobile .cell-card-media::before { display: none; }
+  table.cards-mobile .cell-card-title {
+    display: block; padding: 0 0 14px; text-align: left; font-size: 1rem;
+  }
+  /* Kolom aksi (titik tiga) ngambang di pojok kanan-atas kartu, bukan
+     jadi baris label:value di bawah kayak field lain. */
+  table.cards-mobile .col-actions {
+    position: absolute; top: 14px; right: 14px; padding: 0; border-bottom: 0; width: auto;
+  }
+  /* Tabel yang punya baris thumbnail (Artikel) — thumbnail-nya (44px) lebih
+     tinggi dari baris judul teks polos (Leads dkk), jadi titik-tiganya
+     digeser turun dikit biar sejajar ke TENGAH gambar, bukan ke tengah
+     baris judul. */
+  table.cards-mobile:has(.cell-card-media) .col-actions { top: 33px; }
+
+  /* ------------------------------------------------ Menu aksi jadi bottom
+     sheet di layar sempit — dropdown ngambang kecil kayak di desktop gampang
+     ke-clip di tepi layar HP (space-nya sempit) dan tombolnya kekecilan buat
+     jari. Nempel di bawah layar, full width, tombolnya digedein. */
+  /* Scrim gelap transparan di belakang sheet, biar konten dibawahnya nggak
+     ganggu fokus mata & jelas kalau sheet ini modal (harus ditutup dulu). */
+  .row-actions.is-open::after {
+    content: ''; position: fixed; inset: 0; z-index: 205;
+    background: rgba(8, 21, 47, .45);
+  }
+  .row-actions__menu {
+    position: fixed; top: auto; left: 0; right: 0; bottom: 0; z-index: 210;
+    width: 100%; min-width: 0; border-radius: 20px 20px 0 0;
+    padding: 8px 10px calc(10px + env(safe-area-inset-bottom));
+    box-shadow: 0 -10px 40px rgba(8, 21, 47, .2);
+  }
+  /* Drag handle kecil di atas sheet — penanda visual umum buat bottom sheet
+     (bukan cuma dropdown biasa yang ketempel di atas). */
+  .row-actions__menu::before {
+    content: ''; display: block; width: 36px; height: 4px; margin: 6px auto 10px;
+    background: var(--line); border-radius: 999px;
+  }
+  .row-actions__menu button { padding: 13px 14px; font-size: .92rem; }
+  .row-actions__menu svg { width: 18px; height: 18px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .shell__sidebar, .shell__scrim { transition: none; }
+}
+
+/* ------------------------------------------------------------- Login gate */
+.login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--blue); padding: 24px; }
+.login-card {
+  width: 100%; max-width: 372px; background: var(--surface); border-radius: 18px;
+  box-shadow: 0 24px 60px rgba(2, 10, 30, .35); padding: 38px 34px 34px; text-align: center;
+}
+.login-card img { width: 42px; height: 42px; margin-bottom: 16px; }
+.login-card h1 { font-size: 1.15rem; margin: 0 0 4px; letter-spacing: -.02em; }
+.login-card__sub { font-size: .82rem; color: var(--muted); margin: 0 0 24px; }
+.login-card .field { text-align: left; margin-bottom: 14px; }
+.login-card label { display: block; font-size: .78rem; font-weight: 600; margin-bottom: 6px; color: var(--body-c); }
+.login-card input {
+  width: 100%; padding: 11px 14px; border: 1.5px solid var(--line); border-radius: 10px;
+  font-family: var(--font); font-size: .9rem; color: var(--ink);
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+.login-card input:focus { outline: 0; border-color: var(--blue); box-shadow: 0 0 0 4px rgba(0, 88, 255, .12); }
+.login-card .btn {
+  width: 100%; padding: 12px; border: 0; border-radius: 999px; background: var(--blue);
+  color: #fff; font-family: var(--font); font-weight: 700; font-size: .9rem; cursor: pointer; margin-top: 8px;
+  transition: background-color .15s ease;
+}
+.login-card .btn:hover { background: var(--navy); }
+.login-card .btn[disabled] { background: var(--muted); cursor: progress; }
+.login-card .error { color: var(--danger); font-size: .82rem; margin: 14px 0 0; }

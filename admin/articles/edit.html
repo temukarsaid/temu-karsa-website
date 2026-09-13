@@ -1,0 +1,216 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title id="pageTitle">Tambah Artikel | Temu Karsa Admin</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="/assets/img/favicon-mark.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shell.css">
+<link rel="stylesheet" href="edit.css">
+</head>
+<body>
+
+<div class="shell">
+<div class="shell__topbar">
+  <img class="shell__topbar-logo" src="/assets/img/logo-temu-karsa.png" alt="Temu Karsa">
+</div>
+<aside class="shell__sidebar">
+  <div class="shell__brand">
+    <img src="/assets/img/logo-temu-karsa.png" alt="Temu Karsa">
+  </div>
+  <nav class="shell__nav">
+    <div class="shell__group-label">Main</div>
+    <a class="shell__link" href="/admin/">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+      Dashboard
+    </a>
+    <div class="shell__group-label">Konten</div>
+    <a class="shell__link is-active" href="/admin/articles/">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      Artikel
+    </a>
+    <div class="shell__group-label">KarsaBiz</div>
+    <a class="shell__link" href="/admin/leads/">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Leads
+    </a>
+  </nav>
+  <div class="shell__sidebar-foot">
+    <a class="shell__logout" href="/api/admin-logout">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+      Keluar
+    </a>
+  </div>
+</aside>
+
+<div class="shell__body">
+<div class="shell__main edit-main">
+
+  <div class="form-toolbar">
+    <a class="form-toolbar__back" href="/admin/articles/">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+      Artikel
+    </a>
+    <div class="form-toolbar__actions">
+      <span class="form-status" id="formStatus"></span>
+    </div>
+  </div>
+
+  <div class="page-header">
+    <div>
+      <h1 class="page-header__title" id="formTitle">Tambah Artikel</h1>
+      <p class="page-header__sub" id="formSub">Isi semua bagian, lalu klik Publish Artikel.</p>
+    </div>
+  </div>
+
+  <form id="articleForm">
+
+    <section class="form-section">
+      <div class="form-section__head">
+        <h2>Informasi Dasar</h2>
+        <p>Judul, tanggal tayang, dan kategori artikel.</p>
+      </div>
+      <div class="form-grid">
+        <div class="field field-full">
+          <label for="fTitle">Judul Artikel</label>
+          <input type="text" id="fTitle" placeholder="Judul artikel">
+        </div>
+        <div class="field field-full">
+          <label for="fSlug">URL Artikel (slug)</label>
+          <input type="text" id="fSlug" placeholder="url-artikel">
+          <p class="field__hint">Contoh: pembuatan-cv &rarr; artikel tayang di alamat pembuatan-cv.html. Huruf kecil, tanpa spasi, pakai tanda hubung (-). Otomatis mengikuti judul kecuali diubah manual.</p>
+        </div>
+        <div class="field date-field">
+          <label for="fDateTrigger">Tanggal Publish</label>
+          <button type="button" class="date-trigger" id="fDateTrigger">
+            <span id="fDateText">dd/mm/yyyy --:--</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          </button>
+          <div class="date-popover" id="datePopover" hidden>
+            <div class="date-popover__cal-head">
+              <button type="button" class="rlist__icon-btn" id="dateCalPrev" aria-label="Bulan sebelumnya"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+              <span id="dateCalLabel"></span>
+              <button type="button" class="rlist__icon-btn" id="dateCalNext" aria-label="Bulan berikutnya"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+            </div>
+            <div class="date-popover__weekdays">
+              <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+            </div>
+            <div class="date-popover__grid" id="dateCalGrid"></div>
+            <div class="date-popover__time">
+              <label>Jam</label>
+              <input type="number" id="dateHour" min="0" max="23" placeholder="00">
+              <span>:</span>
+              <input type="number" id="dateMinute" min="0" max="59" placeholder="00">
+            </div>
+            <div class="date-popover__foot">
+              <button type="button" class="btn-pill btn-pill--ghost btn-pill--sm" id="dateClearBtn">Reset</button>
+              <button type="button" class="btn-pill btn-pill--primary btn-pill--sm" id="dateDoneBtn">Pilih</button>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <label for="fCategory">Kategori</label>
+          <select id="fCategory">
+            <option value="Legalitas Usaha">Legalitas Usaha</option>
+            <option value="Office &amp; Workspace">Office &amp; Workspace</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="fReadTime">Estimasi Waktu Baca</label>
+          <input type="text" id="fReadTime" placeholder="Contoh: 6 min read">
+        </div>
+        <div class="field field-toggle">
+          <label for="fDraft">Draft (belum siap tayang)</label>
+          <button type="button" class="toggle-switch" id="fDraft" role="switch" aria-checked="false"></button>
+        </div>
+      </div>
+    </section>
+
+    <section class="form-section">
+      <div class="form-section__head">
+        <h2>Gambar Sampul</h2>
+        <p>Ditampilkan di bagian atas artikel dan di kartu daftar artikel.</p>
+      </div>
+      <div class="image-uploader">
+        <div class="image-uploader__preview image-uploader__preview--empty" id="heroPreviewWrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>
+        </div>
+        <div class="image-uploader__actions">
+          <input type="file" id="heroFile" accept="image/*" hidden>
+          <button type="button" class="btn-pill btn-pill--primary" id="heroPickBtn">Pilih Gambar</button>
+          <p class="image-uploader__hint" id="heroUploadStatus">Belum ada gambar dipilih.</p>
+        </div>
+      </div>
+      <div class="field field-full" style="margin-top:16px;">
+        <label for="fHeroAlt">Deskripsi Gambar Sampul</label>
+        <input type="text" id="fHeroAlt" placeholder="Deskripsi singkat isi gambar, buat aksesibilitas & SEO.">
+      </div>
+    </section>
+
+    <section class="form-section">
+      <div class="form-section__head">
+        <h2>Ringkasan buat Google (SEO)</h2>
+        <p>1-2 kalimat yang muncul di hasil pencarian Google.</p>
+      </div>
+      <div class="field field-full">
+        <textarea id="fMetaDescription" rows="3"></textarea>
+      </div>
+    </section>
+
+    <section class="form-section">
+      <div class="form-section__head">
+        <h2>Paragraf Pembuka</h2>
+        <p>1-2 paragraf pembuka sebelum masuk ke bagian-bagian artikel (opsional).</p>
+      </div>
+      <div class="rlist" id="leadList"></div>
+      <button type="button" class="btn-pill btn-pill--primary rlist__add" id="leadAddBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+        Tambah Paragraf Pembuka
+      </button>
+    </section>
+
+    <section class="form-section">
+      <div class="form-section__head">
+        <h2>Isi Artikel</h2>
+        <p>Susunan bagian utama artikel — teks, tabel perbandingan, atau kutipan.</p>
+      </div>
+      <div class="rlist" id="sectionsList"></div>
+      <button type="button" class="btn-pill btn-pill--primary rlist__add" id="sectionAddBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+        Tambah Bagian
+      </button>
+    </section>
+
+    <section class="form-section">
+      <div class="form-section__head">
+        <h2>Kata Kunci (Hashtag)</h2>
+        <p>Tanpa tanda pagar (#), otomatis ditambahkan saat tampil.</p>
+      </div>
+      <div class="keyword-input-row">
+        <input type="text" class="keyword-add-input" id="keywordInput" placeholder="Ketik lalu Enter...">
+        <div class="keyword-chips" id="keywordChips"></div>
+      </div>
+    </section>
+
+    <div class="form-submit">
+      <button type="button" class="btn-pill btn-pill--primary" id="publishBtn">Publish Artikel</button>
+      <button type="button" class="btn-pill btn-pill--danger" id="deleteBtn" hidden>Hapus Artikel</button>
+    </div>
+
+  </form>
+</div>
+</div>
+</div>
+
+<script src="../shell.js"></script>
+<script>
+  fetch('/api/admin-me').then(function (r) {
+    if (!r.ok) window.location.href = '/admin/';
+  }).catch(function () { window.location.href = '/admin/'; });
+</script>
+<script src="edit.js"></script>
+</body>
+</html>

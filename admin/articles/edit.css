@@ -1,0 +1,327 @@
+/* ============================================================================
+   Form Tambah/Edit Artikel — HTML/CSS/JS sendiri (bukan lagi Decap CMS).
+   Reuse token warna & pola dari shell.css (rail, .page-header, .panel__search,
+   tombol pill, status-chip) supaya tetap satu bahasa visual sama
+   Dashboard/Leads — bukan sistem baru yang lain sendiri.
+   ============================================================================ */
+
+
+/* --------------------------------------------------------- Toolbar sticky
+   Ganti toolbar Decap yang dulu position:absolute (sumber semua bug mobile)
+   — ini position:sticky biasa, ikut alur dokumen normal, otomatis aman di
+   semua lebar layar tanpa perlu override apa pun. */
+.form-toolbar {
+  /* Toolbar-nya sticky (nempel di top:0 pas discroll) tapi posisi normalnya
+     (sebelum discroll) masih kegeser ke bawah 40px sama padding-top bawaan
+     .shell__main — jadi posisinya BEDA sebelum vs sesudah nempel (sebelum
+     discroll keliatan lebih ke bawah dari punya rail). margin-top negatif
+     nge-cancel padding itu, jadi toolbar SELALU pas di y:0 dalam kedua
+     kondisi — padding-top sendiri disamain sama .shell__brand (28px) biar
+     "← Artikel" sejajar vertikal sama logo di rail, mau lagi discroll atau
+     enggak. */
+  position: sticky; top: 0; z-index: 20; margin-top: -40px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  flex-wrap: wrap; background: var(--canvas); padding: 32px 0 14px;
+  margin-bottom: 24px; border-bottom: 1px solid var(--line);
+}
+.form-toolbar__back {
+  display: inline-flex; align-items: center; gap: 8px; color: var(--body-c);
+  text-decoration: none; font-weight: 700; font-size: .88rem;
+}
+.form-toolbar__back:hover { color: var(--ink); }
+.form-toolbar__back svg { width: 18px; height: 18px; }
+.form-toolbar__actions { display: flex; align-items: center; gap: 10px; }
+.form-status {
+  font-size: .8rem; font-weight: 600; color: var(--muted);
+}
+.form-status--error { color: var(--danger); }
+.form-status--ok { color: var(--mint-ink); }
+
+.btn-pill {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 38px;
+  padding: 0 20px; border-radius: 999px; border: 0; cursor: pointer;
+  font-family: var(--font); font-weight: 700; font-size: .86rem;
+  transition: background-color .15s, color .15s, opacity .15s;
+}
+.btn-pill--primary { background: var(--blue); color: #fff; }
+.btn-pill--primary:hover { background: var(--cyan); }
+.btn-pill--primary:disabled { opacity: .55; cursor: default; }
+.btn-pill[hidden] { display: none; }
+.btn-pill--danger { background: var(--danger-soft); color: var(--danger); }
+.btn-pill--danger:hover { background: #FBDADA; }
+.btn-pill--ghost {
+  background: var(--canvas-alt); color: var(--ink); height: 36px; padding: 0 16px;
+}
+.btn-pill--ghost:hover { background: var(--line); }
+.btn-pill--sm { height: 32px; padding: 0 14px; font-size: .8rem; }
+.btn-pill svg { width: 16px; height: 16px; }
+
+/* ------------------------------------------------------------ Section form */
+.form-section { padding: 28px 0; border-bottom: 1px solid var(--line); }
+.form-section:last-child { border-bottom: 0; }
+.form-section__head { margin-bottom: 18px; }
+.form-section__head h2 { font-size: 1.02rem; font-weight: 800; color: var(--ink); margin: 0 0 3px; letter-spacing: -.01em; }
+.form-section__head p { font-size: .82rem; color: var(--muted); margin: 0; }
+
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.form-grid--3 { grid-template-columns: 1fr 1fr 1fr; }
+.field-full { grid-column: 1 / -1; }
+@media (max-width: 640px) { .form-grid, .form-grid--3 { grid-template-columns: 1fr; } }
+
+.field { display: flex; flex-direction: column; }
+.field label {
+  font-size: .8rem; font-weight: 700; color: var(--ink); margin-bottom: 8px;
+}
+.field .field__hint { font-size: .78rem; color: var(--muted); margin: 6px 0 0; }
+.field input[type="text"],
+.field input[type="search"],
+.field input[type="datetime-local"],
+.field textarea,
+.field select {
+  font-family: var(--font); font-size: .88rem; color: var(--ink);
+  border: 1.5px solid var(--line); border-radius: 10px; padding: 11px 16px;
+  background: var(--surface); transition: border-color .15s, box-shadow .15s;
+  width: 100%;
+}
+.field textarea { resize: vertical; min-height: 90px; line-height: 1.5; }
+.field input:focus, .field textarea:focus, .field select:focus {
+  outline: 0; border-color: var(--blue); box-shadow: 0 0 0 4px rgba(0, 88, 255, .12);
+}
+.field select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238A90A0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 14px center; background-size: 18px;
+  padding-right: 42px;
+}
+
+/* Toggle "Draft" — reuse pola yang udah dirapiin waktu masih di Decap */
+/* .field-toggle jadi grid item yang di-stretch sama tingginya kayak field
+   sebelahnya (yang punya label+input), tapi isinya cuma toggle+label 1 baris
+   — align-items:center bakal nyamain ke tengah TOTAL tinggi cell (termasuk
+   "jatah" ruang label yang gak dipakai toggle), bukan ke tengah box input
+   di sebelahnya. Px tetap di bawah ini nyamain toggle ke posisi vertikal
+   box input (bukan ke tengah cell) — samain kalau ukuran font/label field
+   berubah. */
+.field-toggle { display: flex; flex-direction: row; align-items: flex-start; gap: 10px; padding-top: 35px; }
+.field-toggle label { margin: 0; order: 2; }
+.field-toggle .field__hint { order: 3; flex-basis: 100%; margin-left: 46px; }
+/* padding-top:35px di atas cuma perlu pas toggle-nya SEBARIS sama field
+   input lain (nyamain tinggi cell grid, lihat catatan di atas) — begitu
+   toggle-nya field-full (baris sendiri, gak ada field lain buat disamain),
+   itu padding jadi jarak kosong doang di atasnya. Dibalikin ke jarak field
+   biasa. */
+.field-toggle.field-full { padding-top: 0; align-items: center; }
+.toggle-switch {
+  position: relative; width: 36px; height: 20px; border-radius: 999px;
+  background: var(--line); border: 0; cursor: pointer; flex-shrink: 0; order: 1;
+  transition: background-color .15s;
+}
+.toggle-switch::after {
+  content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px;
+  border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(8,21,47,.25);
+  transition: transform .15s;
+}
+.toggle-switch[aria-checked="true"] { background: var(--blue); }
+.toggle-switch[aria-checked="true"]::after { transform: translateX(16px); }
+
+/* ---------------------------------------------------- Date picker custom
+   Ganti <input type="datetime-local"> bawaan — popup kalender native itu
+   posisinya dikontrol penuh sama browser (selalu nempel ke tepi kiri kotak
+   input, gak bisa dipindah lewat CSS/JS apapun), jadi bikin sendiri biar
+   posisinya (di bawah field, dalam batas kartu form) kita yang atur. */
+.date-field { position: relative; }
+.date-trigger {
+  display: flex; align-items: center; justify-content: space-between; width: 100%;
+  font-family: var(--font); font-size: .88rem; color: var(--ink); text-align: left;
+  border: 1.5px solid var(--line); border-radius: 10px; padding: 11px 16px;
+  background: var(--surface); cursor: pointer; transition: border-color .15s, box-shadow .15s;
+}
+.date-trigger:hover { border-color: var(--muted); }
+.date-trigger[aria-expanded="true"] { border-color: var(--blue); box-shadow: 0 0 0 4px rgba(0, 88, 255, .12); }
+.date-trigger svg { width: 17px; height: 17px; color: var(--muted); flex-shrink: 0; }
+.date-trigger span:empty::before,
+.date-trigger span.is-placeholder { color: var(--muted); }
+
+.date-popover {
+  /* nempel ke KANAN field — sejajar di bawah ikon kalender, bukan dari tepi
+     kiri kotak (itu perilaku date picker native yang gak bisa diatur; ini
+     komponen sendiri jadi bebas ditempatin) */
+  position: absolute; z-index: 30; top: calc(100% + 6px); right: 0; width: 268px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+  box-shadow: var(--shadow); padding: 14px;
+}
+.date-popover[hidden] { display: none; }
+.date-popover__cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.date-popover__cal-head span { font-size: .86rem; font-weight: 700; color: var(--ink); }
+.date-popover__weekdays, .date-popover__grid { display: grid; grid-template-columns: repeat(7, 1fr); }
+.date-popover__weekdays span { text-align: center; font-size: .68rem; font-weight: 700; color: var(--muted); padding-bottom: 6px; }
+.date-popover__grid button {
+  aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+  border: 0; background: transparent; border-radius: 8px; font-family: var(--font);
+  font-size: .8rem; color: var(--ink); cursor: pointer;
+}
+.date-popover__grid button:hover { background: var(--canvas-alt); }
+.date-popover__grid button.is-muted { color: var(--muted); }
+.date-popover__grid button.is-today { font-weight: 800; color: var(--blue); }
+.date-popover__grid button.is-selected { background: var(--blue); color: #fff; }
+.date-popover__time {
+  display: flex; align-items: center; justify-content: center; gap: 8px; margin: 12px 0 4px; padding-top: 12px; border-top: 1px solid var(--line);
+}
+.date-popover__time label { font-size: .78rem; font-weight: 700; color: var(--muted); margin-right: 2px; }
+.date-popover__time input {
+  width: 52px; text-align: center; font-family: var(--font); font-size: .86rem;
+  border: 1.5px solid var(--line); border-radius: 8px; padding: 6px 4px;
+}
+.date-popover__time input:focus { outline: 0; border-color: var(--blue); }
+.date-popover__foot { display: flex; justify-content: space-between; margin-top: 12px; }
+
+/* -------------------------------------------------------- Upload gambar */
+.image-uploader { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.image-uploader__preview {
+  width: 96px; height: 96px; border-radius: 12px; background: var(--canvas-alt);
+  object-fit: cover; flex-shrink: 0; border: 1px solid var(--line);
+}
+.image-uploader__preview--empty { display: flex; align-items: center; justify-content: center; color: var(--muted); }
+.image-uploader__preview--empty svg { width: 28px; height: 28px; }
+.image-uploader__actions { display: flex; flex-direction: column; gap: 8px; }
+.image-uploader__hint { font-size: .78rem; color: var(--muted); margin: 0; }
+
+/* --------------------------------------------------- List repeatable umum
+   (Paragraf Pembuka, Isi Artikel, Kata Kunci) — satu bahasa visual: kartu
+   item bernomor + tombol reorder/hapus di header, tombol "Tambah ..." di
+   bawah list, state kosong yang jelas (bukan cuma list kosong senyap). */
+.rlist { display: flex; flex-direction: column; gap: 12px; }
+.rlist__empty {
+  padding: 18px; border: 1.5px dashed var(--line); border-radius: 12px;
+  text-align: center; color: var(--muted); font-size: .84rem;
+}
+.rlist__item { border: 1.5px solid var(--line); border-radius: 12px; padding: 16px; }
+/* Textarea langsung anak .rlist__item (Paragraf Pembuka) gak kebagian
+   width:100% dari rule ".field textarea" (bukan di dalam .field) — kena
+   lebar default browser (~20 kolom) kalau gak ditimpa manual. */
+.rlist__item > textarea {
+  width: 100%; font-family: var(--font); font-size: .88rem; color: var(--ink);
+  border: 1.5px solid var(--line); border-radius: 10px; padding: 11px 16px;
+  resize: vertical; min-height: 90px; line-height: 1.5;
+}
+.rlist__item > textarea:focus { outline: 0; border-color: var(--blue); box-shadow: 0 0 0 4px rgba(0, 88, 255, .12); }
+.rlist__item-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px;
+}
+.rlist__item-title { font-size: .8rem; font-weight: 700; color: var(--muted); }
+.rlist__item-actions { display: flex; align-items: center; gap: 4px; }
+.rlist__icon-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; border-radius: 8px; border: 0; background: transparent;
+  color: var(--muted); cursor: pointer; transition: background-color .15s, color .15s;
+}
+.rlist__icon-btn:hover { background: var(--canvas-alt); color: var(--ink); }
+.rlist__icon-btn:disabled { opacity: .35; cursor: default; }
+.rlist__icon-btn:disabled:hover { background: transparent; color: var(--muted); }
+.rlist__icon-btn--danger:hover { background: var(--danger-soft); color: var(--danger); }
+.rlist__icon-btn svg { width: 15px; height: 15px; }
+.rlist__add { margin-top: 12px; align-self: flex-start; }
+
+/* Field "jenis bagian" per item di Isi Artikel */
+.rlist__type-row { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.rlist__type-row label { font-size: .78rem; font-weight: 700; color: var(--muted); white-space: nowrap; }
+.rlist__type-row select {
+  width: 220px; font-family: var(--font); font-size: .88rem; color: var(--ink);
+  border: 1.5px solid var(--line); border-radius: 10px; padding: 11px 16px;
+  background: var(--surface);
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238A90A0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 14px center; background-size: 18px;
+  padding-right: 42px;
+}
+.rlist__type-row select:focus { outline: 0; border-color: var(--blue); box-shadow: 0 0 0 4px rgba(0, 88, 255, .12); }
+
+/* Kata Kunci — chip input sebaris, bukan list vertikal panjang */
+.keyword-input-row { display: flex; flex-wrap: wrap; gap: 10px; }
+/* Style chip-nya disamain persis kayak ".keyword-chip" di website publik
+   (assets/css/style.css) — canvas-alt + navy, biar konsisten sama yang
+   beneran ditampilin di halaman artikel, bukan warna sendiri di admin. */
+.keyword-chips { display: flex; flex-wrap: wrap; gap: 10px; width: 100%; }
+.keyword-chip-edit {
+  display: inline-flex; align-items: center; gap: 8px; background: var(--canvas-alt);
+  border-radius: 999px; padding: 8px 10px 8px 18px; font-size: .88rem; font-weight: 600; color: var(--navy);
+}
+.keyword-chip-edit button {
+  display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px;
+  border-radius: 50%; border: 0; background: transparent; color: var(--navy); opacity: .55; cursor: pointer;
+}
+.keyword-chip-edit button:hover { background: var(--danger-soft); color: var(--danger); opacity: 1; }
+.keyword-add-input {
+  width: 100%; font-family: var(--font); font-size: .88rem; color: var(--ink);
+  border: 1.5px solid var(--line); border-radius: 10px; padding: 11px 16px;
+  background: var(--surface); transition: border-color .15s, box-shadow .15s;
+}
+.keyword-add-input:focus { outline: 0; border-color: var(--blue); box-shadow: 0 0 0 4px rgba(0, 88, 255, .12); }
+
+/* -------------------------------------------------------- Tabel bagian */
+.table-rows-list { display: flex; flex-direction: column; gap: 8px; }
+.table-row-edit { display: flex; align-items: center; gap: 8px; }
+.table-row-edit input { flex: 1; }
+
+/* --------------------------------------- Tombol Publish, di bawah form
+   Dipindah dari toolbar atas (kecil, numpuk sama tombol lain) ke sini —
+   tombol terakhir yang dilihat user setelah ngisi semua section, besar &
+   full-width biar jadi penutup form yang jelas & gampang dipencet. */
+.form-submit { padding-top: 28px; display: flex; flex-direction: column; gap: 12px; }
+.form-submit .btn-pill { width: 100%; height: 52px; font-size: .96rem; }
+
+
+@media (max-width: 900px) {
+  .edit-main { max-width: none; }
+  /* Nempel PAS DI BAWAH topbar hamburger+logo (lihat .shell__topbar di
+     shell.css), bukan di top:0 — dua elemen sticky top:0 bakal numpuk pas
+     discroll. */
+  .form-toolbar { top: var(--topbar-h); }
+}
+
+@media (max-width: 640px) {
+  /* --------------------------------------------- Date picker jadi bottom
+     sheet di HP — popover ngambang di bawah ikon kalender (versi desktop)
+     gampang ke-clip layar sempit & kotak kalender/jam kekecilan buat jari.
+     Sama pola-nya kayak menu aksi 3-titik di admin/shell.css. */
+  .date-field.is-sheet-open::after {
+    content: ''; position: fixed; inset: 0; z-index: 40;
+    background: rgba(8, 21, 47, .45);
+  }
+  .date-popover {
+    position: fixed; z-index: 41; top: auto; left: 0; right: 0; bottom: 0;
+    width: 100%; max-width: none; border-radius: 20px 20px 0 0;
+    padding: 8px 18px calc(18px + env(safe-area-inset-bottom));
+    box-shadow: 0 -10px 40px rgba(8, 21, 47, .2);
+    max-height: 80vh; overflow-y: auto;
+  }
+  .date-popover::before {
+    content: ''; display: block; width: 36px; height: 4px; margin: 6px auto 14px;
+    background: var(--line); border-radius: 999px;
+  }
+  .date-popover__grid button { font-size: .88rem; }
+  .date-popover__time { margin: 16px 0 4px; padding: 16px 0 4px; }
+  .date-popover__time input { width: 60px; padding: 10px 4px; font-size: .92rem; }
+  .date-popover__foot .btn-pill { flex: 1; }
+  .date-popover__foot { gap: 10px; }
+
+  /* Upload gambar — tombol "Pilih Gambar" dipanjangin full-width biar
+     sejajar sama ending box input "Deskripsi Gambar Sampul" di bawahnya
+     (di layar sempit preview+tombol jadi ketumpuk vertikal, bukan
+     sebelahan kayak di desktop). */
+  .image-uploader__actions { width: 100%; }
+  .image-uploader__actions .btn-pill { width: 100%; }
+  .image-uploader__preview {
+    width: 100%; height: auto; aspect-ratio: 16 / 9;
+  }
+
+  .rlist__add { width: 100%; }
+
+  /* Tombol full-width di layar sempit (Pilih Gambar, Tambah Paragraf
+     Pembuka, Tambah Bagian, Publish Artikel) disamain tinggi & ukuran
+     teksnya biar satu bahasa visual, bukan macem-macem tinggi. */
+  .image-uploader__actions .btn-pill,
+  .rlist__add {
+    height: 52px; font-size: .96rem;
+  }
+}

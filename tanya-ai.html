@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tanya AI | Temu Karsa</title>
+<meta name="description" content="Tanya AI Konsultan Bisnis Temu Karsa — ceritakan kebutuhan atau pertanyaan bisnis Anda, dan dapatkan rekomendasi layanan yang paling sesuai.">
+<meta name="theme-color" content="#041C4F">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Tanya AI | Temu Karsa">
+<meta property="og:description" content="Tanya AI Konsultan Bisnis Temu Karsa — ceritakan kebutuhan atau pertanyaan bisnis Anda, dan dapatkan rekomendasi layanan yang paling sesuai.">
+<meta property="og:image" content="assets/img/logo-temu-karsa.png">
+
+<link rel="icon" type="image/png" href="assets/img/favicon-mark.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<!-- =============================================================== HEADER -->
+<header class="header" id="header">
+  <div class="wrap header__bar">
+    <a class="brand" href="index.html" aria-label="Temu Karsa — beranda">
+      <img src="assets/img/logo-temu-karsa.png" alt="Temu Karsa">
+    </a>
+
+    <nav class="nav" id="nav" aria-label="Navigasi utama">
+      <div class="nav__item" id="navLayanan">
+        <button class="nav__trigger" aria-expanded="false" aria-controls="navLayananDropdown">
+          Layanan
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+
+        <div class="nav__dropdown" id="navLayananDropdown">
+          <div class="nav__dd-col">
+            <a class="nav__dd-title" href="legalitas-perizinan.html">Pengurusan Legalitas &amp; Perizinan</a>
+            <a href="pendirian-badan-usaha.html">Pendirian Badan Usaha</a>
+            <a href="perubahan-badan-usaha.html">Perubahan Badan Usaha</a>
+            <a href="pengurusan-legalitas.html">Pengurusan Legalitas</a>
+          </div>
+          <div class="nav__dd-col">
+            <a class="nav__dd-title" href="penyewaan-space.html">Penyewaan Space &amp; Ruang Kerja</a>
+            <a href="virtual-office.html">Virtual Office</a>
+            <a href="private-office.html">Private Office</a>
+            <a href="coworking-space.html">Coworking Space</a>
+            <a href="meeting-room.html">Meeting Room</a>
+          </div>
+        </div>
+      </div>
+
+      <a href="tentang-kami.html">Tentang Kami</a>
+      <a href="karsabiz.html">KarsaBiz</a>
+      <a href="artikel.html">Artikel</a>
+      <a href="kontak.html">Kontak</a>
+      <a href="kebijakan-privasi.html">Kebijakan Privasi</a>
+    </nav>
+
+    <div class="header__cta">
+      <!-- Tanya AI ARCHIVED (2026-09-12) - link navbar dilepas, page tetap ada di tanya-ai.html
+      <a class="nav-ai" href="tanya-ai.html">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.09 6.26L20 11l-5.91 1.74L12 19l-2.09-6.26L4 11l5.91-1.74L12 3z"/></svg>
+        Tanya AI
+      </a>
+      -->
+      <a class="btn btn--light btn--sm" href="https://wa.me/6285121558129?text=Halo%20Temu%20Karsa%2C%20saya%20ingin%20konsultasi%20gratis%20mengenai%20legalitas%20usaha%2Fworkspace." target="_blank" rel="noopener">
+        Konsultasi Gratis
+        <i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></i>
+      </a>
+      <button class="burger" id="burger" aria-label="Buka menu" aria-expanded="false" aria-controls="nav">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- ============================================================= TANYA AI -->
+  <section class="section ai-tool" id="asisten-ai" style="padding-top:180px;">
+    <div class="wrap">
+      <nav class="breadcrumb breadcrumb--light" aria-label="Breadcrumb" data-reveal>
+        <ol>
+          <li><a href="index.html">Beranda</a></li>
+          <li aria-current="page">Tanya AI</li>
+        </ol>
+      </nav>
+    </div>
+
+    <div class="wrap ai-tool__wrap">
+      <h2 class="ai-tool__title" data-reveal>Tanya AI Konsultan Bisnis Kami</h2>
+      <p class="ai-tool__subtitle" data-reveal data-delay="60">Ceritakan kebutuhan atau pertanyaan bisnis Anda, dan dapatkan rekomendasi
+      layanan Temu Karsa yang paling sesuai.</p>
+
+      <form class="ai-box" id="aiBox" data-reveal data-delay="120">
+        <div class="ai-box__field">
+          <textarea class="ai-box__input" id="aiInput" rows="3" maxlength="500"></textarea>
+          <div class="ai-box__placeholder" id="aiPlaceholder" aria-hidden="true"><span class="ai-box__ptext"></span><span class="ai-box__caret"></span></div>
+        </div>
+
+        <div class="ai-box__bar">
+          <div class="ai-box__chips">
+            <button type="button" class="ai-chip">Pendirian PT</button>
+            <button type="button" class="ai-chip">Virtual Office</button>
+            <button type="button" class="ai-chip">Izin Usaha</button>
+            <button type="button" class="ai-chip">Coworking Space</button>
+          </div>
+          <div class="ai-box__meta">
+            <span class="ai-box__count"><span id="aiCount">0</span>/500</span>
+            <button type="submit" class="ai-box__send" id="aiSend" aria-label="Kirim pertanyaan" disabled>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="M6 11l6-6 6 6"/></svg>
+            </button>
+          </div>
+        </div>
+      </form>
+
+      <p class="ai-tool__disclaimer" data-reveal data-delay="160">Dengan mengirim pesan, Anda memahami bahwa jawaban dihasilkan oleh AI dan
+      bukan merupakan nasihat hukum resmi. Baca <a href="kebijakan-privasi.html">Kebijakan Privasi</a> kami.</p>
+    </div>
+  </section>
+
+</main>
+
+<!-- =============================================================== FOOTER -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer__top">
+      <div class="footer__brand">
+        <img src="assets/img/logo-temu-karsa.png" alt="Temu Karsa">
+        <p>
+          Mitra legalitas dan ruang kerja untuk pelaku usaha di Indonesia. Dari akta
+          pendirian sampai meja kerja — semua dalam satu ekosistem.
+        </p>
+      </div>
+
+      <div>
+        <h5>Legalitas</h5>
+        <div class="footer__links">
+          <a href="pendirian-badan-usaha.html">Pendirian Badan Usaha</a>
+          <a href="perubahan-badan-usaha.html">Perubahan Badan Usaha</a>
+          <a href="pengurusan-legalitas.html">Pengurusan Legalitas</a>
+        </div>
+      </div>
+
+      <div>
+        <h5>Workspace</h5>
+        <div class="footer__links">
+          <a href="virtual-office.html">Virtual Office</a>
+          <a href="private-office.html">Private Office</a>
+          <a href="coworking-space.html">Coworking Space</a>
+          <a href="meeting-room.html">Meeting Room</a>
+        </div>
+      </div>
+
+      <div>
+        <h5>Perusahaan</h5>
+        <div class="footer__links">
+          <a href="tentang-kami.html">Tentang Kami</a>
+          <a href="artikel.html">Artikel</a>
+          <!-- Tanya AI ARCHIVED (2026-09-12) - <a href="tanya-ai.html">Tanya AI</a> -->
+          <a href="kebijakan-privasi.html">Kebijakan Privasi</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer__contact">
+      <div class="footer__contact-info">
+        <h5 class="footer__contact-title">Kontak</h5>
+        <ul class="contact-info-list">
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-6.5-5.4-6.5-11A6.5 6.5 0 0 1 12 3.5 6.5 6.5 0 0 1 18.5 10c0 5.6-6.5 11-6.5 11Z"/><circle cx="12" cy="10" r="2.3"/></svg>
+            <span>Ruko Taman Juanda, Jl. Pahlawan Blok B1 No.3, Bekasi Timur, Jawa Barat, 17111</span>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.4A10 10 0 1 0 12 2z"/><path d="M8.6 9.2c.3 2.6 3.6 5.9 6.2 6.2l1-1.4 1.9.8-.3 1.6c-2.9.9-8.7-4.9-7.8-7.8l1.6-.3.8 1.9z"/></svg>
+            <span>+62 851-2155-8129 (WhatsApp)</span>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg>
+            <span>temukarsaid@gmail.com</span>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>
+            <span>Senin - Sabtu: 08:00 - 17:00 WIB</span>
+          </li>
+        </ul>
+      </div>
+      <div class="footer__map">
+        <iframe
+          src="https://www.google.com/maps?q=Ruko+Taman+Juanda,+Jl.+Pahlawan+Blok+B1+No.3,+Bekasi+Timur,+Jawa+Barat+17111&output=embed"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          title="Lokasi Temu Karsa"></iframe>
+      </div>
+    </div>
+
+    <div class="footer__bottom">
+      <p>© <span id="year">2026</span> Temu Karsa. Seluruh hak cipta dilindungi.</p>
+      <div class="socials">
+        <a href="mailto:halo@temukarsa.id" aria-label="Email">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg>
+        </a>
+        <a href="https://www.linkedin.com/company/temu-karsa/" target="_blank" rel="noopener" aria-label="LinkedIn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 1 0-4 0v7h-4V8h4v1.5A6 6 0 0 1 16 8z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        </a>
+        <a href="https://www.instagram.com/temukarsa.id/" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".8" fill="currentColor" stroke="none"/></svg>
+        </a>
+        <a href="https://wa.me/6285121558129" target="_blank" rel="noopener" aria-label="WhatsApp">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.4A10 10 0 1 0 12 2z"/><path d="M8.6 9.2c.3 2.6 3.6 5.9 6.2 6.2l1-1.4 1.9.8-.3 1.6c-2.9.9-8.7-4.9-7.8-7.8l1.6-.3.8 1.9z"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/main.js"></script>
+</body>
+</html>

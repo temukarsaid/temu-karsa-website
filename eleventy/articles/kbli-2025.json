@@ -1,0 +1,42 @@
+{
+  "slug": "kbli-2025",
+  "date": "2026-07-31T11:00:00+07:00",
+  "dateDisplay": "31 Jul 2026",
+  "category": "Legalitas Usaha",
+  "readTime": "2 min read",
+  "title": "Penambahan KBLI Baru di KBLI 2025: Apakah Berpengaruh pada NIB dan Perizinan Usaha?",
+  "metaDescription": "Pembaruan KBLI 2025 membuat banyak pelaku usaha perlu menyesuaikan kode KBLI di OSS-RBA. Bahkan, dalam beberapa kasus, perusahaan harus menambahkan KBLI baru karena adanya pemecahan, penggabungan, atau perubahan klasifikasi usaha.",
+  "heroImage": "assets/img/artikel/kbli-2025.jpg",
+  "heroImageAlt": "KBLI 2025",
+  "ctaTopic": "penyesuaian KBLI",
+  "leadParagraphs": [],
+  "sections": [
+    {
+      "id": "apa-itu-penyesuaian-kbli-2025",
+      "heading": "Apa Itu Penyesuaian KBLI 2025?",
+      "body": "KBLI 2025 merupakan pembaruan dari KBLI 2020 yang diterbitkan pemerintah untuk menyesuaikan klasifikasi kegiatan usaha dengan perkembangan industri saat ini.\n\nBeberapa perubahan yang terjadi meliputi:\n\n- Penghapusan kode KBLI lama.\n- Pemecahan satu kode menjadi beberapa kode baru.\n- Penggabungan atau reklasifikasi kegiatan usaha.\n- Penyesuaian ruang lingkup usaha agar lebih spesifik.\n\nAkibatnya, sebagian pelaku usaha perlu mengganti atau menambahkan kode KBLI agar sesuai dengan kegiatan usaha yang dijalankan."
+    },
+    {
+      "id": "apakah-mempengaruhi-perizinan",
+      "heading": "Apakah Penambahan KBLI Baru Mempengaruhi Perizinan?",
+      "body": "Secara umum, tidak.\n\nPenambahan KBLI tidak otomatis membatalkan legalitas izin usaha yang sudah dimiliki. Berdasarkan ketentuan implementasi KBLI 2025, pelaku usaha tidak perlu mengajukan ulang seluruh perizinan hanya karena ada penyesuaian kode KBLI.\n\nNamun, data usaha tetap perlu diperbarui di OSS-RBA agar sesuai dengan kondisi usaha yang sebenarnya."
+    },
+    {
+      "id": "dokumen-berpotensi-terdampak",
+      "heading": "Dokumen yang Berpotensi Terdampak",
+      "body": "Penambahan KBLI biasanya berdampak pada beberapa dokumen berikut:\n\n- **NIB (Nomor Induk Berusaha)**, karena data dan klasifikasi kegiatan usaha perlu diperbarui.\n- **Sertifikat Standar atau izin operasional**, jika KBLI baru memiliki tingkat risiko yang berbeda.\n- **Perizinan pendukung (PB UMKU)**, apabila kegiatan usaha baru membutuhkan izin tambahan.\n- **Dokumen lingkungan**, jika terdapat perubahan yang memengaruhi dampak lingkungan.\n\nJadi, dampaknya bergantung pada jenis KBLI yang ditambahkan, bukan sekadar perubahan kode."
+    },
+    {
+      "id": "pkkpr-diurus-ulang",
+      "heading": "Apakah PKKPR Harus Diurus Ulang?",
+      "body": "Tidak selalu.\n\nJika penambahan KBLI hanya berupa penyesuaian administratif dan tidak mengubah lokasi maupun aktivitas usaha, maka PKKPR tetap berlaku dan biasanya cukup dilakukan pembaruan data di OSS.\n\nNamun, PKKPR mungkin perlu disesuaikan apabila penambahan KBLI menyebabkan:\n\n- perubahan fungsi atau jenis usaha,\n- perluasan area usaha,\n- perubahan pemanfaatan ruang,\n- atau peningkatan dampak terhadap lingkungan.\n\nKarena itu, setiap kasus perlu dianalisis berdasarkan kondisi usaha yang sebenarnya."
+    },
+    {
+      "id": "kesimpulan-kbli-2025",
+      "heading": "Kesimpulan",
+      "body": "Penambahan KBLI pada KBLI 2025 tidak otomatis membuat izin usaha menjadi tidak berlaku. Meski demikian, pelaku usaha tetap perlu memastikan data di OSS-RBA telah diperbarui dan mengecek apakah KBLI baru memerlukan izin tambahan atau penyesuaian dokumen lainnya.\n\nButuh bantuan menyesuaikan KBLI atau memperbarui NIB di OSS-RBA? Tim Temu Karsa siap membantu proses perubahan KBLI, pembaruan legalitas usaha, hingga pengurusan perizinan bisnis secara cepat dan sesuai regulasi. Hubungi Temu Karsa sekarang dan pastikan legalitas bisnis Anda tetap aman dan siap berkembang."
+    }
+  ],
+  "keywords": ["KBLI2025", "OSS", "KonversiKBLI2020ke2025", "KBLI2025BerlakuKapan", "KBLIOSS2025Terbaru"],
+  "relatedArticles": ["pembuatan-cv", "rekomendasi-meeting-room-bekasi", "kbli-2025-explained"]
+}

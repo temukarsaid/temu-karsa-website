@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "temu-karsa",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["server.js"],
+      "port": 4321
+    },
+    {
+      "name": "temu-karsa-admin",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["wrangler", "pages", "dev", ".", "--port", "8788", "--compatibility-date=2024-09-01"],
+      "port": 8788
+    }
+  ]
+}

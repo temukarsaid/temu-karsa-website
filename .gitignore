@@ -1,0 +1,9 @@
+node_modules/
+
+# Rahasia lokal — JANGAN pernah ke-commit. Env var produksi diisi lewat
+# Cloudflare Pages dashboard (Settings > Environment variables), bukan file.
+.dev.vars
+.dev.vars.*
+
+# Wrangler local state (cache, sesi dev)
+.wrangler/

@@ -1,0 +1,385 @@
+/* ============================================================================
+   Reskin Decap CMS biar senada sama brand Temu Karsa (warna, font, tombol,
+   spacing) — sekaligus nutupin beberapa gap responsive bawaan Decap yang
+   emang didesain desktop-only.
+
+   Decap CMS TIDAK punya API resmi buat nge-theme UI editor-nya (beda sama
+   preview pane yang emang didesain buat di-custom lewat registerPreviewStyle).
+   Class name yang dia pakai itu hasil CSS-in-JS (emotion), tapi untungnya
+   masih nyimpen nama komponen aslinya di dalam class-nya sendiri, misal
+   "css-zwje8v-LoginButton-..." — jadi kita bisa "colek" pakai selector
+   [class*="NamaKomponen"] tanpa perlu tau hash acaknya. Konsekuensinya:
+   banyak !important (lawan CSS-in-JS yang speknya udah tinggi), dan banyak
+   selector nyakup <a> SEKALIGUS <button> karena Decap suka pakai <a> buat
+   "tombol" yang secara visual keliatan kayak button biasa.
+
+   Kalau ada bagian yang masih keliatan "default Decap" pas dicoba live,
+   kasih tau screenshot-nya — gampang ditambah/diperbaiki selector-nya di
+   sini. Ketemu elemen baru? Cek dulu class-nya nyata (inspect element),
+   jangan nebak dari nama biasa dipakai library lain.
+   ============================================================================ */
+
+:root {
+  --tk-navy: #003399;
+  --tk-navy-deep: #041C4F;
+  --tk-blue: #0058FF;
+  --tk-cyan: #009DFD;
+  --tk-ink: #08152F;
+  --tk-body: #5C6272;
+  --tk-muted: #8A90A0;
+  --tk-line: #E4E7EE;
+  --tk-canvas: #F4F5F8;
+  --tk-canvas-alt: #EDEFF5;
+  --tk-surface: #FFFFFF;
+  --tk-danger: #C4453B;
+  --tk-danger-soft: #FDEDEC;
+  --tk-font: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+}
+
+/* ================================================================ Global */
+/* Font Plus Jakarta Sans (sama kayak website) — font-nya di-load di
+   admin/index.html, sini cuma maksa Decap pakai itu ketimbang system-ui
+   bawaannya. */
+#nc-root, #nc-root * { font-family: var(--tk-font) !important; }
+body, #nc-root { background: var(--tk-canvas) !important; }
+a { color: var(--tk-blue); }
+
+/* ============================================================= Login screen */
+[class*="StyledAuthenticationPage"] { background: var(--tk-canvas) !important; }
+[class*="LoginButton"] {
+  background: var(--tk-blue) !important;
+  border-radius: 999px !important;
+  border: 0 !important;
+  font-weight: 700 !important;
+  transition: background-color .2s !important;
+}
+[class*="LoginButton"]:hover { background: var(--tk-navy-deep) !important; }
+/* Watermark "Decap" kecil di pojok login — dibiarin (bukan wajib
+   disembunyiin, Decap open-source gak minta atribusi khusus). */
+
+/* ===================================================== Chrome bawaan Decap
+   Topbar app (logo Decap, nav Content/Media/dst) DAN sidebar daftar koleksi
+   di halaman list — dua-duanya diganti total sama rail + tabel custom kita
+   sendiri (lihat shell.css & #articleListView di articles/index.html), jadi
+   yang bawaan Decap dimatiin semua di sini. */
+header[class*="AppHeader"] { display: none !important; }
+[class*="SidebarContainer"] { display: none !important; }
+/* CollectionMain punya padding-left:280px bawaan buat nyisain tempat
+   sidebar di atas — begitu sidebar-nya di-hide, padding itu nyisa jadi gap
+   kosong. Ditimpa 0. */
+[class*="CollectionMain"] { padding-left: 0 !important; }
+
+/* Toolbar EDITOR (bukan topbar app di atas — ini toolbar khusus pas lagi
+   buka/edit satu artikel: "← Artikel", Publish, Hapus, dst). */
+/* "Cek Preview" (link ke deploy preview — kita gak pasang layanan deploy
+   preview kayak Netlify, jadi gak fungsi) dan avatar akun pojok kanan atas
+   (menu setting Decap, kita punya "Keluar" sendiri di rail) — dua-duanya
+   gak kepake, disembunyiin. Dites nyata: ToolbarSubSectionFirst-
+   ToolbarSubSectionLast (bungkus Cek Preview) & SettingsWrapper (bungkus
+   avatar). */
+[class*="ToolbarSubSectionFirst-ToolbarSubSectionLast"],
+[class*="SettingsWrapper"] {
+  display: none !important;
+}
+/* SettingsWrapper cuma isi avatar-nya doang — bungkus luarnya sendiri
+   (ToolbarSectionMeta) masih render kosong dengan border-left-nya, jadi
+   nyisa garis pembatas nganggur di ujung kanan toolbar. Ikut disembunyiin. */
+[class*="ToolbarSectionMeta"] { display: none !important; }
+/* Status "Changes saved" di pojok kiri atas editor — minta dihilangkan aja
+   (bukan diterjemahin), dianggap noise karena autosave emang selalu jalan
+   diam-diam di background. Dites nyata: BackStatus/BackStatusUnchanged. */
+[class*="BackStatus"] { display: none !important; }
+
+/* ============================================================== Tombol
+   (Publish, Save, "+ Artikel", dst — PENTING: banyak yang elemen <a>
+   bukan <button>, jadi selector-nya gak boleh dibatesin ke tag button aja.
+   Dites nyata: CollectionTopNewButton = tombol "+ Artikel".) */
+a[class*="Button"]:not([class*="Icon"]),
+button[class*="Button"]:not([class*="Icon"]):not([class*="Toggle"]) {
+  border-radius: 999px !important;
+  font-weight: 700 !important;
+}
+[class*="CollectionTopNewButton"],
+[class*="PublishButton"],
+[class*="SaveButton"],
+[class*="default-primary"],
+[class*="StyledDropdownButton"],
+[class*="AddButton"] {
+  background: var(--tk-blue) !important;
+  border-color: var(--tk-blue) !important;
+  color: #fff !important;
+}
+[class*="CollectionTopNewButton"]:hover,
+[class*="PublishButton"]:hover,
+[class*="SaveButton"]:hover,
+[class*="StyledDropdownButton"]:hover,
+[class*="AddButton"]:hover {
+  /* sama kayak hover tombol primer (.btn--light) di website: ganti warna
+     jadi cyan, bukan gelapin ke navy */
+  background: var(--tk-cyan) !important;
+}
+/* StyledDropdownButton dipakai buat tombol status "Publish"/"Sudah publish"
+   di toolbar atas — dites nyata: elemennya <span>, bukan <button>/<a>
+   (jadi gak kena selector "a[class*=Button]/button[class*=Button]" di
+   atas), warna bawaannya pale cyan (badge status), ditimpa jadi solid
+   biru biar konsisten sama tombol primer di website. */
+[class*="StyledDropdownButton"] {
+  border-radius: 999px !important;
+  font-weight: 700 !important;
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+}
+/* Varian "caret" (ada panah dropdown kecil) render panahnya lewat ::after
+   position:absolute; right:10px; width:10px — dia GAK ikut dorong teks
+   (namanya juga absolute), jadi teksnya butuh padding-right ekstra sendiri
+   biar gak numpuk sama panahnya. */
+[class*="StyledDropdownButton"][class*="caret"] { padding-right: 26px !important; }
+/* "Tambah paragraf pembuka" / "Tambah kata kunci" (AddButton, ikon "+" biasa
+   tanpa caret dropdown) — padding & tingginya beda dari StyledDropdownButton
+   bawaan Decap (2px/12px vs 0px/16px), jadi kelihatan gak sama biar pun
+   sama-sama udah dicat biru. Disamain ke ukuran StyledDropdownButton versi
+   non-caret (padding 16px kiri-kanan). Tinggi PAKAI padding vertikal
+   (min-height, bukan height tetap) — di layar sempit labelnya suka kepaksa
+   jadi 2 baris ("Tambah paragraf" / "pembuka"), kalau height dikunci pas
+   buat 1 baris, teks baris keduanya meluber ke luar kotak (mepet ke
+   atas/bawah, keliatan kepotong). */
+[class*="AddButton"] {
+  display: inline-flex !important;
+  align-items: center !important;
+  min-height: 36px !important;
+  padding: 9px 16px !important;
+  font-size: 14px !important;
+  line-height: 1.25 !important;
+}
+
+/* ========================================================= Kartu/list
+   (daftar artikel di Content Manager bawaan Decap — sebenernya kita udah
+   gak pakai tampilan list ini sama sekali, ada tabel custom sendiri di
+   #articleListView, tapi rule ini dibiarin sebagai jaring pengaman kalau
+   suatu saat rute list bawaan Decap sempat kelihatan/diakses.)
+   Dites nyata: tiap baris ".../ListCard-card-card" punya width:682px HARDCODE
+   dari Decap sendiri (bukan dihitung dari lebar kontainer) — jadi daftar
+   artikel keliatan sempit banget dengan sisa layar kosong di kanan padahal
+   ruangnya ada. Ditimpa full-width. */
+[class*="ListCard-card-card"] {
+  width: 100% !important;
+  border-radius: 14px !important;
+  border-color: var(--tk-line) !important;
+}
+[class*="CardTitle"] { color: var(--tk-ink) !important; }
+[class*="Card-"], [class*="CollectionCard"] {
+  border-radius: 14px !important;
+  border-color: var(--tk-line) !important;
+}
+
+/* ============================================== Widget upload gambar
+   (tombol "Choose different image" / "Replace with URL" / "Remove image",
+   dan versi sebelum ada gambar "Choose an image" / "Insert from URL")
+   Dites nyata: FileWidgetButton (netral) & FileWidgetButtonRemove (bahaya).
+   Bawaannya numpuk ke bawah kayak link/chip kecil — dijadiin tombol
+   sungguhan, lebar sama, sebaris. Parent-nya sendiri gak punya class (cuma
+   <div>/<span> polos) jadi dicolek pakai :has() dari anaknya — TERNYATA dua
+   state ini (ada gambar vs belum) punya struktur DOM beda: yang udah ada
+   gambar, tombolnya LANGSUNG anak <div>; yang belum ada gambar (baru
+   "Pilih gambar"/"Masukkan dari URL"), dua tombolnya nyempil bareng di
+   DALAM SATU <span display:inline> — makanya default-nya numpuk kebungkus
+   kayak teks biasa (wrap kayak kata), bukan div terpisah per tombol. */
+div:has(> [class*="FileWidgetButton"]),
+span:has(> [class*="FileWidgetButton"]) {
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+[class*="FileWidgetButton"] {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  min-width: 148px;
+  height: 40px;
+  margin: 0 !important;
+  padding: 0 14px !important;
+  border-radius: 10px !important;
+  border: 0 !important;
+  font-weight: 700 !important;
+  font-size: .82rem !important;
+  background: var(--tk-canvas-alt) !important;
+  color: var(--tk-ink) !important;
+  transition: background-color .15s !important;
+}
+[class*="FileWidgetButton"]:hover { background: var(--tk-line) !important; }
+[class*="FileWidgetButtonRemove"] {
+  background: var(--tk-danger-soft) !important;
+  color: var(--tk-danger) !important;
+}
+[class*="FileWidgetButtonRemove"]:hover { background: #FBDADA !important; }
+
+/* ====================================================== Field boolean
+   (toggle, mis. "Draft") — dites nyata: ControlContainer-nya punya 2 anak
+   (label + <div> pembungkus toggle switch), div pembungkusnya kena kotak
+   border bawaan sama kayak field lain (padahal isinya cuma satu switch
+   kecil, gak perlu kotak). Diubah: toggle & label disejajarkan satu baris
+   (toggle di kiri), kotaknya dilepas. */
+[class*="ControlContainer"]:has(> div > [class*="ToggleContainer"]) {
+  display: flex !important;
+  flex-direction: row-reverse !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+[class*="ControlContainer"]:has(> div > [class*="ToggleContainer"]) > div:not([class*="ControlTopbar"]) {
+  border: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  width: auto !important;
+}
+[class*="ControlContainer"]:has(> div > [class*="ToggleContainer"]) [class*="ControlTopbar"] {
+  margin: 0 !important;
+}
+[class*="ControlContainer"]:has(> div > [class*="ToggleContainer"]) [class*="FieldLabel"] {
+  margin: 0 !important;
+}
+/* Toggle switch pas posisi ON — warna birunya bawaan Decap sendiri
+   (rgb(58,105,199)), bukan biru Temu Karsa. Class background ON & OFF-nya
+   sama-sama "...ToggleBackground-BooleanBackground-css" (gak ada penanda
+   "checked" di nama class-nya), jadi dibedain lewat atribut aria-checked
+   di tombolnya, bukan class. */
+[role="switch"][aria-checked="true"] [class*="ToggleBackground"] {
+  background-color: var(--tk-blue) !important;
+}
+
+/* Tombol "Sekarang"/"Kosongkan" di field tanggal — dites nyata: bungkusnya
+   <div class="...-Buttons">, gap bawaan 20px, kejauhan dibanding pasangan
+   tombol lain (Pilih gambar/Masukkan dari URL yang udah 10px). Disamain. */
+[class$="-Buttons"] { gap: 10px !important; }
+
+/* ================================================================= Form
+   (label field, border input, jarak antar field) — bawaan Decap: label
+   jadi "chip" abu nempel di pojok kiri-atas border field (sudut kiri-atas
+   inputnya sengaja lancip 0px biar nyambung sama chip-nya), dan jarak antar
+   field lumayan renggang. Diubah jadi pola label polos di atas field
+   (bold, gak nge-box) + border seragam rounded — dites nyata:
+   FieldLabel, ControlContainer, ControlHint. */
+[class*="FieldLabel"] {
+  display: block !important;
+  background: transparent !important;
+  color: var(--tk-ink) !important;
+  font-size: .8rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  padding: 0 !important;
+  margin: 0 0 8px !important;
+}
+[class*="ControlContainer"] { margin-bottom: 22px !important; }
+[class*="ControlHint"] { font-size: .78rem !important; margin-top: 6px !important; }
+
+/* CUMA anak LANGSUNG ControlContainer, bukan descendant — kalau dilebarin
+   ke descendant, ke-tangkep juga input pencarian tersembunyi di dalam
+   dropdown react-select (Kategori dkk) yang seharusnya invisible, dan
+   malah nongol jadi kotak putih kecil aneh nempel di select-nya. */
+[class*="ControlContainer"] > input,
+[class*="ControlContainer"] > textarea,
+[class*="ControlContainer"] > select {
+  border: 1.5px solid var(--tk-line) !important;
+  border-radius: 10px !important;
+  padding: 11px 16px !important;
+  font-size: .88rem !important;
+  transition: border-color .15s, box-shadow .15s !important;
+}
+/* Widget yang bukan input polos (gambar, list, dsb) bungkusnya juga <div>
+   anak langsung ControlContainer, sama-sama masih punya sudut lancip
+   "notch" bawaan Decap itu — dibulatin juga, kecuali ControlTopbar
+   (baris label-nya sendiri, bukan field). */
+[class*="ControlContainer"] > div:not([class*="ControlTopbar"]) {
+  border-radius: 10px !important;
+}
+[class*="ControlContainer"] > input:focus,
+[class*="ControlContainer"] > textarea:focus,
+[class*="ControlContainer"] > select:focus {
+  outline: 0 !important;
+  border-color: var(--tk-blue) !important;
+  box-shadow: 0 0 0 4px rgba(0, 88, 255, .12) !important;
+}
+
+/* Dropdown react-select (field "Kategori" dkk) — komponennya bukan <select>
+   asli, jadi ditimpa lewat class suffix "-control" yang selalu ada di nama
+   class-nya (hash-nya di depan beda-beda, tapi akhirannya konsisten). */
+[class$="-control"] {
+  border-radius: 10px !important;
+  border-color: var(--tk-line) !important;
+  min-height: 45px !important;
+}
+[class$="-control"]:hover { border-color: var(--tk-line) !important; }
+div[class*="-control"][class*="focused"] {
+  border-color: var(--tk-blue) !important;
+  box-shadow: 0 0 0 4px rgba(0, 88, 255, .12) !important;
+}
+
+/* ================================================= Form di HP/tablet
+   Decap render form EDIT artikel selalu 2 kolom (form + panel preview di
+   kanan) lewat react-split-pane, dan wadahnya (EditorContainer) di-hardcode
+   Decap sendiri minimal lebar 800px. Biasanya pengguna bisa matiin panel
+   preview itu lewat tombol "Cek Preview" di toolbar — tapi tombol itu udah
+   kita sembunyiin permanen (lihat ToolbarSubSectionFirst-ToolbarSubSectionLast
+   di atas), jadi preview-nya nyangkut kebuka terus dan maksa form melebar
+   sampai 800px+ di layar sempit. Fix-nya: di bawah 900px (sama kayak
+   breakpoint rail di shell.css), matiin panel preview + divider-nya secara
+   paksa, sisain form-nya doang selebar penuh 1 kolom. */
+@media (max-width: 900px) {
+  [class*="EditorContainer"] {
+    min-width: 0 !important;
+    width: 100% !important;
+    /* EditorContainer aslinya position:absolute + overflow-y:hidden setinggi
+       viewport doang (812px) — pantesnya gitu pas ada 2 kolom (form+preview)
+       yang masing2 scroll SENDIRI-SENDIRI. Begitu preview dimatiin (lihat
+       Pane2 di bawah) dan form-nya 1 kolom, cara termudah biar seluruh form
+       (yang bisa jauh lebih tinggi dari layar) bisa dijangkau adalah bikin
+       EditorContainer sendiri yang jadi area scroll-nya.
+
+       JANGAN coba "height:auto" di SplitPane/Pane1 sebagai gantinya —
+       pernah dicoba, malah bikin SplitPane mekar sepanjang isi form
+       (1800px+) padahal EditorContainer pembungkusnya masih position:
+       absolute setinggi viewport doang, kelebihannya kepotong DIAM-DIAM
+       tanpa scrollbar sama sekali (halaman kekunci gak bisa discroll). */
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  [class*="ToolbarContainer"] { min-width: 0 !important; width: 100% !important; }
+  /* Tombol "← Artikel" (BackLink) nempel dari x:0 — numpuk sama tombol
+     hamburger rail kita yang ngambang fixed di pojok kiri-atas (top:14,
+     left:14, lebar ~38px). Geser ke kanan biar gak tabrakan. */
+  [class*="ToolbarSectionBackLink"] { padding-left: 52px !important; }
+  /* Panel preview di sebelah kanan form dimatiin total (lihat penjelasan
+     panjang di atas komentar section ini). */
+  .Pane1 { width: 100% !important; max-width: 100% !important; }
+  .Pane2, .Resizer { display: none !important; }
+  /* ViewControls (tombol bulat mata/scroll-ke-atas) nempel di kanan-atas
+     form, cuma berguna buat toggle panel preview yang udah kita matiin
+     total — daripada nyangkut ngambang nutupin field, sembunyiin aja. */
+  [class*="ViewControls"] { display: none !important; }
+  /* Toolbar-nya position:absolute (bukan bagian normal flow halaman), jadi
+     kalau tombol "Publish artikel" + "Hapus artikel" gak muat di layar
+     sempit, dia kepotong DIAM-DIAM di luar batas layar (gak matiin scroll
+     body, tapi juga gak kelihatan/gak kepencet). Kasih scroll horizontal
+     sendiri di baris tombolnya biar tetep bisa dijangkau. */
+  [class*="ToolbarSectionMain"] {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  /* Wadah form (nama class-nya "PreviewPaneContainer" walau isinya form,
+     bukan preview — penamaan Decap sendiri) kadang nyisain scrollLeft dari
+     waktu preview masih ketaruh di sebelahnya (2 kolom), jadi kontennya
+     keliatan ke-geser ke kiri walau preview-nya udah kita matiin total.
+     Matiin scroll horizontalnya biar kontennya nempel rapi di kiri. */
+  [class*="ControlPaneContainer"], [class*="PreviewPaneContainer"] {
+    /* overflow:hidden doang masih bisa digeser scrollLeft via JS (mis.
+       scrollIntoView pas navigasi ke field tertentu) walau gak nunjukkin
+       scrollbar — clip beneran ngelarang scroll-nya sama sekali. */
+    overflow-x: clip !important;
+  }
+  /* Field tanggal: baris <input datetime> + tombol "Sekarang"/"Kosongkan"
+     itu flex row nowrap — di layar sempit, input-nya sendiri udah makan
+     hampir semua lebar, jadi tombolnya overflow keluar kotak field (kepotong
+     nempel di tepi kanan). Boleh wrap ke baris baru di bawah input. */
+  [class*="DateTimeControl"] { flex-wrap: wrap !important; row-gap: 10px !important; }
+}

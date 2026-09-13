@@ -1,0 +1,9 @@
+---
+pagination:
+  data: articles
+  size: 1
+  alias: article
+permalink: "{{ article.slug }}.html"
+eleventyExcludeFromCollections: true
+---
+{% include "article-layout.njk" %}

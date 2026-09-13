@@ -1,0 +1,158 @@
+# ============================================================================
+# Backend "github" — publish dari CMS bakal nge-commit beneran ke repo GitHub.
+# OAuth login-nya sudah disiapkan nyatu di project ini sendiri (folder
+# functions/api/ — /api/auth dan /api/callback, format Cloudflare Pages
+# Functions), jadi TIDAK perlu deploy service terpisah.
+# WAJIB diisi sebelum CMS bisa dipakai (lihat CMS-SETUP.md langkah #1-#3):
+#   1. repo di bawah ini diisi "owner/nama-repo" GitHub yang beneran.
+#   2. base_url diisi domain Cloudflare Pages/domain situs INI SENDIRI
+#      setelah deploy (contoh: https://temukarsa.pages.dev) — bukan URL lain.
+#   3. Di Cloudflare Pages Project Settings → Environment variables, isi
+#      OAUTH_CLIENT_ID dan OAUTH_CLIENT_SECRET dari GitHub OAuth App.
+# Tanpa itu, tombol "Login" di /admin bakal error.
+# ============================================================================
+backend:
+  name: github
+  repo: GANTI_DENGAN_owner/nama-repo   # contoh: temukarsa/temu-karsa-website
+  branch: main
+  base_url: GANTI_DENGAN_URL_SITUS_INI_SETELAH_DEPLOY   # contoh: https://temukarsa.pages.dev
+
+# Mode edit lokal: HANYA aktif kalau CMS-nya dibuka dari localhost, dan cuma
+# jalan kalau proxy "npx decap-server" lagi hidup. Dipakai buat lihat/edit
+# artikel di komputer sendiri tanpa login GitHub — file yang dibaca & ditulis
+# adalah file asli di eleventy/articles/. Di domain produksi baris ini
+# diabaikan Decap, jadi aman ditinggal di sini.
+local_backend: true
+
+# Bahasa UI Decap CMS (tombol, label, notifikasi) — "id" = Indonesia.
+locale: "id"
+
+logo_url: "/assets/img/logo-temu-karsa.png"
+
+media_folder: "assets/img/artikel"
+public_folder: "assets/img/artikel"
+
+publish_mode: simple
+
+collections:
+  - name: "articles"
+    label: "Artikel"
+    label_singular: "Artikel"
+    folder: "eleventy/articles"
+    create: true
+    slug: "{{slug}}"
+    extension: "json"
+    format: "json"
+    identifier_field: "title"
+    summary: "{{title}} — {{category}}"
+    fields:
+      - { label: "Judul Artikel", name: "title", widget: "string" }
+      - label: "URL Artikel (slug)"
+        name: "slug"
+        widget: "string"
+        hint: "Contoh: pembuatan-cv → artikel tayang di alamat pembuatan-cv.html. Huruf kecil semua, tanpa spasi, pakai tanda hubung (-)."
+      - { label: "Tanggal Publish", name: "date", widget: "datetime" }
+      - label: "Draft (belum siap tayang)"
+        name: "draft"
+        widget: "boolean"
+        default: false
+        required: false
+      - label: "Kategori"
+        name: "category"
+        widget: "select"
+        options: ["Legalitas Usaha", "Office & Workspace"]
+      - label: "Estimasi Waktu Baca"
+        name: "readTime"
+        widget: "string"
+        hint: "Contoh: 6 min read"
+      - label: "Gambar Sampul (Hero)"
+        name: "heroImage"
+        widget: "image"
+      - label: "Deskripsi Gambar Sampul"
+        name: "heroImageAlt"
+        widget: "string"
+        hint: "Deskripsi singkat isi gambar, buat aksesibilitas & SEO."
+      - label: "Ringkasan buat Google (SEO)"
+        name: "metaDescription"
+        widget: "text"
+        hint: "1-2 kalimat yang muncul di hasil pencarian Google."
+      - label: "Paragraf Pembuka"
+        name: "leadParagraphs"
+        widget: "list"
+        required: false
+        hint: "1-2 paragraf pembuka sebelum masuk ke bagian-bagian artikel."
+        field: { label: "Paragraf", name: "paragraph", widget: "markdown", buttons: ["bold", "italic", "link"], editor_components: [] }
+      - label: "Isi Artikel"
+        name: "sections"
+        widget: "list"
+        summary: "{{fields.heading}}{{fields.quote}}"
+        hint: "Klik \"Tambah\" lalu pilih jenis bagian: Teks, Tabel Perbandingan, atau Kutipan."
+        types:
+          - label: "Bagian Teks"
+            name: "text"
+            widget: "object"
+            summary: "{{fields.heading}}"
+            fields:
+              - label: "Judul Bagian"
+                name: "heading"
+                widget: "string"
+                required: false
+                hint: "Kosongkan kalau bagian ini tanpa judul (misalnya paragraf penutup)."
+              - label: "Tampilkan di Daftar Isi"
+                name: "showInToc"
+                widget: "boolean"
+                default: true
+                required: false
+                hint: "Aktif = judul bagian ini muncul di kotak \"Daftar Isi\" pojok kanan artikel."
+              - label: "Isi Tulisan"
+                name: "body"
+                widget: "markdown"
+                buttons: ["bold", "italic", "bulleted-list", "numbered-list", "link", "quote"]
+                editor_components: []
+                minimal: true
+          - label: "Tabel Perbandingan"
+            name: "table_section"
+            widget: "object"
+            summary: "{{fields.heading}}"
+            fields:
+              - { label: "Judul Tabel", name: "heading", widget: "string" }
+              - label: "Mode 2 Kolom"
+                name: "table_split"
+                widget: "boolean"
+                default: false
+                required: false
+                hint: "Aktifkan untuk tabel ringkasan 2 kolom sejajar (mis. \"Pilih A jika... / Pilih B jika...\"). Biarkan mati untuk tabel data biasa."
+              - label: "Judul Kolom"
+                name: "table_headers"
+                widget: "string"
+                hint: "Pisahkan tiap judul kolom dengan tanda | (garis vertikal). Contoh: Aspek | CV | PT"
+              - label: "Baris Tabel"
+                name: "table_rows"
+                widget: "list"
+                hint: "Klik \"Tambah\" untuk 1 baris baru. Isi tiap baris dengan format sama: nilai per kolom dipisah tanda |"
+                field: { label: "Baris (pisahkan kolom dengan |)", name: "row", widget: "string" }
+          - label: "Kutipan"
+            name: "quote_section"
+            widget: "object"
+            summary: "{{fields.quote}}"
+            fields:
+              - label: "Teks Kutipan"
+                name: "quote"
+                widget: "text"
+                hint: "Muncul sebagai kutipan besar bergaris di tengah artikel."
+      - label: "Kata Kunci (Hashtag)"
+        name: "keywords"
+        widget: "list"
+        hint: "Tanpa tanda pagar (#), CMS akan menambahkannya otomatis."
+        field: { label: "Kata Kunci", name: "keyword", widget: "string" }
+      - label: "Artikel Terkait"
+        name: "relatedArticles"
+        widget: "relation"
+        collection: "articles"
+        search_fields: ["title"]
+        value_field: "slug"
+        display_fields: ["title"]
+        multiple: true
+        min: 1
+        max: 3
+        hint: "Pilih 1-3 artikel lain yang akan muncul di \"Artikel Terbaru Lainnya\" pada halaman website Temu Karsa."
