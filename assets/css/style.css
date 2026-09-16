@@ -424,7 +424,7 @@ a.nav__dd-title:hover { color: var(--blue); }
   position: absolute;
   inset: 0;
   z-index: -2;
-  background-image: url('../img/hero-handshake.jpg');
+  background-image: url('../img/hero-handshake.avif');
   background-size: cover;
   background-position: center 42%;
 }
