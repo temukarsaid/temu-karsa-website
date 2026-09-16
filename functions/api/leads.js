@@ -92,3 +92,55 @@ export async function onRequestGet({ request, env }) {
 
   return new Response(JSON.stringify(data), { status: 200, headers: { 'Content-Type': 'application/json' } });
 }
+
+// DELETE /api/leads?id=<uuid> -> hapus 1 lead permanen dari Supabase.
+export async function onRequestDelete({ request, env }) {
+  const session = await requireSession(request, env);
+  if (!session) {
+    return new Response(JSON.stringify({ error: 'unauthorized' }), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  const url = new URL(request.url);
+  const id = url.searchParams.get('id');
+  if (!id) {
+    return new Response(JSON.stringify({ error: 'id wajib diisi' }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  if (env.DEMO_LEADS === '1') {
+    // Mode demo cuma buat coba-coba tampilan lokal — gak ada tempat nyimpen
+    // beneran buat dihapus, jadi anggap sukses aja tanpa efek apa-apa.
+    return new Response(JSON.stringify({ ok: true }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+  }
+
+  if (!env.SUPABASE_URL || !env.SUPABASE_SERVICE_ROLE_KEY) {
+    return new Response(JSON.stringify({ error: 'Server belum dikonfigurasi (SUPABASE_URL/SUPABASE_SERVICE_ROLE_KEY).' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  const supaHeaders = {
+    apikey: env.SUPABASE_SERVICE_ROLE_KEY,
+    Authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}`,
+  };
+
+  const restUrl = new URL(`${env.SUPABASE_URL}/rest/v1/leads`);
+  restUrl.searchParams.set('id', `eq.${id}`);
+
+  const res = await fetch(restUrl, { method: 'DELETE', headers: supaHeaders });
+  if (!res.ok) {
+    const text = await res.text();
+    return new Response(JSON.stringify({ error: `Supabase error: ${text}` }), {
+      status: 502,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  return new Response(JSON.stringify({ ok: true }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+}

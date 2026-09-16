@@ -282,6 +282,11 @@ body { margin: 0; background: var(--canvas); color: var(--ink); font-family: var
 }
 .row-actions__menu button:hover { background: var(--canvas-alt); color: var(--ink); }
 .row-actions__menu svg { width: 16px; height: 16px; flex-shrink: 0; color: var(--muted); }
+/* Aksi destruktif (Hapus) — dipisahin warnanya (merah) dari aksi netral
+   lainnya di menu yang sama, biar user sadar ini beda dari Edit/Lihat/Salin. */
+.row-actions__menu button.is-danger { color: var(--danger); }
+.row-actions__menu button.is-danger svg { color: var(--danger); }
+.row-actions__menu button.is-danger:hover { background: var(--danger-soft); color: var(--danger); }
 
 /* ------------------------------------------------------------ Donut chart */
 .donut-wrap { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; margin-bottom: 4px; }

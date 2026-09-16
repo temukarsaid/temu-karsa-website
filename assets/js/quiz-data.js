@@ -269,7 +269,7 @@ var QUIZ_DATA = {
           value: "it",
           next: "q5",
           kbli: [
-            { code: "62190", title: "Aktivitas Pemrograman Komputer Lainnya" },
+            { code: "62199", title: "Aktivitas Pemrograman Komputer Lainnya YTDL" },
             { code: "62209", title: "Aktivitas Konsultansi Komputer dan Manajemen Fasilitas Komputer Lainnya" }
           ]
         },
@@ -313,7 +313,12 @@ var QUIZ_DATA = {
           label: "Furnitur (Kayu, Rotan, Logam, atau Plastik)",
           value: "furnitur",
           next: "q5",
-          kbli: [{ code: "31011", title: "Industri Furnitur dari Kayu" }]
+          kbli: [
+            { code: "31011", title: "Industri Furnitur dari Kayu" },
+            { code: "31012", title: "Industri Furnitur dari Rotan dan Bambu" },
+            { code: "31021", title: "Industri Furnitur dari Plastik" },
+            { code: "31022", title: "Industri Furnitur dari Logam" }
+          ]
         },
         {
           label: "Produk Plastik atau Kemasan",
@@ -325,13 +330,16 @@ var QUIZ_DATA = {
           label: "Produk atau Fabrikasi Logam",
           value: "logam",
           next: "q5",
-          kbli: [{ code: "25111", title: "Industri Produk Logam Struktural" }]
+          kbli: [
+            { code: "25111", title: "Industri Produk Logam Struktural Bukan Aluminium untuk Konstruksi Ringan" },
+            { code: "25112", title: "Industri Produk Logam Struktural Aluminium untuk Konstruksi Ringan" }
+          ]
         },
         {
           label: "Elektronik atau Komponen Elektronik",
           value: "elektronik",
           next: "q5",
-          kbli: [{ code: "26190", title: "Industri Komponen dan Papan Elektronik Lainnya" }]
+          kbli: [{ code: "26199", title: "Industri Komponen dan Papan Elektronik Lainnya YTDL" }]
         },
         {
           label: "Produk Manufaktur Lainnya",
