@@ -144,3 +144,79 @@ export async function onRequestDelete({ request, env }) {
 
   return new Response(JSON.stringify({ ok: true }), { status: 200, headers: { 'Content-Type': 'application/json' } });
 }
+
+// PATCH /api/leads?id=<uuid>  body: { status: "baru" | "pdf_siap" }
+// -> admin tandai manual status lead (dulu ini otomatis lewat trigger yang
+// udah dimatiin — sekarang murni aksi manual admin, biar sesuai fakta
+// "udah dikirim beneran" bukan "berhasil generate PDF di server").
+export async function onRequestPatch({ request, env }) {
+  const session = await requireSession(request, env);
+  if (!session) {
+    return new Response(JSON.stringify({ error: 'unauthorized' }), {
+      status: 401,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  const url = new URL(request.url);
+  const id = url.searchParams.get('id');
+  if (!id) {
+    return new Response(JSON.stringify({ error: 'id wajib diisi' }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  let body;
+  try {
+    body = await request.json();
+  } catch (err) {
+    return new Response(JSON.stringify({ error: 'Body request gak valid' }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  if (body.status !== 'baru' && body.status !== 'pdf_siap') {
+    return new Response(JSON.stringify({ error: 'status harus "baru" atau "pdf_siap"' }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  if (env.DEMO_LEADS === '1') {
+    return new Response(JSON.stringify({ ok: true }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+  }
+
+  if (!env.SUPABASE_URL || !env.SUPABASE_SERVICE_ROLE_KEY) {
+    return new Response(JSON.stringify({ error: 'Server belum dikonfigurasi (SUPABASE_URL/SUPABASE_SERVICE_ROLE_KEY).' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  const supaHeaders = {
+    apikey: env.SUPABASE_SERVICE_ROLE_KEY,
+    Authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}`,
+    'Content-Type': 'application/json',
+    Prefer: 'return=minimal',
+  };
+
+  const restUrl = new URL(`${env.SUPABASE_URL}/rest/v1/leads`);
+  restUrl.searchParams.set('id', `eq.${id}`);
+
+  const res = await fetch(restUrl, {
+    method: 'PATCH',
+    headers: supaHeaders,
+    body: JSON.stringify({ status: body.status }),
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    return new Response(JSON.stringify({ error: `Supabase error: ${text}` }), {
+      status: 502,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  return new Response(JSON.stringify({ ok: true }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+}
