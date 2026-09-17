@@ -11,17 +11,17 @@
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Tanya AI | Temu Karsa</title>
-<meta name="description" content="Tanya AI Konsultan Bisnis Temu Karsa — ceritakan kebutuhan atau pertanyaan bisnis Anda, dan dapatkan rekomendasi layanan yang paling sesuai.">
+<title>Legal Check — Cek KBLI & Kebutuhan Legalitas Bisnismu | Temu Karsa</title>
+<meta name="description" content="Jawab beberapa pertanyaan singkat dan dapatkan rekomendasi jenis usaha serta legalitas yang paling sesuai untukmu — gratis dan instan.">
 <meta name="theme-color" content="#041C4F">
 
 <!-- Open Graph -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="Tanya AI | Temu Karsa">
-<meta property="og:description" content="Tanya AI Konsultan Bisnis Temu Karsa — ceritakan kebutuhan atau pertanyaan bisnis Anda, dan dapatkan rekomendasi layanan yang paling sesuai.">
+<meta property="og:title" content="Legal Check — Cek KBLI & Kebutuhan Legalitas Bisnismu | Temu Karsa">
+<meta property="og:description" content="Jawab beberapa pertanyaan singkat dan dapatkan rekomendasi jenis usaha serta legalitas yang paling sesuai untukmu.">
 <meta property="og:image" content="assets/img/logo-temu-karsa.png">
 
-<link rel="canonical" href="https://www.temukarsa.com/tanya-ai.html">
+<link rel="canonical" href="https://www.temukarsa.com/legal-check.html">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"LocalBusiness","name":"Temu Karsa","image":"https://www.temukarsa.com/assets/img/logo-temu-karsa.png","url":"https://www.temukarsa.com/","telephone":"+6285121558129","email":"halo@temukarsa.id","address":{"@type":"PostalAddress","streetAddress":"Ruko Taman Juanda, Jl. Pahlawan Blok B1 No.3","addressLocality":"Bekasi Timur","addressRegion":"Jawa Barat","postalCode":"17111","addressCountry":"ID"},"openingHoursSpecification":{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],"opens":"08:00","closes":"17:00"}}</script>
 
 <link rel="icon" type="image/png" href="assets/img/favicon-mark.png">
@@ -71,12 +71,6 @@
     </nav>
 
     <div class="header__cta">
-      <!-- Tanya AI ARCHIVED (2026-09-12) - link navbar dilepas, page tetap ada di tanya-ai.html
-      <a class="nav-ai" href="tanya-ai.html">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.09 6.26L20 11l-5.91 1.74L12 19l-2.09-6.26L4 11l5.91-1.74L12 3z"/></svg>
-        Tanya AI
-      </a>
-      -->
       <a class="btn btn--light btn--sm" href="https://wa.me/6285121558129?text=Halo%20Temu%20Karsa%2C%20saya%20ingin%20konsultasi%20gratis%20mengenai%20legalitas%20usaha%2Fworkspace." target="_blank" rel="noopener">
         Konsultasi Gratis
         <i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></i>
@@ -90,46 +84,47 @@
 
 <main>
 
-  <!-- ============================================================= TANYA AI -->
-  <section class="section ai-tool" id="asisten-ai" style="padding-top:180px;">
+  <!-- ================================================================ INTRO -->
+  <section class="section" id="kuis-intro">
     <div class="wrap">
       <nav class="breadcrumb breadcrumb--light" aria-label="Breadcrumb" data-reveal>
         <ol>
           <li><a href="index.html">Beranda</a></li>
-          <li aria-current="page">Tanya AI</li>
+          <li><a href="karsabiz.html">KarsaBiz</a></li>
+          <li aria-current="page">Legal Check</li>
         </ol>
       </nav>
+
+      <span class="section-kicker" data-reveal>Legal Check</span>
+      <h1 class="intro-heading why__intro" data-reveal data-delay="60">
+        <span class="intro-heading__strong">Cek KBLI dan cari tahu legalitas</span>
+        <span class="intro-heading__soft">apa saja yang kamu butuhkan untuk bisnis kamu.</span>
+      </h1>
     </div>
+  </section>
 
-    <div class="wrap ai-tool__wrap">
-      <h1 class="ai-tool__title" data-reveal>Tanya AI Konsultan Bisnis Kami</h1>
-      <p class="ai-tool__subtitle" data-reveal data-delay="60">Ceritakan kebutuhan atau pertanyaan bisnis Anda, dan dapatkan rekomendasi
-      layanan Temu Karsa yang paling sesuai.</p>
-
-      <form class="ai-box" id="aiBox" data-reveal data-delay="120">
-        <div class="ai-box__field">
-          <textarea class="ai-box__input" id="aiInput" rows="3" maxlength="500"></textarea>
-          <div class="ai-box__placeholder" id="aiPlaceholder" aria-hidden="true"><span class="ai-box__ptext"></span><span class="ai-box__caret"></span></div>
-        </div>
-
-        <div class="ai-box__bar">
-          <div class="ai-box__chips">
-            <button type="button" class="ai-chip">Pendirian PT</button>
-            <button type="button" class="ai-chip">Virtual Office</button>
-            <button type="button" class="ai-chip">Izin Usaha</button>
-            <button type="button" class="ai-chip">Coworking Space</button>
-          </div>
-          <div class="ai-box__meta">
-            <span class="ai-box__count"><span id="aiCount">0</span>/500</span>
-            <button type="submit" class="ai-box__send" id="aiSend" aria-label="Kirim pertanyaan" disabled>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="M6 11l6-6 6 6"/></svg>
-            </button>
+  <!-- ================================================================= KUIS -->
+  <section class="section" id="kuis-daftar">
+    <div class="wrap">
+      <div class="quiz" id="quiz" data-reveal>
+        <div class="quiz-chrome">
+          <div class="quiz-chrome__row">
+            <div class="quiz-progress" role="progressbar" aria-label="Progress kuis" aria-valuemin="0" aria-valuemax="100" id="quizProgress">
+              <div class="quiz-progress__bar" id="quizProgressBar"></div>
+            </div>
           </div>
         </div>
-      </form>
 
-      <p class="ai-tool__disclaimer" data-reveal data-delay="160">Dengan mengirim pesan, Anda memahami bahwa jawaban dihasilkan oleh AI dan
-      bukan merupakan nasihat hukum resmi. Baca <a href="kebijakan-privasi.html">Kebijakan Privasi</a> kami.</p>
+        <div class="quiz-consult">
+          <div class="quiz-consult__mascot">
+            <img src="assets/img/mascot/penasaran.png" alt="Maskot Temu Karsa" id="quizMascotImg">
+          </div>
+          <div class="quiz-consult__col">
+            <div class="quiz-bubble" id="quizBubble"></div>
+            <div class="quiz-answer-card" id="quizCard"></div>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -171,7 +166,6 @@
         <div class="footer__links">
           <a href="tentang-kami.html">Tentang Kami</a>
           <a href="artikel.html">Artikel</a>
-          <!-- Tanya AI ARCHIVED (2026-09-12) - <a href="tanya-ai.html">Tanya AI</a> -->
           <a href="kebijakan-privasi.html">Kebijakan Privasi</a>
         </div>
       </div>
@@ -229,5 +223,8 @@
 </footer>
 
 <script src="assets/js/main.js"></script>
+<script src="assets/js/quiz-data.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="assets/js/quiz.js"></script>
 </body>
 </html>

@@ -1,0 +1,191 @@
+[
+  {
+    "id": "local-1789629674110",
+    "created_at": "2026-09-17T07:21:14.110Z",
+    "status": "baru",
+    "nama": "hello",
+    "whatsapp": "082124301282",
+    "email": "kareninaaas@gmail.com",
+    "answers": {
+      "q1": "perorangan",
+      "q2": "makanan",
+      "q2-makanan-mode": "restoran",
+      "resto-skala": "medium",
+      "resto-produk": [
+        "olah-daging"
+      ],
+      "q5": "komersial",
+      "q6": "lokal",
+      "q7": "berdampak"
+    },
+    "recommendations": [
+      {
+        "id": "nib",
+        "label": "NIB (Nomor Induk Berusaha)",
+        "status": "wajib",
+        "statusLabel": "Perlu dimiliki",
+        "description": "NIB merupakan bagian dari legalitas dasar kegiatan usaha kamu, jadi identitas resmi di sistem OSS.",
+        "cta": "Urus NIB"
+      },
+      {
+        "id": "tdup-fnb",
+        "label": "TDUP (Tanda Daftar Usaha Pariwisata) — Sub-bidang Restoran/Kafe/Katering",
+        "status": "wajib",
+        "statusLabel": "Perlu dimiliki",
+        "description": "Usaha penyediaan makanan/minuman (restoran, kafe, katering, cloud kitchen) wajib terdaftar sebagai Usaha Pariwisata sub-bidang Jasa Makanan dan Minuman.",
+        "cta": "Urus TDUP"
+      },
+      {
+        "id": "higiene-sanitasi-pangan",
+        "label": "Sertifikat Higiene Sanitasi Pangan",
+        "status": "wajib",
+        "statusLabel": "Perlu dimiliki",
+        "description": "Setiap usaha penyajian makanan (restoran, warung, kafe, katering) wajib memiliki Sertifikat Higiene Sanitasi Pangan dari Dinas Kesehatan setempat.",
+        "cta": "Konsultasikan"
+      },
+      {
+        "id": "izin-lingkungan",
+        "label": "Izin Lingkungan (UKL-UPL / AMDAL)",
+        "status": "wajib",
+        "statusLabel": "Wajib diperiksa",
+        "description": "Kegiatan usaha yang berpotensi menghasilkan limbah atau polusi wajib punya dokumen lingkungan sesuai skala dampaknya.",
+        "cta": "Konsultasikan"
+      },
+      {
+        "id": "pbg-slf",
+        "label": "PBG & SLF (Izin Bangunan & Kelayakan Fungsi)",
+        "status": "kondisional",
+        "statusLabel": "Perlu diperiksa",
+        "description": "Karena kamu beroperasi di tempat/bangunan komersial, gedung tersebut perlu Persetujuan Bangunan Gedung dan Sertifikat Laik Fungsi yang sesuai.",
+        "cta": "Konsultasikan"
+      },
+      {
+        "id": "merek",
+        "label": "Pendaftaran Merek",
+        "status": "disarankan",
+        "statusLabel": "Disarankan",
+        "description": "Kalau kamu membangun brand sendiri, pendaftaran merek dapat membantu memberikan perlindungan hukum terhadap brand tersebut.",
+        "cta": "Daftarkan Merek"
+      }
+    ],
+    "kbli_matched": [
+      {
+        "code": "56101",
+        "title": "Restoran / Rumah Makan dengan Penyajian di Tempat"
+      },
+      {
+        "code": "56102",
+        "title": "Aktivitas Penyediaan Makanan di Jalan atau Kios"
+      },
+      {
+        "code": "10120",
+        "title": "Pengolahan dan Pengawetan Daging dan Produk Daging"
+      }
+    ]
+  },
+  {
+    "id": "local-1789628532572",
+    "created_at": "2026-09-17T07:02:12.572Z",
+    "status": "baru",
+    "nama": "test",
+    "whatsapp": "082124301282",
+    "email": "kareninaaas@gmail.com",
+    "answers": {
+      "q1": "perorangan",
+      "q2": "makanan",
+      "kemasan": "rumahan",
+      "bahan": [
+        "daging",
+        "susu"
+      ],
+      "q5": "rumah",
+      "q6": "lokal",
+      "q7": "berdampak"
+    },
+    "recommendations": [
+      {
+        "id": "nib",
+        "label": "NIB (Nomor Induk Berusaha)",
+        "status": "wajib",
+        "statusLabel": "Perlu dimiliki",
+        "description": "NIB merupakan bagian dari legalitas dasar kegiatan usaha kamu, jadi identitas resmi di sistem OSS.",
+        "cta": "Urus NIB"
+      },
+      {
+        "id": "izin-lingkungan",
+        "label": "Izin Lingkungan (UKL-UPL / AMDAL)",
+        "status": "wajib",
+        "statusLabel": "Wajib diperiksa",
+        "description": "Kegiatan usaha yang berpotensi menghasilkan limbah atau polusi wajib punya dokumen lingkungan sesuai skala dampaknya.",
+        "cta": "Konsultasikan"
+      },
+      {
+        "id": "izin-edar-bpom",
+        "label": "Izin Edar BPOM (MD)",
+        "status": "kondisional",
+        "statusLabel": "Perlu diperiksa",
+        "description": "Produksi skala industri atau produk yang mengandung daging/susu segar tergolong risiko lebih tinggi — umumnya butuh izin edar BPOM, bukan PIRT.",
+        "cta": "Konsultasikan"
+      },
+      {
+        "id": "merek",
+        "label": "Pendaftaran Merek",
+        "status": "disarankan",
+        "statusLabel": "Disarankan",
+        "description": "Kalau kamu membangun brand sendiri, pendaftaran merek dapat membantu memberikan perlindungan hukum terhadap brand tersebut.",
+        "cta": "Daftarkan Merek"
+      }
+    ],
+    "kbli_matched": [
+      {
+        "code": "10111-10119",
+        "title": "Kegiatan Rumah Potong Hewan"
+      },
+      {
+        "code": "10120",
+        "title": "Pengolahan dan Pengawetan Daging dan Produk Daging"
+      },
+      {
+        "code": "10501",
+        "title": "Industri Susu Segar dan Krim"
+      }
+    ]
+  },
+  {
+    "id": "11111111-aaaa-4bbb-8ccc-000000000001",
+    "created_at": "2026-09-10T03:24:00.000Z",
+    "nama": "Siti Rahmawati",
+    "whatsapp": "0812-3456-7890",
+    "email": "siti.rahmawati@gmail.com",
+    "status": "pdf_siap",
+    "answers": {
+      "q1": "perorangan",
+      "q2": "makanan",
+      "kemasan": "kering",
+      "bahan": "kering",
+      "q5": "rumah",
+      "q6": "lokal",
+      "q7": "tidak-berdampak"
+    },
+    "recommendations": [
+      {
+        "label": "NIB (Nomor Induk Berusaha)",
+        "description": "Identitas legalitas utama pelaku usaha",
+        "status": "wajib",
+        "statusLabel": "Wajib"
+      },
+      {
+        "label": "Sertifikat Halal Self-Declare",
+        "description": "Wajib untuk produk makanan & minuman",
+        "status": "wajib",
+        "statusLabel": "Wajib"
+      }
+    ],
+    "kbli_matched": [
+      {
+        "code": "10799",
+        "title": "Industri Produk Makanan Lainnya"
+      }
+    ]
+  }
+]

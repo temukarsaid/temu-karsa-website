@@ -36,10 +36,10 @@
 
   .sheet { width: 100%; max-width: 780px; margin: 28px auto 60px; background: var(--surface); box-shadow: var(--sh-md); border-radius: 4px; padding: 52px 56px 44px; }
   .letterhead { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; padding-bottom: 24px; }
-  .letterhead__brand { display: flex; gap: 12px; }
+  .letterhead__brand { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
   .letterhead__brand img { height: 40px; width: auto; object-fit: contain; }
   .letterhead__brand-name { font-size: 1rem; font-weight: 800; color: var(--navy); }
-  .letterhead__addr { margin: 6px 0 0; font-size: .76rem; line-height: 1.6; color: var(--muted); max-width: 30ch; }
+  .letterhead__addr { margin: 2px 0 0; font-size: .76rem; line-height: 1.6; color: var(--muted); max-width: 35ch; }
   .letterhead__meta { text-align: right; }
   .letterhead__doctitle { margin: 0 0 8px; font-size: 1.2rem; font-weight: 800; }
   .letterhead__row { font-size: .76rem; color: var(--body-c); }
@@ -96,11 +96,47 @@
   .pagination__ellipsis { padding: 0 4px; color: var(--muted); font-size: .84rem; }
 
   @media print {
-    .shell__sidebar, .shell__topbar, .shell__burger, .shell__scrim,
-    .detail-bar, .wrap, .page-header, .pagination { display: none !important; }
-    #detailOverlay { position: static; }
-    .sheet { box-shadow: none; margin: 0; max-width: none; }
-    body { background: #fff; }
+    @page {
+      size: A4 portrait;
+      margin: 12mm 15mm;
+    }
+    html, body {
+      background: #fff !important;
+      color: #000 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      height: auto !important;
+      overflow: visible !important;
+    }
+    .shell, .shell__sidebar, .shell__topbar, .shell__burger, .shell__scrim,
+    .detail-bar, .wrap, .page-header, .pagination, .panel, .panel__body {
+      display: none !important;
+    }
+    #detailOverlay {
+      display: block !important;
+      position: static !important;
+      background: transparent !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      overflow: visible !important;
+    }
+    .sheet {
+      box-shadow: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      width: 100% !important;
+      max-width: none !important;
+      border: 0 !important;
+      background: transparent !important;
+    }
+    .rec, .profile-item, .kbli-row {
+      page-break-inside: avoid;
+    }
+    .rule {
+      background: #0d6efd !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
   }
 </style>
 </head>
@@ -469,25 +505,16 @@
         '<div class="letterhead">' +
           '<div class="letterhead__brand">' +
             '<img src="/assets/img/logo-temu-karsa.png" alt="Temu Karsa">' +
-            '<div>' +
-              '<div class="letterhead__brand-name">Temu Karsa</div>' +
-              '<p class="letterhead__addr">Ruko Taman Juanda, Jl. Pahlawan Blok B1 No.3,<br>Bekasi Timur, Jawa Barat 17111<br>temukarsaid@gmail.com &middot; +62 851-2155-8129</p>' +
-            '</div>' +
+            '<p class="letterhead__addr">Ruko Taman Juanda, Jl. Pahlawan Blok B1 No.3,<br>Bekasi Timur, Jawa Barat 17111<br>temukarsaid@gmail.com &middot; +62 851-2155-8129</p>' +
           '</div>' +
           '<div class="letterhead__meta">' +
-            '<h1 class="letterhead__doctitle">Hasil Diagnostic<br>Legalitas Bisnis</h1>' +
+            '<h1 class="letterhead__doctitle">Hasil Legal Check</h1>' +
             '<p class="letterhead__row">No. Referensi: ' + esc(ref) + '</p>' +
             '<p class="letterhead__row">Tanggal: ' + fmtDate(lead.created_at) + '</p>' +
           '</div>' +
         '</div>' +
         '<div class="rule"></div>' +
-        '<div class="meta-grid">' +
-          '<div>' +
-            '<p class="meta-label">Untuk</p>' +
-            '<p class="meta-name">' + esc(lead.nama) + '</p>' +
-            '<p class="meta-line">' + esc(lead.whatsapp) + '</p>' +
-            '<p class="meta-line">' + esc(lead.email) + '</p>' +
-          '</div>' +
+        '<div class="meta-grid" style="grid-template-columns:1fr;">' +
           '<div>' +
             '<p class="meta-label">Ringkasan Profil Bisnis</p>' +
             renderProfile(lead.answers) +

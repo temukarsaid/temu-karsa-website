@@ -488,7 +488,13 @@
         email: document.getElementById('email').value,
         password: document.getElementById('password').value,
       }),
-    }).then(function (r) { return r.json().then(function (data) { return { ok: r.ok, data: data }; }); })
+    }).then(function (r) {
+        return r.text().then(function (text) {
+          var data;
+          try { data = JSON.parse(text); } catch(e) { data = { error: 'Respon server tidak valid (' + r.status + ')' }; }
+          return { ok: r.ok, data: data };
+        });
+      })
       .then(function (res) {
         submit.disabled = false;
         submit.textContent = 'Masuk';

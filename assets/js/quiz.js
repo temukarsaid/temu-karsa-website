@@ -282,10 +282,10 @@
           '<div class="field">' +
             '<label for="quizLeadName">Nama Lengkap</label>' +
             '<input type="text" id="quizLeadName" placeholder="Masukkan nama kamu" required>' +
-          '</div>' +
+            '</div>' +
           '<div class="field">' +
             '<label for="quizLeadWa">Nomor WhatsApp</label>' +
-            '<input type="tel" id="quizLeadWa" placeholder="Masukkan nomor WhatsApp aktif" required>' +
+            '<input type="tel" id="quizLeadWa" placeholder="Contoh: 08123456789" pattern="[0-9+-- ]{9,15}" title="Nomor WhatsApp harus berupa angka (min. 9 digit)" required>' +
           '</div>' +
           '<div class="field">' +
             '<label for="quizLeadEmail">Alamat Email</label>' +
@@ -301,10 +301,32 @@
 
       if (hasPrev) $('.quiz-back', card).addEventListener('click', goBack);
 
+      var waInput = $('#quizLeadWa', card);
+      waInput.addEventListener('input', function () {
+        // Hapus karakter non-digit kecuali + / - / spasi jika diketik
+        var cleanVal = this.value.replace(/[^0-9+-- ]/g, '');
+        if (this.value !== cleanVal) this.value = cleanVal;
+        
+        var digitsOnly = this.value.replace(/\D/g, '');
+        if (digitsOnly.length > 0 && digitsOnly.length < 9) {
+          this.setCustomValidity('Nomor WhatsApp minimal 9 digit angka.');
+        } else {
+          this.setCustomValidity('');
+        }
+      });
+
       $('#quizLeadSubmit', card).addEventListener('click', function () {
         var nameEl = $('#quizLeadName', card);
         var waEl = $('#quizLeadWa', card);
         var emailEl = $('#quizLeadEmail', card);
+
+        var digitsOnly = waEl.value.replace(/\D/g, '');
+        if (!digitsOnly || digitsOnly.length < 9) {
+          waEl.setCustomValidity('Nomor WhatsApp harus berupa angka (minimal 9 digit).');
+        } else {
+          waEl.setCustomValidity('');
+        }
+
         if (!nameEl.reportValidity() || !waEl.reportValidity() || !emailEl.reportValidity()) return;
 
         var submitBtn = $('#quizLeadSubmit', card);
@@ -367,6 +389,14 @@
         recommendations: result.items,
         kbli_matched: result.kbliMatched
       };
+
+      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        return fetch('/api/leads', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(row)
+        }).then(function (r) { return r.ok; }).catch(function () { return false; });
+      }
 
       if (!supabaseClient) {
         console.error('[KarsaBiz] Supabase client belum siap (cek koneksi CDN supabase-js).');
