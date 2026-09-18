@@ -5,13 +5,31 @@ Temu Karsa: legalitas usaha (pendirian PT/CV, perizinan, merek, pajak) dan
 penyewaan ruang kerja (Virtual Office, Private Office, Coworking Space,
 Meeting Room) untuk pelaku UMKM di Indonesia.
 
-> **Update:** kedua kelompok layanan payung (L1) sudah lengkap beserta semua
-> sub-layanannya (L2) — 2 halaman L1 + 7 halaman L2, total 9 halaman kategori
-> di luar homepage. Lihat bagian **Arsitektur Multi-Halaman** di bawah untuk
-> daftar lengkap & pola yang dipakai membangunnya, dipakai lagi kalau suatu
-> saat ada kelompok layanan baru. Empat halaman pendukung (Tentang Kami,
-> Kontak, Kebijakan Privasi, Tanya AI) juga sudah jadi halaman sendiri —
-> lihat bagian **Halaman Pendukung** di akhir dokumen.
+> **Update:** kedua kelompok layanan payung (L1) legalitas & workspace sudah
+> lengkap beserta semua sub-layanannya (L2) — 2 halaman L1 + 7 halaman L2,
+> total 9 halaman kategori di luar homepage. Lihat bagian
+> **Arsitektur Multi-Halaman** di bawah untuk daftar lengkap & pola yang
+> dipakai membangunnya, dipakai lagi kalau suatu saat ada kelompok layanan
+> baru. Empat halaman pendukung (Tentang Kami, Kontak, Kebijakan Privasi,
+> Tanya AI) juga sudah jadi halaman sendiri — lihat bagian
+> **Halaman Pendukung** di akhir dokumen.
+>
+> **Update (2026-09-17):** `karsabiz.html` sekarang jadi L1 ketiga — bukan
+> kelompok layanan legal/workspace, tapi payung buat **tools digital**
+> KarsaBiz (Legal Check jadi L2 pertamanya, 2 tools lain masih "Segera
+> Hadir"). Lihat subbagian **L1/L2 KarsaBiz (tools digital)** di akhir
+> bagian Arsitektur Multi-Halaman untuk pola & penyimpangannya dari L1/L2
+> legalitas/workspace.
+>
+> **Update (2026-09-18):** beberapa perbaikan lintas-halaman —
+> posisi breadcrumb ketiga L1 (legalitas/workspace/karsabiz) disamakan
+> persis dengan halaman non-L1 (lihat **Pola halaman L1**), hero L1 KarsaBiz
+> balik pakai foto (bukan gradient lagi, lihat **L1/L2 KarsaBiz**), nav item
+> halaman aktif sekarang ditandai biru di semua halaman (lihat **Navbar**),
+> shadow pill navbar dibikin satu nilai tetap di semua kondisi (lihat
+> **Navbar**), email resmi dikoreksi ke `temukarsaid@gmail.com` (lihat
+> **Copywriting**), dan URL embed peta lokasi diganti domain (lihat
+> **Peta lokasi**).
 
 ## Prinsip desain
 
@@ -85,20 +103,37 @@ pemisah di setiap section — garis pemisah (`.section-divider`, 1px
 
 ### Navbar
 Pill mengambang, **selalu putih** (bukan transparan) demi keterbacaan di atas
-foto hero, posisi fixed tanpa geser saat scroll (cuma shadow menebal).
-Berisi: logo, dropdown "Layanan" (2 kolom: Legalitas & Workspace), lalu link
-teks polos urut **Tentang Kami → KarsaBiz → Artikel → Kontak →
-Kebijakan Privasi** (urutan ini baku, sama persis di semua 20 halaman — kalau
-ada link nav baru ditambahkan, ikuti urutan yang sudah disepakati, jangan
-taruh sembarang posisi), link "Tanya AI" (teks + ikon sparkle, tanpa border
-tombol, di `.header__cta` — bukan bagian dari `<nav>` link-link di atas),
-dan tombol primary "Konsultasi Gratis" yang langsung membuka WhatsApp dengan
-pesan pembuka otomatis.
+foto hero, posisi fixed tanpa geser saat scroll. Shadow-nya **satu nilai
+tetap** di semua kondisi scroll & semua halaman (`0 14px 36px rgba(8,21,47,.12),
+0 2px 10px rgba(8,21,47,.06)`) — sempat ada varian lebih tebal saat
+`.header.is-stuck` (scrollY>40, class-nya masih di-toggle JS-nya), tapi
+dilepas 2026-09-18 karena bikin shadow kerasa "beda" tergantung scroll
+position pas pindah halaman. Berisi: logo, dropdown "Layanan" (2 kolom:
+Legalitas & Workspace), lalu link teks polos urut **Tentang Kami → KarsaBiz →
+Artikel → Kontak → Kebijakan Privasi** (urutan ini baku, sama persis di semua
+halaman — kalau ada link nav baru ditambahkan, ikuti urutan yang sudah
+disepakati, jangan taruh sembarang posisi), link "Tanya AI" (teks + ikon
+sparkle, tanpa border tombol, di `.header__cta` — bukan bagian dari `<nav>`
+link-link di atas), dan tombol primary "Konsultasi Gratis" yang langsung
+membuka WhatsApp dengan pesan pembuka otomatis.
 
 - **Hover link nav = ganti warna teks jadi `--blue` saja.** Sempat pakai
   underline (`::after` yang scale-in), tapi dilepas total supaya konsisten
   dengan halaman kategori (L1) yang dari awal cuma pakai perubahan warna.
   Berlaku untuk semua link nav termasuk trigger dropdown "Layanan".
+- **Nav item halaman aktif ditandai biru** (2026-09-18) — ditandai manual
+  lewat atribut `aria-current="page"` di `<a>`/`<button class="nav__trigger">`
+  yang bersangkutan (satu per halaman, ditulis langsung di HTML tiap
+  halaman, bukan dihitung otomatis via JS), lalu di-styling lewat
+  `.nav a[aria-current="page"], .nav__trigger[aria-current="page"] { color:
+  var(--blue); }`. Trigger dropdown **"Layanan"** dapat `aria-current="page"`
+  di semua 9 halaman L1/L2 di bawahnya (legalitas & workspace) karena gak
+  ada satu link tunggal yang match persis dengan section itu. **"KarsaBiz"**
+  juga aktif di `legal-check.html` (L2-nya). Ada override kedua khusus di
+  breakpoint mobile (`.nav.is-open > a[aria-current="page"]` dan
+  `.nav.is-open .nav__trigger[aria-current="page"]`) karena aturan menu
+  mobile (`.nav.is-open > a { color: var(--ink) }`) punya spesifisitas sama
+  dan menang duluan kalau nggak di-override lagi.
 - **Judul grup di dalam dropdown** (`.nav__dd-title`, mis. "Pengurusan
   Legalitas & Perizinan") jadi `<a>` sungguhan begitu halaman kategorinya
   sudah ada, sebelum itu tetap `<span>` biasa. Warna defaultnya abu
@@ -215,10 +250,24 @@ atas foto hero untuk menampilkan metrik kepercayaan. Dua bentuk:
 
 ### Peta lokasi
 Google Maps embed asli (iframe, bukan gambar statis) — genuinely interaktif
-(bisa zoom/geser/klik "Buka di Maps"), bukan screenshot peta.
+(bisa zoom/geser/klik "Buka di Maps"), bukan screenshot peta. URL embed pakai
+domain **`www.google.com/maps?q=...&output=embed`** (2026-09-18, diganti dari
+`maps.google.com/maps?q=...` yang lama — sempat dilaporkan render jadi ikon
+broken-image di beberapa halaman, domain lama itu kurang stabil buat
+di-embed tanpa API key). Kalau masih broken setelah ganti domain ini,
+kemungkinan penyebabnya di luar kode: ad-blocker/ekstensi privasi browser
+yang mem-block iframe Google Maps, atau CSP server yang belum mengizinkan
+frame dari domain Google Maps.
 
 ## Copywriting
 
+- **Email resmi Temu Karsa: `temukarsaid@gmail.com`** (2026-09-18, dikoreksi
+  dari `halo@temukarsa.id` yang salah — domain `temukarsa.id` itu emang
+  bukan alamat email asli, cuma kebetulan mirip sama handle Instagram
+  `@temukarsa.id` yang memang benar dan TIDAK diubah). Dipakai konsisten di
+  semua `mailto:` link (footer & kontak.html), teks email yang ditampilkan
+  di kebijakan-privasi.html, `"email"` di JSON-LD LocalBusiness tiap
+  halaman, dan letterhead PDF Legal Check di admin dashboard.
 - Semua salinan Bahasa Indonesia, nada profesional-hangat (bukan kaku
   korporat, bukan terlalu santai).
 - CTA konsisten: "Konsultasi Gratis" sebagai frasa utama di seluruh situs.
@@ -278,6 +327,45 @@ Struktur bertingkat:
    dengan kata berputar di hero homepage tapi tanpa animasi ganti kata).
    Metrik kepercayaan tampil sebagai beberapa `.glass-card--mini` vertikal
    di kolom kanan (lihat bagian Glass card).
+
+   **Catatan (2026-09-17) — posisi & TINGGI breadcrumb/kartu hero dikunci,
+   bukan lagi ikut `align-items:center` + tinggi konten bawaan `.hero`.**
+   Sebelumnya breadcrumb DAN tinggi kartu hero (bulat, `.hero`) 3 halaman L1
+   (`legalitas-perizinan.html`, `penyewaan-space.html`, `karsabiz.html`) bisa
+   beda-beda sendiri, karena `.hero` men-center `.hero__inner` secara
+   vertikal berdasarkan tinggi kontennya (makin pendek konten => makin turun
+   posisi breadcrumb-nya, DAN kalau konten lebih tinggi dari
+   `min-height:88vh` kartu heronya ikut "membungkus" jadi lebih tinggi dari
+   halaman lain) — dua efek yang beda-beda tiap halaman tergantung panjang
+   paragraf/jumlah kartu statistik/tinggi layar. Fix: di atas
+   `min-width:681px`, `.hero--legalitas .hero__inner` dan
+   `.hero--karsabiz .hero__inner` dikunci:
+   - `align-self:flex-start; margin-top:0` — breadcrumb selalu nempel tepat
+     di bawah `padding-top` `.hero`, gak ikut center lagi.
+   - `align-items:start` (ganti dari `end` bawaan) — 2 kolom (`.hero__copy`
+     & `.hero__cards`) top-align, bukan bottom-align, ke baris grid-nya.
+   - `min-height:610px` pada `.hero__inner` — dikunci ke tinggi konten
+     `.hero__copy` KarsaBiz (yang paling tinggi di antara ketiganya, karena
+     ada baris `.hero-stats` tambahan), supaya baris grid & otomatis tinggi
+     `.hero` (kartu bulat)-nya SAMA PERSIS di ketiga halaman — bukan cuma
+     breadcrumb-nya doang. Kalau salah satu halaman kontennya nanti ditambah
+     lagi sampai lebih tinggi dari 610px, naikkan angka ini juga di
+     ketiganya biar tetap sama.
+   Sengaja dibatasi `min-width:681px` (tidak menyentuh `.hero` polos
+   homepage) supaya trik "kartu statistik mengambang di tengah" versi mobile
+   (`.hero__cards--stats { margin-top: auto }` di `@media max-width:680px`)
+   tetap jalan apa adanya. Kalau nambah L1 baru lagi ke depan, tambahkan
+   modifier class-nya ke selector ini juga (dan cek ulang angka 610px di
+   atas masih cukup buat konten L1 baru itu).
+
+   Tambahan: `.hero__cards` (kolom kanan — maskot KarsaBiz / 4
+   `.glass-card--mini` legalitas & penyewaan) di-override `align-self:center`
+   sendiri (beda dari `.hero__copy` yang top-align lewat `align-items:start`
+   di atas) — supaya kolom kanan itu SELALU CENTER SECARA VERTIKAL relatif
+   terhadap tinggi baris grid (yaitu tinggi kolom kiri `.hero__copy`, karena
+   itu yang paling tinggi/menentukan tinggi baris), bukan ikut top-align
+   sejajar breadcrumb. Ini permintaan eksplisit: "posisi maskot/kartu di
+   kanan itu center dari container kiri-nya".
 2. **Layanan Kami** — grid `.service-cards` (tiap kartu punya `id` sendiri
    untuk anchor) yang isinya jadi target dropdown navbar & link footer
    kelompok tersebut. Defaultnya 3 kolom; dipakai modifier `.service-cards--4`
@@ -578,6 +666,117 @@ Setiap kali halaman baru (L1/L2) dibuat, link-link terkait di homepage
 (dropdown navbar, footer, tombol "Lihat detail layanan" di kartu Layanan
 Kami) ikut di-update ke halaman baru itu di langkah yang sama — bukan
 ditinggal sebagai kerjaan terpisah.
+
+### L1/L2 KarsaBiz (tools digital)
+
+`karsabiz.html` (L1) dan `legal-check.html` (L2 pertamanya) ikut pola
+L1/L2 di atas **sebisa mungkin**, tapi KarsaBiz itu payung **tools digital**
+gratis, bukan kelompok layanan legal/workspace berbayar — jadi ada beberapa
+penyimpangan yang disengaja & didokumentasikan di sini, bukan salah ikut pola:
+
+- **Hero L1 KarsaBiz — pakai foto seperti L1 lain** (2026-09-18, dibalikin
+  lagi dari gradient biru yang tadinya dipakai — rule L1 di situs ini
+  memang "hero pakai foto", gradient itu sempat jadi penyimpangan yang
+  sekarang dianggap salah ikut pola, bukan disengaja lagi). Strukturnya
+  sekarang SAMA PERSIS dengan L1 legalitas/penyewaan: `<div class="hero__bg
+  hero__bg--karsabiz"></div>` (foto: `assets/img/karsabiz/hero-karsabiz.jpg`)
+  + overlay peredup bawaan `.hero__bg::after` otomatis kepakai (nggak perlu
+  override apa-apa). Foto-nya sengaja dipilih yang SIMPEL/nggak ramai
+  (closeup tangan mengetik laptop, latar belakang blur/bokeh) — biar maskot
+  yang jadi fokus utama & gampang dikenali, bukan foto dengan banyak detail
+  yang bikin hero kelihatan penuh/rame. Modifier class `.hero--karsabiz` di
+  section-nya TETAP dipertahankan (bukan dihapus) — dipakai buat semua
+  scoped rule struktural lain di bawah ini (grid-template-areas breadcrumb,
+  min-height konsistensi tinggi, dst), cuma propertinya udah nggak lagi
+  nge-set `background` gradient. Slot `.hero__cards` (biasanya diisi
+  tumpukan `.glass-card--mini`) di halaman ini diisi **maskot**
+  (`assets/img/mascot/terpesona.png`, reuse aset maskot kuis yang sudah
+  ada, `width:340px` desktop / `220px` mobile).
+  Dekorasi logogram (`.hero__mark-deco`) yang sempat dicoba di bawah maskot
+  sudah **dihapus lagi** (2026-09-17, permintaan eksplisit) — kalau mau
+  dipasang lagi nanti, cek riwayat git untuk markup & CSS-nya. Tiga
+  metrik ("Gratis", "100%", "Instan") dipindah jadi `.hero-stats` (baris
+  horizontal di bawah tombol CTA, bukan kartu kaca vertikal di kolom kanan)
+  — teks kualitatif, bukan statistik pengguna riil, karena KarsaBiz belum
+  punya data untuk diklaim (lihat prinsip di bagian Copywriting soal tidak
+  mengarang angka).
+- **Breadcrumb `karsabiz.html` jadi anak langsung `.hero__inner`, BUKAN di
+  dalam `.hero__copy`** (beda dari L1 legalitas/penyewaan) — supaya bisa
+  diatur urutannya sendiri via `grid-template-areas` (2026-09-17, permintaan
+  eksplisit: maskot muncul tepat di bawah breadcrumb di tablet/mobile,
+  sebelum judul & teks, bukan di paling bawah setelah `.hero-stats`).
+  - Desktop (>1180px): `grid-template-areas: "breadcrumb ." "copy cards"`
+    (breadcrumb cuma di kolom kiri baris 1, sama posisinya secara visual
+    kayak sebelum dipindah) — `gap:16px 60px` (row-gap 16px sengaja
+    disamakan dengan `margin-bottom` bawaan `.breadcrumb` yang di-nolkan di
+    sini, supaya tinggi total `.hero__inner` gak berubah dari sebelum
+    breadcrumb dipindah — tetap konsisten dengan `min-height:610px` yang
+    dikunci bareng L1 legalitas/penyewaan, lihat poin di atas soal itu).
+  - Tablet/mobile (≤1180px): `grid-template-areas: "breadcrumb" "cards"
+    "copy"` — breadcrumb, lalu maskot, baru judul/teks/tombol/stats.
+  - **Jebakan yang sempat kejadian:** di ≤680px ada aturan UMUM (gak
+    di-scope ke karsabiz) `.hero__inner { display:flex; flex-direction:
+    column }` — dipakai buat trik "kartu statistik mengambang" punya
+    legalitas/penyewaan. Aturan itu ikut nabrak karsabiz juga (bikin
+    `display` balik ke `flex`), yang artinya SEMUA properti grid
+    (`grid-template-areas`, `grid-area` di tiap anak) jadi diabaikan total
+    browser-nya, balik ke urutan DOM biasa (maskot balik ke paling bawah).
+    Fix-nya: paksa balik `display:grid` khusus di scope
+    `.hero--karsabiz .hero__inner` di breakpoint ≤1180px (menang karena
+    lebih spesifik dari `.hero__inner` polos). **Pelajaran:** kalau nambah
+    override struktural buat satu L1/L2 tertentu, selalu cek juga breakpoint
+    yang lebih SEMPIT dari yang lagi dikerjain — override yang cuma didaftar
+    di satu breakpoint bisa "ketiban" lagi sama aturan umum di breakpoint
+    yang lebih sempit lagi kalau propertinya sama (`display` dsb).
+- **`.service-cards` isi tools, bukan sub-layanan.** Status tiap tool
+  ditandai lewat **chip `.card--service__badge`** di pojok kanan ATAS kartu
+  (menumpang di tepi kartu, `top:-15px; right:0` — posisinya sengaja
+  disamakan persis dengan `.pricing-card__badge`, lihat bagian Pricing):
+  `.card--service__badge--free` (biru, isi "Gratis") untuk tool yang sudah
+  ada, `.card--service__badge` polos (abu-abu netral) untuk "Segera Hadir".
+  Tool yang belum ada halamannya cukup tanpa tombol CTA di bawah paragraf
+  (statusnya sudah kebaca dari chip pojok, jadi tidak perlu lagi
+  `<span class="tag tag--muted">` di dalam body kartu — itu pola versi lama,
+  sudah diganti 2026-09-17). Icon tiap kartu **wajib beda satu sama lain**
+  (jangan reuse SVG yang sama persis antar kartu tools, biar gampang
+  dibedain sekilas).
+- **`legal-check.html` (L2) pakai `.service-single__top` (breadcrumb +
+  `<h1>` polos) TANPA tombol CTA di baris judul** — beda dari L2 lain yang
+  wajib punya satu tombol CTA di situ. Alasannya: kuis di section
+  berikutnya adalah satu-satunya aksi utama halaman ini, satu tombol WA
+  tambahan tepat di atasnya akan jadi CTA bersaing (melanggar prinsip "satu
+  CTA utama per tampilan"). Section `.service-single__row` (baris 2-kolom,
+  pricing, dst) **tidak dipakai sama sekali** — badan halamannya cuma
+  breadcrumb+judul lalu langsung komponen kuis (`#quiz`, lihat
+  `assets/js/quiz.js`/`quiz-data.js`), bukan konten spec-sheet seperti L2
+  legalitas/workspace.
+- **`karsabiz.html` (L1) DAN `legal-check.html` (L2) — keduanya SEKARANG
+  TIDAK pakai Kenapa Pilih Kami, Cara Kerja Kami, CTA, maupun Kontak Kami**
+  (2026-09-17, keputusan eksplisit, berlaku bertahap: `karsabiz.html`
+  duluan, lalu `legal-check.html` menyusul di keputusan terpisah). Keempat
+  section itu tadinya disalin verbatim dari pola L1 legalitas/workspace,
+  tapi isinya ngaco buat konteks KarsaBiz (nyebut "ahli hukum", "kantor
+  virtual/fisik di Bekasi Timur", dll — KarsaBiz itu tools digital, bukan
+  jasa legal/kantor fisik) dan bukan mau ditulis ulang, jadi **di-takeout**
+  di kedua halaman. Struktur final:
+  - `karsabiz.html`: Hero → Tools & Fitur → CTA → Footer.
+  - `legal-check.html`: breadcrumb+judul (`#kuis-intro`) → Kuis
+    (`#kuis-daftar`) → Footer — jadi cuma 2 section doang sebelum footer,
+    TANPA CTA/Kontak Kami sama sekali. Ini pengecualian dari poin 3 Pola L1
+    ("Kenapa Pilih Kami, Cara Kerja Kami, CTA, Kontak Kami wajib ada persis
+    seperti L1/L2 lain") — khusus buat `karsabiz.html` & `legal-check.html`,
+    bukan L1/L2 lain.
+  Divider yang tadinya menyambung ke section yang dihapus ikut dibuang di
+  kedua halaman. Kalau nanti mau ada section
+  "Kenapa Pilih Kami"/"Cara Kerja Kami"/"Kontak Kami" versi KarsaBiz lagi,
+  itu harus ditulis dari nol sesuai konteks tools digital, bukan reuse
+  konten lama.
+- Begitu tools "Segera Hadir" (Kalkulator Modal Usaha, Panduan Pilih
+  Struktur Usaha) benar-benar dibuatkan halamannya, ikuti aturan **"begitu
+  satu L2 dibuat, semua referensi ikut diganti dalam langkah yang sama"** —
+  ganti `<span class="tag tag--muted">` jadi tombol `<a class="btn
+  btn--ghost btn--sm">` yang nunjuk ke L2 barunya, sama seperti pola L2
+  legalitas/workspace.
 
 ## Halaman Pendukung (Tentang Kami, Kontak, Kebijakan Privasi, Tanya AI)
 

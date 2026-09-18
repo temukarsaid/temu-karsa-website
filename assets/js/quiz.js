@@ -118,7 +118,9 @@
       card.innerHTML =
         '<div class="quiz-options">' + optionsHtml + '</div>' +
         '<div class="quiz-actions">' +
-          (hasPrev ? '<button type="button" class="btn btn--ghost btn--sm quiz-back">Kembali</button>' : '') +
+          (hasPrev ? '<button type="button" class="btn btn--ghost btn--sm quiz-back">' +
+            '<i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"/></svg></i>' +
+            'Kembali</button>' : '') +
           '<button type="button" class="btn btn--light btn--sm quiz-next" disabled>Lanjut' +
             '<i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></i>' +
           '</button>' +
@@ -187,7 +189,9 @@
       card.innerHTML =
         groupsHtml +
         '<div class="quiz-actions">' +
-          (hasPrev ? '<button type="button" class="btn btn--ghost btn--sm quiz-back">Kembali</button>' : '') +
+          (hasPrev ? '<button type="button" class="btn btn--ghost btn--sm quiz-back">' +
+            '<i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"/></svg></i>' +
+            'Kembali</button>' : '') +
           '<button type="button" class="btn btn--light btn--sm quiz-next" disabled>Lanjut' +
             '<i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></i>' +
           '</button>' +
@@ -293,7 +297,9 @@
           '</div>' +
         '</div>' +
         '<div class="quiz-actions" id="quizLeadActions">' +
-          (hasPrev ? '<button type="button" class="btn btn--ghost btn--sm quiz-back">Kembali</button>' : '') +
+          (hasPrev ? '<button type="button" class="btn btn--ghost btn--sm quiz-back">' +
+            '<i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"/></svg></i>' +
+            'Kembali</button>' : '') +
           '<button type="button" class="btn btn--light btn--sm" id="quizLeadSubmit">Kirim &amp; Analisis Jawabanku' +
             '<i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></i>' +
           '</button>' +
@@ -368,7 +374,7 @@
           'Waduh, ada gangguan pas ngirim jawabanmu. Coba lagi sebentar, atau langsung hubungi kami manual lewat WhatsApp biar gak ketunda.' +
         '</p>' +
         '<div class="quiz-actions">' +
-          '<a class="btn btn--ghost btn--sm" href="https://wa.me/6285121558129?text=' + waText + '" target="_blank" rel="noopener">Hubungi via WhatsApp</a>' +
+          '<a class="btn btn--ghost btn--sm quiz-wa-link" href="https://wa.me/6285121558129?text=' + waText + '" target="_blank" rel="noopener">Hubungi via WhatsApp</a>' +
           '<button type="button" class="btn btn--light btn--sm" id="quizLeadRetry">Coba Lagi</button>' +
         '</div>';
       $('#quizLeadRetry', card).addEventListener('click', function () { renderLeadCapture(); });

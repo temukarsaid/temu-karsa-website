@@ -262,16 +262,19 @@ button, input, select, textarea { font: inherit; color: inherit; }
   border-radius: 999px;
   background: #fff;
   box-shadow: 0 14px 36px rgba(8, 21, 47, .12), 0 2px 10px rgba(8, 21, 47, .06);
-  transition: box-shadow .35s var(--ease);
   /* di layar lebar, .wrap otomatis nge-center di max-width 1280 — pill ini
      dipersempit 2×gutter supaya tepi pill-nya jatuh tepat di titik yang
      sama dengan awal teks section lain (yang punya padding gutter sendiri
      di dalam .wrap), bukan di tepi .wrap itu sendiri. */
   max-width: calc(var(--max) - 2 * var(--gutter));
 }
-.header.is-stuck .header__bar {
-  box-shadow: 0 18px 44px rgba(8, 21, 47, .16), 0 3px 12px rgba(8, 21, 47, .08);
-}
+/* Dulu ada varian shadow lebih tebal buat .header.is-stuck (scrollY > 40,
+   lihat main.js), tapi itu bikin shadow-nya kelihatan "beda" tergantung
+   scroll position pas pindah halaman (kadang landing di scroll position
+   yang beda tiap page load) — dilepas (2026-09-17) biar shadow navbar
+   SELALU sama persis di semua halaman & posisi scroll, bukan cuma pas di
+   paling atas. Class `.is-stuck` sendiri masih di-toggle JS-nya, cuma
+   sekarang gak ngefek apa-apa ke shadow. */
 
 .brand { flex: none; }
 .brand img { height: 36px; width: auto; }
@@ -297,6 +300,14 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .nav a:hover,
 .nav__item:hover .nav__trigger,
 .nav__item.is-open .nav__trigger { color: var(--blue); }
+/* Nav item halaman yang lagi dibuka ditandai biru — ditandai lewat
+   aria-current="page" (ditulis manual per halaman di setiap <a>/<button>
+   nav, bukan otomatis via JS, sama kayak breadcrumb yang udah pakai pola
+   ini duluan). Dropdown trigger "Layanan" ikut ditandai aria-current="page"
+   di semua halaman L1/L2 di bawahnya (legalitas & workspace), karena gak
+   ada satu link tunggal yang match persis. */
+.nav a[aria-current="page"],
+.nav__trigger[aria-current="page"] { color: var(--blue); }
 
 .nav-ai {
   position: relative;
@@ -431,7 +442,142 @@ a.nav__dd-title:hover { color: var(--blue); }
 /* varian foto per halaman kategori — struktur hero tetap identik, cuma foto
    latarnya yang beda supaya sesuai konteks layanan */
 .hero__bg--legalitas { background-image: url('../img/legalitas/hero-legalitas.jpg'); background-position: center; }
-.hero__bg--workspace { background-image: url('../img/workspace/hero-workspace.jpg'); background-position: center; }/* varian hero satu kolom — dipakai halaman yang tidak punya kartu kaca
+.hero__bg--workspace { background-image: url('../img/workspace/hero-workspace.jpg'); background-position: center; }
+
+/* Posisi breadcrumb L1 disamakan dengan halaman non-L1 (artikel, L2, dst)
+   biar user nggak ngerasa "loncat" pas pindah halaman. Penyebab bedanya:
+   .hero itu kartu rounded yang punya margin:var(--hero-margin) dari tepi
+   halaman (20px desktop / 10px mobile), sedangkan section biasa di halaman
+   lain nempel langsung tanpa margin — jadi isi hero otomatis mulai lebih
+   bawah sebesar margin itu. Padding-top hero L1 dikurangi persis sebesar
+   margin-nya supaya breadcrumb mendarat di Y yang sama: 180-20=160 desktop,
+   142-10=132... dipakai 130 supaya pas 140px (angka padding-top halaman
+   non-L1 di mobile). Homepage (.hero polos, nggak punya breadcrumb) SENGAJA
+   tidak disentuh. */
+/* Selector-nya sengaja dobel-class (.hero.hero--x) biar spesifisitasnya
+   lebih tinggi dari aturan `.hero { padding: 142px 0 46px }` di media query
+   mobile yang posisinya jauh di bawah — kalau cuma satu class, aturan mobile
+   itu yang menang dan padding-nya balik lagi ke bawaan. */
+.hero.hero--legalitas,
+.hero.hero--karsabiz { padding-top: 160px; }
+@media (max-width: 680px) {
+  .hero.hero--legalitas,
+  .hero.hero--karsabiz { padding-top: 130px; }
+}
+
+/* Halaman L1 (legalitas-perizinan, penyewaan-space, karsabiz) dikunci nempel
+   ke atas (bukan ikut align-items:center bawaan .hero) supaya breadcrumb
+   selalu di posisi Y yang SAMA persis di ketiganya, berapa pun tinggi
+   kontennya (jumlah kartu statistik dsb) atau tinggi layar viewport —
+   sebelumnya posisi breadcrumb 3 halaman ini beda-beda sendiri karena
+   align-items:center menghitung ulang tiap kali tinggi konten berubah.
+   min-height:610px dikunci sama di ketiganya juga (angka ini = tinggi
+   konten .hero__copy KarsaBiz yang paling tinggi di antara ketiganya, sudah
+   termasuk baris .hero-stats) — biar TINGGI kartu hero (.hero bulat)-nya
+   ikut sama persis juga, bukan cuma breadcrumb-nya doang, walau isi
+   paragraf/jumlah kartu tiap halaman beda panjang. align-items diganti dari
+   `end` (bawaan, bottom-align 2 kolom) jadi `start` supaya kolom yang lebih
+   pendek nggak didorong turun ngikutin ruang kosong tambahan dari
+   min-height ini. Homepage (index.html, .hero polos tanpa modifier) SENGAJA
+   tidak disentuh, supaya tidak ada efek samping di luar 3 halaman L1 ini.
+   Dibatasi min-width:681px — di bawah itu .hero__inner sudah punya aturan
+   sendiri (align-self:stretch + margin-top:auto di .hero__cards--stats)
+   buat ngambangin kartu statistik di tengah, jangan sampai ketiban. */
+@media (min-width: 681px) {
+  .hero--legalitas .hero__inner,
+  .hero--karsabiz .hero__inner {
+    align-self: flex-start;
+    align-items: start;
+    margin-top: 0;
+    min-height: 610px;
+  }
+  /* Kolom kanan (maskot KarsaBiz / 4 kartu statistik legalitas & penyewaan)
+     di-center secara vertikal RELATIF TERHADAP TINGGI KOLOM KIRI (baris
+     grid `.hero__inner`, yang tingginya dikunci 610px di atas) — bukan
+     ikut top-align bareng kolom kiri (`align-items:start` di atas cuma
+     default row-nya, kolom kanan di-override sendiri lewat align-self). */
+  .hero--legalitas .hero__cards,
+  .hero--karsabiz .hero__cards {
+    align-self: center;
+  }
+}
+
+/* ---- Hero KarsaBiz — pakai foto seperti L1 lain (2026-09-18, gantiin
+   gradient biru yang dipakai sebelumnya, lihat riwayat di design.md).
+   Foto sengaja dipilih yang simpel/nggak ramai (closeup tangan mengetik di
+   laptop, latar belakang blur) — biar maskot yang jadi fokus utama,
+   nggak keganggu detail foto yang terlalu banyak. .hero__bg::after (overlay
+   gelap bawaan buat foto) tetap kepakai otomatis lewat class .hero__bg. */
+.hero__bg--karsabiz { background-image: url('../img/karsabiz/hero-karsabiz.jpg'); background-position: center; }
+/* Breadcrumb dipindah keluar dari .hero__copy jadi anak langsung
+   .hero__inner (lihat markup karsabiz.html) supaya bisa diatur urutannya
+   sendiri lewat grid-template-areas — di tablet/mobile maskot (.hero__cards)
+   ditaruh di antara breadcrumb & teks (breadcrumb → maskot → judul dst),
+   sesuai permintaan eksplisit, beda dari L1 legalitas/penyewaan yang
+   breadcrumb-nya tetap nempel di dalam .hero__copy. row-gap 16px
+   (gap pertama) sengaja disamakan dengan margin-bottom:16px bawaan
+   .breadcrumb yang di-nolkan di sini, supaya total tinggi .hero__inner
+   TIDAK berubah dari sebelum breadcrumb dipindah (masih konsisten dengan
+   min-height:610px yang dikunci bareng L1 legalitas/penyewaan). */
+.hero--karsabiz .hero__inner {
+  grid-template-areas: "breadcrumb ." "copy cards";
+  gap: 16px 60px;
+}
+.hero--karsabiz .hero__inner > .breadcrumb { grid-area: breadcrumb; margin-bottom: 0; }
+.hero--karsabiz .hero__copy { grid-area: copy; }
+.hero--karsabiz .hero__cards { grid-area: cards; }
+@media (max-width: 1180px) {
+  /* display:grid dipaksa balik di sini — di bawah 680px ada aturan umum
+     `.hero__inner { display:flex; flex-direction:column }` (buat trik kartu
+     statistik mengambang punya legalitas/penyewaan) yang ikut nabrak
+     karsabiz juga karena selector-nya gak di-scope. Tanpa override ini,
+     grid-template-areas di bawah nggak ngefek sama sekali (flex container
+     ngabaikan properti grid), balik ke urutan DOM biasa (maskot di paling
+     bawah lagi). */
+  .hero--karsabiz .hero__inner {
+    display: grid;
+    grid-template-areas: "breadcrumb" "cards" "copy";
+    gap: 24px;
+    align-items: start;
+    align-self: flex-start;
+    margin-top: 0;
+  }
+}
+.hero--karsabiz .hero__cards { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.hero--karsabiz .hero__mascot {
+  width: 340px; max-width: 100%;
+  filter: drop-shadow(0 20px 60px rgba(0, 88, 255, .3));
+  animation: karsabizMascotFloat 5s ease-in-out infinite;
+  position: relative; z-index: 1;
+}
+@keyframes karsabizMascotFloat {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-12px); }
+}
+.hero-stats { display: flex; gap: 48px; flex-wrap: wrap; margin-top: 40px; padding-top: 32px; border-top: 1px solid rgba(255, 255, 255, .12); }
+.hero-stat { display: flex; flex-direction: column; gap: 6px; }
+.hero-stat__num { font-size: 1.5rem; font-weight: 800; color: #fff; letter-spacing: -.02em; }
+.hero-stat__label { font-size: .8rem; color: rgba(255, 255, 255, .6); font-weight: 500; }
+@media (max-width: 480px) {
+  /* Di layar sempit, gap:48px bikin item ke-3 ("Instan") kepental ke baris
+     baru. Dipaksa 1 baris (nowrap) + gap dikecilin + font num diciutin
+     dikit, biar 3 item selalu muat sejajar horizontal walau layar sempit —
+     label boleh pecah 2 baris di dalam kolomnya sendiri, itu nggak masalah. */
+  .hero-stats { flex-wrap: nowrap; gap: 20px; }
+  .hero-stat { flex: 1 1 0; min-width: 0; }
+  .hero-stat__num { font-size: 1.25rem; }
+}
+
+@media (max-width: 980px) {
+  /* SENGAJA tidak di-order:-1 ke atas — breadcrumb+judul (.hero__copy)
+     harus tetap jadi elemen pertama begitu hero__inner numpuk 1 kolom,
+     sama seperti L1 legalitas/workspace (kartu kaca mereka juga tetap di
+     BAWAH teks, bukan di atas) — kalau maskotnya dipindah ke atas, posisi
+     breadcrumb jadi beda sendiri dibanding L1 lain di breakpoint yang sama. */
+  .hero--karsabiz .hero__mascot { width: 220px; }
+}
+
+/* varian hero satu kolom — dipakai halaman yang tidak punya kartu kaca
    statistik (mis. artikel.html), .hero__copy jadi satu-satunya isi & dikunci
    lebar bacanya supaya tidak melebar penuh 1280px */
 .hero__inner--single { grid-template-columns: minmax(0, 1fr); }
@@ -850,10 +996,29 @@ a.nav__dd-title:hover { color: var(--blue); }
   gap: 24px;
 }
 .service-cards .card h3 { font-size: 1.15rem; }
-.card--service .btn { margin-top: 22px; }
+.card--service .btn, .card--service .tag--muted { margin-top: 22px; }
 /* kartu info, bukan tombol/link utuh — tombol "Pelajari Selengkapnya" di
    dalamnya sudah punya hover sendiri, jadi kartunya diam saat di-hover */
 .service-cards .card:hover { transform: none; box-shadow: var(--sh-sm); }
+
+/* Chip status di pojok kanan atas tiap kartu tools KarsaBiz — "Gratis" utk
+   tool yang sudah tersedia, "Segera Hadir" utk yang belum. Posisinya
+   disamakan persis dengan .pricing-card__badge: menumpang di TEPI ATAS
+   kartu (bukan di dalam padding), rata sisi kanan. */
+.card--service__badge {
+  position: absolute;
+  top: -15px; right: 0;
+  padding: 7px 18px;
+  border-radius: 999px;
+  background: var(--canvas-alt);
+  color: var(--muted);
+  font-size: .8rem;
+  font-weight: 700;
+}
+.card--service__badge--free {
+  background: #BFE1FF;
+  color: var(--blue);
+}
 
 @media (max-width: 1180px) {
   .service-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -1799,6 +1964,10 @@ a.nav__dd-title:hover { color: var(--blue); }
   font-weight: 600;
   color: var(--navy);
 }
+/* Dipakai di kartu .card--service yang tools/layanannya belum tersedia
+   (mis. "Segera Hadir" di KarsaBiz) — pengganti tombol "Pelajari
+   Selengkapnya" saat memang belum ada halaman untuk dituju. */
+.tag--muted { background: var(--canvas-alt); color: var(--muted); align-self: flex-start; }
 
 /* --------------------------------------------------------- 12. Workspace */
 .space-grid {
@@ -2282,9 +2451,66 @@ a.nav__dd-title:hover { color: var(--blue); }
 #artikel-intro { padding-top: 180px; padding-bottom: 0; }
 #artikel-daftar { padding-top: 64px; }
 #kuis-intro { padding-top: 180px; padding-bottom: 0; }
+/* Judul legal-check.html dua kalimat (bold+abu-abu gaya .intro-heading),
+   jauh lebih panjang dari judul L2 lain — batas 18ch bawaan
+   .service-single__title (dipakai L2 legalitas/workspace yang judulnya
+   pendek) bikin ini kepotong jadi >4 baris sempit. Dilepas khusus di sini.
+   Ukuran font juga diturunin ke ukuran .intro-heading ("Bukan sekadar
+   mengurus dokumen" dll) — <h1> default (clamp 2.4rem–4.1rem) kegedean
+   buat 2 kalimat sepanjang ini. */
+#kuis-intro .service-single__top .section-kicker {
+  /* .service-single__top ngasih gap:28px rata ke semua anak (buat jarak
+     breadcrumb→judul aslinya, ditambah margin-bottom:16px bawaan
+     .breadcrumb sendiri = 44px total) — begitu .section-kicker disisipkan
+     di antara breadcrumb & judul, dua jarak ini jadi ikut kepakai buat
+     kicker padahal seharusnya beda: breadcrumb→kicker harus 16px (sama
+     kayak breadcrumb→heading di #artikel-intro dkk yang gak pakai kicker),
+     kicker→judul harus 14px (sama kayak "Kenapa Pilih Kami"). Kedua margin
+     negatif ini motong gap:28px bawaan jadi pas di kedua sisi. */
+  margin-top: -28px;
+  margin-bottom: -14px;
+}
+/* .service-single__top dibatasi max-width:980px bawaan (buat judul L2 lain
+   yang pendek+1 baris) — judul 2 kalimat ini malah kepotong sebelum
+   mentok lebar .wrap (1280px) beneran. Dilepas biar selebar .wrap penuh,
+   sama kayak "Kenapa Pilih Kami" dkk. */
+#kuis-intro .service-single__top { max-width: none; }
+#kuis-intro .service-single__title {
+  max-width: none;
+  font-size: clamp(1.5rem, 2.6vw, 2.1rem);
+  line-height: 1.4;
+  font-weight: 700;
+}
 #kuis-daftar { padding-top: 64px; }
-#kontak-intro { padding-bottom: 0; }
-#kontak-intro + #kontak { padding-top: 64px; }
+/* Breadcrumb kontak.html ada DI DALAM #kontak (bukan section #kontak-intro
+   terpisah lagi). Latar putih TIDAK boleh sampai paling atas — backdrop di
+   belakang navbar harus tetap abu-abu (var(--canvas)) kayak semua halaman
+   lain, biar shadow pill navbar keliatan sama. Jadi background-nya gradient
+   bertahap: abu-abu 140px pertama, lalu putih dari situ ke bawah (tepi bawah
+   navbar ada di 108px, breadcrumb mulai 208px). KEPUTUSAN FINAL — jangan
+   diubah jadi putih solid lagi. */
+/* WAJIB pakai :first-child — di halaman LAIN (homepage dll) section
+   #kontak ini ada di TENGAH halaman & harus tetap putih polos kayak
+   bawaan .contact. Gradient ini cuma boleh jalan di kontak.html, di mana
+   #kontak kebetulan jadi elemen PERTAMA di dalam <main> (nempel ke atas
+   halaman/navbar). Jangan pernah pakai `#kontak` polos di sini. */
+main > #kontak:first-child {
+  background: linear-gradient(
+    to bottom,
+    var(--canvas) 0, var(--canvas) 140px,
+    var(--surface) 140px, var(--surface) 100%
+  );
+}
+/* .contact__grid pakai align-items:start (bawaan, dipakai section serupa
+   di halaman lain juga) — di halaman lain itu oke karena baris pertama
+   kolom kirinya cuma kicker/heading. Di kontak.html, breadcrumb ada DI
+   ATAS grid ini (bukan bagian dari kolom kiri), jadi kartu form di kolom
+   kanan ikut rata sama baris kicker "Kontak Kami" yang cuma 16px di bawah
+   breadcrumb — keliatan mepet. Dikasih margin-top cuma di kartu form-nya
+   (bukan seluruh .contact__grid) supaya kolom kiri (breadcrumb→kicker)
+   tetap 16px kayak biasa, cuma kartu form-nya aja yang turun. Scoped ke
+   #kontak biar halaman lain yang pakai .form-card nggak ikut kesenggol. */
+#kontak .form-card { margin-top: 40px; }
 @media (max-width: 680px) {
   #artikel-intro { padding-top: 140px; }
   #kuis-intro { padding-top: 140px; }
@@ -3168,7 +3394,13 @@ a.nav__dd-title:hover { color: var(--blue); }
 /* "Kembali" & "Lanjut" nempel bareng rata kanan — di pertanyaan pertama
    "Kembali" gak dirender sama sekali jadi "Lanjut" otomatis sendirian */
 .quiz-actions { display: flex; justify-content: flex-end; align-items: center; gap: 12px; margin-top: 20px; }
-.quiz-back { padding: 10px 21px; }
+/* "Kembali" sekarang punya ikon panah di KIRI (dibalik dari "Lanjut" yang
+   di kanan) — padding .btn--sm bawaan (lega di kiri, mepet di kanan) jadi
+   harus dibalik juga: mepet di kiri (sisi ikon), lega di kanan (sisi teks). */
+.quiz-back { padding: 10px 21px 10px 10px; }
+/* Panah "Kembali" nunjuk mundur terus, jangan ikut muter 45° kayak hover
+   tombol panah diagonal lainnya (.btn:hover i bawaan) */
+.quiz-back:hover i { transform: none; }
 .quiz-next:disabled {
   --btn-bg: var(--line);
   --btn-fg: var(--muted);
@@ -3183,9 +3415,13 @@ a.nav__dd-title:hover { color: var(--blue); }
 #quizLeadSubmit:hover i { transform: none; }
 
 /* .btn--sm bawaan padding-nya sengaja asimetris (lebih lega di kiri) buat
-   nyeimbangin ikon lingkaran di kanan — tombol ini polos tanpa ikon, jadi
-   padding-nya disamain kiri-kanan biar teksnya kelihatan center */
-.quiz-restart { padding: 10px 21px; }
+   nyeimbangin ikon lingkaran di kanan — tombol-tombol ini polos tanpa ikon
+   (disengaja, "Coba Lagi"/"Hubungi via WhatsApp"/status "Mengirim..." gak
+   perlu ikon), jadi padding-nya disamain kiri-kanan biar teksnya center. */
+.quiz-restart,
+.quiz-wa-link,
+#quizLeadRetry,
+#quizLeadSubmit:disabled { padding: 10px 21px; }
 
 /* --------------------------------------------------------- Layar akhir
    Ganti nampilin hasil rekomendasi langsung — user cuma ditagih kontak
@@ -3335,6 +3571,7 @@ a.nav__dd-title:hover { color: var(--blue); }
   }
   .nav.is-open > a { padding: 14px 16px; font-size: 1rem; color: var(--ink); }
   .nav.is-open > a::after { display: none; }
+  .nav.is-open > a[aria-current="page"] { color: var(--blue); }
 
   /* dropdown "Layanan" jadi accordion statis di dalam menu mobile */
   .nav.is-open .nav__trigger {
@@ -3344,6 +3581,7 @@ a.nav__dd-title:hover { color: var(--blue); }
     font-size: 1rem;
     color: var(--ink);
   }
+  .nav.is-open .nav__trigger[aria-current="page"] { color: var(--blue); }
   .nav.is-open .nav__trigger::after { display: none; }
   .nav.is-open .nav__dropdown {
     position: static;
