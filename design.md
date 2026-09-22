@@ -278,7 +278,31 @@ frame dari domain Google Maps.
 ## Struktur homepage (urutan section `index.html`)
 
 1. Header (navbar mengambang)
-2. Hero (foto handshake, headline rotator, kartu statistik kaca)
+2. Hero (foto handshake, headline rotator, kartu statistik kaca) — class
+   `.hero--home` (2026-09-22, ditambahin biar bisa di-scope sendiri tanpa
+   nyenggol L1/L2 lain yang sama-sama pakai `.hero`). Tinggi kartu bulatnya
+   dikunci `min-height: max(88vh, 860px)` — angka `860px` disamain PERSIS
+   sama tinggi hero L1 (legalitas/penyewaan/karsabiz, lihat poin 1 di
+   **Pola halaman L1**), biar transisi homepage↔L1 nggak kerasa "loncat"
+   tingginya. `max(88vh, ...)` (bukan `860px` polos) supaya di layar yang
+   tinggi banget, homepage & L1 tetap match sama-sama ikut `88vh`, bukan
+   cuma cocok di satu ukuran layar doang.
+
+   Konten di dalamnya (headline+CTA di kolom kiri, kartu kaca statistik di
+   kolom kanan) di-center vertikal via `.hero__inner { margin-top: -90px }`
+   (override angka `-44px` bawaan) — `.hero` punya padding atas-bawah yang
+   ASIMETRIS (180px atas buat jarak navbar fixed, 90px bawah), dan
+   `.hero__inner` SELALU dalam mode "hugging" (kotaknya ngepas sebesar
+   konten, `align-items:center` bawaan `.hero` jadi nggak pernah benar-benar
+   ngefek — lihat catatan sama persis di **Pola halaman L1** poin 1). Dalam
+   mode itu, rumus biar jarak kosong atas = jarak kosong bawah adalah
+   `margin-top = paddingBawah - paddingAtas = 90 - 180 = -90px`. **Jangan
+   naikin tinggi kotaknya lewat `min-height` di `.hero__inner`** — itu
+   sempat dicoba duluan dan SALAH: kotak grid-nya emang jadi center, tapi
+   isinya (`.hero__copy`/`.hero__cards`) tetap nempel ke bawah kotak itu
+   karena `.hero__inner` defaultnya `align-items:end`, jadi konten malah
+   kelihatan makin turun, bukan makin center. Tinggi WAJIB dikunci di
+   `.hero` itu sendiri, bukan di `.hero__inner`.
 3. Marquee — daftar sektor industri yang dilayani
 4. Tentang Temu Karsa
 5. Layanan Kami (showcase 2 kartu + ilustrasi isometrik)
@@ -372,6 +396,16 @@ Struktur bertingkat:
    (4 kolom desktop → 2 → 1) saat kelompoknya punya 4 sub-layanan, seperti di
    `penyewaan-space.html` (Virtual Office, Private Office, Coworking Space,
    Meeting Room) — dipilih 4 kolom rata, bukan 3+1 sisa sebaris sendiri.
+   Tombol `.btn` di dalam `.card--service` (baik "Pelajari Selengkapnya" di
+   L1 legalitas/workspace maupun "Mulai Sekarang" di kartu tools KarsaBiz)
+   dibikin **selebar kartunya** (2026-09-22, pola yang sama dengan
+   `.pricing-card .btn`): `width:100%; justify-content:center;
+   padding-inline:12px; white-space:nowrap`. Padding-inline dikecilin dari
+   `21px` (bawaan `.btn--sm`, asimetris kiri-kanan buat nyeimbangin ikon
+   bulat pas tombolnya masih hug-content) ke `12px` simetris — di grid
+   4-kolom yang sempit (Virtual Office dkk), `21px` dua sisi bikin teks
+   "Pelajari Selengkapnya" pecah 2 baris; `white-space:nowrap` jadi jaring
+   pengaman tambahan biar nggak kejadian lagi di lebar kartu manapun.
 3. **Kenapa Pilih Kami, Cara Kerja Kami, CTA, Kontak Kami** — disalin verbatim
    dari homepage (markup, class, dan style-nya sama persis) supaya trust
    signal & cara konversi konsisten di semua halaman. Tiap pasangan section
@@ -699,7 +733,12 @@ penyimpangan yang disengaja & didokumentasikan di sini, bukan salah ikut pola:
   horizontal di bawah tombol CTA, bukan kartu kaca vertikal di kolom kanan)
   — teks kualitatif, bukan statistik pengguna riil, karena KarsaBiz belum
   punya data untuk diklaim (lihat prinsip di bagian Copywriting soal tidak
-  mengarang angka).
+  mengarang angka). `.hero-stats` gap `32px` (2026-09-22, diturunin dari
+  `48px`) — gap-nya sendiri udah rata di ketiga item dari awal, tapi kolom
+  "100%" lebih LEBAR dari yang lain (label "Berbasis data resmi" paling
+  panjang), jadi optically item ketiga ("Instan") kelihatan lebih jauh
+  padahal jaraknya sama persis. Gap diperkecil biar selisih optical itu
+  nggak terlalu kentara — bukan berarti gap sebelumnya "salah".
 - **Breadcrumb `karsabiz.html` jadi anak langsung `.hero__inner`, BUKAN di
   dalam `.hero__copy`** (beda dari L1 legalitas/penyewaan) — supaya bisa
   diatur urutannya sendiri via `grid-template-areas` (2026-09-17, permintaan

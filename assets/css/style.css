@@ -478,11 +478,10 @@ a.nav__dd-title:hover { color: var(--blue); }
    paragraf/jumlah kartu tiap halaman beda panjang. align-items diganti dari
    `end` (bawaan, bottom-align 2 kolom) jadi `start` supaya kolom yang lebih
    pendek nggak didorong turun ngikutin ruang kosong tambahan dari
-   min-height ini. Homepage (index.html, .hero polos tanpa modifier) SENGAJA
-   tidak disentuh, supaya tidak ada efek samping di luar 3 halaman L1 ini.
-   Dibatasi min-width:681px — di bawah itu .hero__inner sudah punya aturan
-   sendiri (align-self:stretch + margin-top:auto di .hero__cards--stats)
-   buat ngambangin kartu statistik di tengah, jangan sampai ketiban. */
+   min-height ini. Dibatasi min-width:681px — di bawah itu .hero__inner
+   sudah punya aturan sendiri (align-self:stretch + margin-top:auto di
+   .hero__cards--stats) buat ngambangin kartu statistik di tengah, jangan
+   sampai ketiban. */
 @media (min-width: 681px) {
   .hero--legalitas .hero__inner,
   .hero--karsabiz .hero__inner {
@@ -500,6 +499,35 @@ a.nav__dd-title:hover { color: var(--blue); }
   .hero--karsabiz .hero__cards {
     align-self: center;
   }
+  /* Homepage (2026-09-22, permintaan eksplisit: samain tinggi kartu hero
+     homepage dgn 3 halaman L1, yang tingginya = 860px). Sengaja TIDAK pakai
+     align-self:flex-start/align-items:start/margin-top:0 kayak L1
+     (homepage nggak punya breadcrumb yang perlu dikunci posisinya, dan
+     tetap mau ikut center-vertikal bawaan homepage).
+
+     Tinggi 860px-nya dikunci langsung di `.hero`-nya (min-height), BUKAN
+     dengan cara menggelembungkan `.hero__inner` pakai min-height — cara
+     itu sempat dicoba dan hasilnya salah: kotak grid-nya memang jadi
+     center, tapi ISI-nya (teks + kartu kaca) nempel ke BAWAH kotak itu
+     karena `.hero__inner` bawaannya `align-items:end`, jadi konten
+     kelihatannya malah makin turun (271px kosong di atas vs 62px di bawah).
+     Dengan dikunci di .hero, `.hero__inner` balik setinggi kontennya
+     sendiri, jadi posisi kotak = posisi konten yang kelihatan.
+
+     `max(88vh, 860px)` dipakai (bukan 860px polos) supaya rumusnya sama
+     persis dengan L1 — di layar yang tinggi banget, dua-duanya sama-sama
+     ikut 88vh, bukan cuma match di satu ukuran layar doang.
+
+     margin-top:-90px meng-override -44px bawaan `.hero__inner` (base rule).
+     Fungsinya sama — kompensasi padding .hero yang asimetris (180px atas
+     buat jarak navbar fixed vs 90px bawah) — tapi angkanya dikoreksi ke
+     rumus yang benar: margin-top = paddingBawah - paddingAtas = 90-180 =
+     -90px. Dengan angka ini konten center PERSIS berapa pun tinggi
+     kontennya (jarak atas = jarak bawah otomatis, nggak perlu di-tuning
+     ulang tiap konten berubah — beda dari -44px yang cuma pas buat satu
+     tinggi konten tertentu). */
+  .hero--home { min-height: max(88vh, 860px); }
+  .hero--home .hero__inner { margin-top: -90px; }
 }
 
 /* ---- Hero KarsaBiz — pakai foto seperti L1 lain (2026-09-18, gantiin
@@ -554,7 +582,13 @@ a.nav__dd-title:hover { color: var(--blue); }
   0%, 100% { transform: translateY(0); }
   50%       { transform: translateY(-12px); }
 }
-.hero-stats { display: flex; gap: 48px; flex-wrap: wrap; margin-top: 40px; padding-top: 32px; border-top: 1px solid rgba(255, 255, 255, .12); }
+/* gap 48px (nilai lama) SAMA RATA di antara ketiga item — bukan itu yang
+   bikin "100%" ke "Instan" kelihatan lebih jauh, itu ilusi optik: kolom
+   "100%" lebih LEBAR (label "Berbasis data resmi" lebih panjang dari label
+   lain), jadi dorong "Instan" makin jauh walau jaraknya sama persis.
+   Diperkecil ke 32px (2026-09-22, permintaan eksplisit) biar selisih
+   optical-nya nggak terlalu kentara. */
+.hero-stats { display: flex; gap: 32px; flex-wrap: wrap; margin-top: 40px; padding-top: 32px; border-top: 1px solid rgba(255, 255, 255, .12); }
 .hero-stat { display: flex; flex-direction: column; gap: 6px; }
 .hero-stat__num { font-size: 1.5rem; font-weight: 800; color: #fff; letter-spacing: -.02em; }
 .hero-stat__label { font-size: .8rem; color: rgba(255, 255, 255, .6); font-weight: 500; }
@@ -997,6 +1031,23 @@ a.nav__dd-title:hover { color: var(--blue); }
 }
 .service-cards .card h3 { font-size: 1.15rem; }
 .card--service .btn, .card--service .tag--muted { margin-top: 22px; }
+/* Tombol di kartu layanan/tools dibikin selebar kartunya (2026-09-22),
+   pola yang sama dengan `.pricing-card .btn`. padding-inline disamakan
+   kiri-kanan karena bawaan `.btn--sm` itu asimetris (21px kiri / 10px
+   kanan — buat nyeimbangin ikon bulat di kanan waktu tombolnya masih
+   hug-content); di tombol full-width yang isinya di-center, asimetri itu
+   malah bikin grup teks+ikon kegeser ~5px dari tengah.
+   Angkanya dikecilin ke 12px (bukan 21px) + `white-space:nowrap`: di grid
+   4 kolom (Virtual Office dkk) kartunya sempit, padding 21px dua sisi
+   bikin "Pelajari Selengkapnya" pecah jadi 2 baris. Di tombol full-width
+   padding-inline nggak nentuin lebar tombol lagi, cuma jarak minimum ke
+   tepi — jadi aman dikecilin. */
+.card--service .btn {
+  width: 100%;
+  justify-content: center;
+  padding-inline: 12px;
+  white-space: nowrap;
+}
 /* kartu info, bukan tombol/link utuh — tombol "Pelajari Selengkapnya" di
    dalamnya sudah punya hover sendiri, jadi kartunya diam saat di-hover */
 .service-cards .card:hover { transform: none; box-shadow: var(--sh-sm); }
