@@ -249,15 +249,29 @@ atas foto hero untuk menampilkan metrik kepercayaan. Dua bentuk:
   select di seluruh halaman (homepage, L1, L2), tidak perlu disalin manual.
 
 ### Peta lokasi
-Google Maps embed asli (iframe, bukan gambar statis) — genuinely interaktif
-(bisa zoom/geser/klik "Buka di Maps"), bukan screenshot peta. URL embed pakai
-domain **`www.google.com/maps?q=...&output=embed`** (2026-09-18, diganti dari
-`maps.google.com/maps?q=...` yang lama — sempat dilaporkan render jadi ikon
-broken-image di beberapa halaman, domain lama itu kurang stabil buat
-di-embed tanpa API key). Kalau masih broken setelah ganti domain ini,
-kemungkinan penyebabnya di luar kode: ad-blocker/ekstensi privasi browser
-yang mem-block iframe Google Maps, atau CSP server yang belum mengizinkan
-frame dari domain Google Maps.
+Embed peta asli (iframe, bukan gambar statis) — genuinely interaktif (bisa
+zoom/geser), bukan screenshot peta.
+
+**2026-09-23: pindah dari Google Maps ke OpenStreetMap.** Sebelumnya pakai
+`www.google.com/maps?q=...&output=embed`, tapi ketauan Google diam-diam
+udah mengalihkan SEMUA trafik URL format itu (baik query alamat teks maupun
+koordinat lat/lng) ke versi embed baru berbasis JS (`maps-api-v3/embed/js`,
+`origin=mfe`) yang masuk filter list ad-blocker umum (uBlock, AdGuard, Brave
+Shields, dll) sebagai resource "tracking" — makanya box map-nya kosong sama
+sekali, tanpa pesan error apapun, di browser manapun yang pakai
+ad-blocker/privacy extension. Ini bukan bug kode kita, tapi migrasi endpoint
+Google yang bikin format embed lama (`output=embed`) jadi rapuh terhadap
+ad-blocker. Fix: ganti iframe src ke embed OpenStreetMap:
+```
+https://www.openstreetmap.org/export/embed.html?bbox=<left>,<bottom>,<right>,<top>&layer=mapnik&marker=<lat>,<lng>
+```
+Gratis, tanpa API key, dan domain `openstreetmap.org` praktis tidak pernah
+kena filter ad-blocker karena bukan domain Google/tracking. Konsekuensi:
+gaya visual peta jadi beda dari Google Maps (lebih flat/simpel, warna beda),
+tapi pin lokasi & alamat tetap akurat. Dipasang di SEMUA halaman yang punya
+`.footer__map` (23 file: semua halaman statis + `article-layout.njk` buat
+artikel Eleventy) — kalau nanti nambah halaman baru dengan footer, pastikan
+copy src iframe ini, jangan balik pakai format Google Maps `output=embed`.
 
 ## Copywriting
 
