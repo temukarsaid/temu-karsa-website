@@ -2508,14 +2508,23 @@ a.nav__dd-title:hover { color: var(--blue); }
 #artikel-intro { padding-top: 180px; padding-bottom: 0; }
 #artikel-daftar { padding-top: 64px; }
 #kuis-intro { padding-top: 180px; padding-bottom: 0; }
+/* Beda dari #kuis-intro: kalkulator-modal-usaha.html & panduan-struktur-usaha.html
+   TIDAK punya section lain di bawahnya (CTA-nya di-takeout, 2026-09-30) —
+   jadi padding-bottom dibiarkan bawaan .section (--section-y), bukan 0,
+   supaya judul nggak nempel ke footer. */
+#kalkulator-intro, #struktur-intro { padding-top: 180px; }
 /* Judul legal-check.html dua kalimat (bold+abu-abu gaya .intro-heading),
    jauh lebih panjang dari judul L2 lain — batas 18ch bawaan
    .service-single__title (dipakai L2 legalitas/workspace yang judulnya
    pendek) bikin ini kepotong jadi >4 baris sempit. Dilepas khusus di sini.
    Ukuran font juga diturunin ke ukuran .intro-heading ("Bukan sekadar
    mengurus dokumen" dll) — <h1> default (clamp 2.4rem–4.1rem) kegedean
-   buat 2 kalimat sepanjang ini. */
-#kuis-intro .service-single__top .section-kicker {
+   buat 2 kalimat sepanjang ini. Selector sama dipakai juga oleh
+   #kalkulator-intro & #struktur-intro (kalkulator-modal-usaha.html,
+   panduan-struktur-usaha.html) — judulnya pola sama persis (2 kalimat). */
+#kuis-intro .service-single__top .section-kicker,
+#kalkulator-intro .service-single__top .section-kicker,
+#struktur-intro .service-single__top .section-kicker {
   /* .service-single__top ngasih gap:28px rata ke semua anak (buat jarak
      breadcrumb→judul aslinya, ditambah margin-bottom:16px bawaan
      .breadcrumb sendiri = 44px total) — begitu .section-kicker disisipkan
@@ -2531,8 +2540,12 @@ a.nav__dd-title:hover { color: var(--blue); }
    yang pendek+1 baris) — judul 2 kalimat ini malah kepotong sebelum
    mentok lebar .wrap (1280px) beneran. Dilepas biar selebar .wrap penuh,
    sama kayak "Kenapa Pilih Kami" dkk. */
-#kuis-intro .service-single__top { max-width: none; }
-#kuis-intro .service-single__title {
+#kuis-intro .service-single__top,
+#kalkulator-intro .service-single__top,
+#struktur-intro .service-single__top { max-width: none; }
+#kuis-intro .service-single__title,
+#kalkulator-intro .service-single__title,
+#struktur-intro .service-single__title {
   max-width: none;
   font-size: clamp(1.5rem, 2.6vw, 2.1rem);
   line-height: 1.4;
