@@ -1030,7 +1030,13 @@ a.nav__dd-title:hover { color: var(--blue); }
   gap: 24px;
 }
 .service-cards .card h3 { font-size: 1.15rem; }
-.card--service .btn, .card--service .tag--muted { margin-top: 22px; }
+/* Flex column + tombol margin-top:auto (2026-09-30): supaya tombol "Mulai
+   Sekarang" rata sejajar di semua kartu meski panjang paragraf beda-beda
+   (mis. Legal Check 4 baris vs Kalkulator/Panduan cuma 2 baris) — tanpa
+   ini tombol nempel persis di bawah teks, jadi naik-turun per kartu. */
+.card--service { display: flex; flex-direction: column; }
+.card--service p { margin-bottom: 22px; }
+.card--service .btn, .card--service .tag--muted { margin-top: auto; }
 /* Tombol di kartu layanan/tools dibikin selebar kartunya (2026-09-22),
    pola yang sama dengan `.pricing-card .btn`. padding-inline disamakan
    kiri-kanan karena bawaan `.btn--sm` itu asimetris (21px kiri / 10px
