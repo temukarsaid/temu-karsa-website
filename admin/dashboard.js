@@ -627,7 +627,15 @@
     var t = state.traffic;
     var total = (t.totals.current && t.totals.current.views) || 0;
     $('pagesSub').textContent = 'Page views per halaman dalam ' + state.days + ' hari terakhir.';
-    var entries = (t.pages || []).map(function (p) { return { label: pageLabel(p.path), title: p.path, n: p.views }; });
+    // GA mencatat /karsabiz dan /karsabiz.html (dan / vs /index.html) sebagai
+    // halaman beda — digabung dulu biar satu halaman = satu baris.
+    var merged = {};
+    (t.pages || []).forEach(function (p) {
+      var key = p.path.replace(/\?.*$/, '').replace(/\/index\.html$/, '/').replace(/\.html$/, '').replace(/(.)\/$/, '$1') || '/';
+      if (!merged[key]) merged[key] = { label: pageLabel(key === '/' ? '/' : key + '.html'), title: key, n: 0 };
+      merged[key].n += p.views;
+    });
+    var entries = Object.keys(merged).map(function (k) { return merged[k]; }).sort(function (a, b) { return b.n - a.n; });
     ul.innerHTML = entries.length ? barsHtml(entries, total) : emptyLi('Belum ada data', 'Belum ada page views di periode ini.');
   }
 
