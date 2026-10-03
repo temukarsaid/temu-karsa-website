@@ -1,17 +1,17 @@
-/* API data buat section KarsaBiz di /admin/leads/ — satu-satunya tempat
-   yang boleh pegang SUPABASE_SERVICE_ROLE_KEY (env var rahasia, cuma ada
-   di server, gak pernah dikirim ke browser). Halaman admin/leads/index.html
-   cuma manggil endpoint INI, gak pernah connect ke Supabase langsung dari
-   browser.
+/* API data buat /admin/checklist/ — submission "Checklist Dokumen Usaha".
+   Disimpan di tabel Supabase YANG SAMA dengan Legal Check (`leads`), cuma
+   dibedain lewat answers.formType = 'checklist-dokumen-usaha' (lihat
+   assets/js/checklist.js submitChecklist()) — jadi gak perlu migrasi
+   skema tabel baru. Endpoint ini filter query-nya ke formType itu doang,
+   sisanya pola persis functions/api/leads.js.
 
-   GET /api/leads          -> daftar ringkas semua lead (buat tabel)
-   GET /api/leads?id=<uuid> -> detail lengkap 1 lead (buat tampilan cetak PDF)
+   GET /api/checklist-leads          -> daftar ringkas
+   GET /api/checklist-leads?id=<uuid> -> detail lengkap 1 submission
 
-   Wajib login dulu ke dashboard admin (cookie admin_session dari
-   admin-login.js) — kalau enggak, balikin 401. */
+   Wajib login admin (cookie admin_session), sama kayak /api/leads. */
 
 import { verifySession, parseCookies } from '../_lib/session.js';
-import { getDemoLeads } from '../_lib/demo-leads.js';
+import { getDemoChecklistLeads } from '../_lib/demo-leads.js';
 
 async function requireSession(request, env) {
   if (!env.SESSION_SECRET) return null;
@@ -31,18 +31,16 @@ export async function onRequestGet({ request, env }) {
   const url = new URL(request.url);
   const id = url.searchParams.get('id');
 
-  // Mode demo — cuma buat coba-coba tampilan lokal, TIDAK boleh dipasang
-  // di Cloudflare Pages produksi. Diaktifin lewat DEMO_LEADS=1 di .dev.vars.
   if (env.DEMO_LEADS === '1') {
     if (id) {
-      const lead = getDemoLeads().find(function (l) { return l.id === id; });
+      const lead = getDemoChecklistLeads().find(function (l) { return l.id === id; });
       if (!lead) return new Response(JSON.stringify({ error: 'not_found' }), { status: 404, headers: { 'Content-Type': 'application/json' } });
       return new Response(JSON.stringify(lead), { status: 200, headers: { 'Content-Type': 'application/json' } });
     }
-    const list = getDemoLeads().map(function (l) {
+    const list = getDemoChecklistLeads().map(function (l) {
       return {
         id: l.id, created_at: l.created_at, nama: l.nama, whatsapp: l.whatsapp, email: l.email, status: l.status,
-        kategori: l.answers.q2, bentuk: l.answers.q1,
+        jenisLayanan: l.answers.jenisLayanan,
       };
     });
     return new Response(JSON.stringify(list), { status: 200, headers: { 'Content-Type': 'application/json', 'X-Demo-Data': '1' } });
@@ -61,15 +59,12 @@ export async function onRequestGet({ request, env }) {
   };
 
   const restUrl = new URL(`${env.SUPABASE_URL}/rest/v1/leads`);
+  restUrl.searchParams.set('answers->>formType', 'eq.checklist-dokumen-usaha');
   if (id) {
     restUrl.searchParams.set('id', `eq.${id}`);
     restUrl.searchParams.set('select', '*');
   } else {
-    // Daftar ringkas doang buat tabel — kolom jsonb berat (answers dkk)
-    // gak perlu ditarik penuh di sini, baru diambil pas buka detail satu
-    // lead. "kategori"/"bentuk" ditarik ringan langsung dari dalam jsonb
-    // (bukan full jsonb-nya) buat kebutuhan chart di Dashboard.
-    restUrl.searchParams.set('select', 'id,created_at,nama,whatsapp,email,status,kategori:answers->>q2,bentuk:answers->>q1');
+    restUrl.searchParams.set('select', 'id,created_at,nama,whatsapp,email,status,jenisLayanan:answers->>jenisLayanan');
     restUrl.searchParams.set('order', 'created_at.desc');
   }
 
@@ -93,7 +88,7 @@ export async function onRequestGet({ request, env }) {
   return new Response(JSON.stringify(data), { status: 200, headers: { 'Content-Type': 'application/json' } });
 }
 
-// DELETE /api/leads?id=<uuid> -> hapus 1 lead permanen dari Supabase.
+// DELETE /api/checklist-leads?id=<uuid>
 export async function onRequestDelete({ request, env }) {
   const session = await requireSession(request, env);
   if (!session) {
@@ -113,8 +108,6 @@ export async function onRequestDelete({ request, env }) {
   }
 
   if (env.DEMO_LEADS === '1') {
-    // Mode demo cuma buat coba-coba tampilan lokal — gak ada tempat nyimpen
-    // beneran buat dihapus, jadi anggap sukses aja tanpa efek apa-apa.
     return new Response(JSON.stringify({ ok: true }), { status: 200, headers: { 'Content-Type': 'application/json' } });
   }
 
@@ -132,6 +125,7 @@ export async function onRequestDelete({ request, env }) {
 
   const restUrl = new URL(`${env.SUPABASE_URL}/rest/v1/leads`);
   restUrl.searchParams.set('id', `eq.${id}`);
+  restUrl.searchParams.set('answers->>formType', 'eq.checklist-dokumen-usaha');
 
   const res = await fetch(restUrl, { method: 'DELETE', headers: supaHeaders });
   if (!res.ok) {
@@ -145,10 +139,7 @@ export async function onRequestDelete({ request, env }) {
   return new Response(JSON.stringify({ ok: true }), { status: 200, headers: { 'Content-Type': 'application/json' } });
 }
 
-// PATCH /api/leads?id=<uuid>  body: { status: "baru" | "pdf_siap" }
-// -> admin tandai manual status lead (dulu ini otomatis lewat trigger yang
-// udah dimatiin — sekarang murni aksi manual admin, biar sesuai fakta
-// "udah dikirim beneran" bukan "berhasil generate PDF di server").
+// PATCH /api/checklist-leads?id=<uuid>  body: { status: "baru" | "pdf_siap" }
 export async function onRequestPatch({ request, env }) {
   const session = await requireSession(request, env);
   if (!session) {
@@ -204,6 +195,7 @@ export async function onRequestPatch({ request, env }) {
 
   const restUrl = new URL(`${env.SUPABASE_URL}/rest/v1/leads`);
   restUrl.searchParams.set('id', `eq.${id}`);
+  restUrl.searchParams.set('answers->>formType', 'eq.checklist-dokumen-usaha');
 
   const res = await fetch(restUrl, {
     method: 'PATCH',

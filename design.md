@@ -21,6 +21,11 @@ Meeting Room) untuk pelaku UMKM di Indonesia.
 > bagian Arsitektur Multi-Halaman untuk pola & penyimpangannya dari L1/L2
 > legalitas/workspace.
 >
+> **Update (2026-10-03):** tool Checklist Dokumen Usaha, footer 4 kolom (KarsaBiz),
+> peta OpenStreetMap, dan redesign dashboard admin dengan traffic GA4 — lihat
+> subbagian **Checklist Dokumen Usaha, footer 4 kolom, dan dashboard admin**
+> sebelum bagian Halaman Pendukung.
+>
 > **Update (2026-09-18):** beberapa perbaikan lintas-halaman —
 > posisi breadcrumb ketiga L1 (legalitas/workspace/karsabiz) disamakan
 > persis dengan halaman non-L1 (lihat **Pola halaman L1**), hero L1 KarsaBiz
@@ -830,6 +835,73 @@ penyimpangan yang disengaja & didokumentasikan di sini, bukan salah ikut pola:
   ganti `<span class="tag tag--muted">` jadi tombol `<a class="btn
   btn--ghost btn--sm">` yang nunjuk ke L2 barunya, sama seperti pola L2
   legalitas/workspace.
+
+### Checklist Dokumen Usaha, footer 4 kolom, dan dashboard admin (2026-10-03)
+
+**Checklist Dokumen Usaha** (`checklist-dokumen-usaha.html`, logika di
+`assets/js/checklist.js`) — tool KarsaBiz kedua yang hidup, form 7 langkah
+dengan maskot + progress bar + bubble yang sama persis dengan Legal Check
+(class `.quiz-*` dipakai ulang). Langkah: (1) jenis layanan, (2) data
+pendiri/pemegang saham (blok berulang, tombol teks `+ Tambah`), (3) NPWP
+pribadi tiap pendiri, (4) 3 opsi nama PT (tetap 3, harus beda), (5) alamat
+kedudukan usaha, (6) modal dasar/disetor + lembar saham per pendiri (nama
+diambil dari langkah 2), (7) telepon & email — tombol akhir **"Cetak
+Checklist"**, bukan "Lanjut".
+- Pilihan jenis layanan = `<label>` membungkus `<input type="radio">` asli
+  (visual sama dengan `.quiz-option`, class `.quiz-option__input` disembunyikan
+  secara aksesibel).
+- Field berulang pakai `.field` + blok `.checklist-person` (garis pemisah,
+  tombol hapus merah mulai blok ke-2). Alamat = `<textarea>` yang bisa di-drag.
+  NIK dan NPWP otomatis dibersihkan jadi angka saja.
+- Tombol "Lanjut"/"Cetak Checklist" wajib ber-class `quiz-next` (menahan ikon
+  tidak ikut berputar saat hover). Saat "Mengirim…" class itu **dilepas dulu**
+  sebelum `disabled`, supaya tombol tetap biru seperti `#quizLeadSubmit` Legal
+  Check, bukan abu-abu.
+- Tombol tanpa ikon (Coba Lagi, Hubungi via WhatsApp, Mengirim…) memakai
+  padding simetris `10px 21px` (daftar selector di `style.css`); `.btn--sm`
+  bawaan asimetris karena menyeimbangkan ikon bulat.
+- Submit ke tabel Supabase `leads` yang sama dengan Legal Check, dibedakan
+  lewat `answers.formType = 'checklist-dokumen-usaha'` (tanpa migrasi skema).
+  Layar sukses memuat janji "1x24 jam kerja". PDF dibuat di admin
+  (`admin/checklist/`), lalu dikirim manual via WhatsApp.
+- Halaman placeholder lain: `kalkulator-modal-usaha.html` (judul dua kalimat,
+  tanpa CTA; selector `#kalkulator-intro`/`#checklist-intro` berbagi aturan
+  judul dengan `#kuis-intro`).
+- Kartu di `karsabiz.html` memakai flex-column + `margin-top:auto` pada
+  tombol supaya tombol "Mulai Sekarang" sejajar walau panjang teks beda.
+
+**Footer 4 kolom.** Kolom **KarsaBiz** (Legal Check, Kalkulator Modal Usaha,
+Checklist Dokumen Usaha) ditambahkan setelah Workspace di semua halaman +
+template artikel. Grid `repeat(4, .8fr)`; tablet jadi 2×2. Deskripsi brand:
+"Mitra legalitas, ruang kerja, dan tools bisnis digital…". Peta footer
+sekarang **OpenStreetMap** (embed `openstreetmap.org/export/embed.html`),
+bukan Google Maps — embed `output=embed` diblokir ad-blocker.
+
+**Dashboard admin home** (`admin/index.html`, `admin/dashboard.css`,
+`admin/dashboard.js`) — dirancang ulang 2026-10-02, struktur "Lini Masa
+Performa". Mode Operate; di atas shell yang ada (sidebar putih, biru brand,
+Plus Jakarta Sans). Urutan: 4 kartu metrik (tetap) → grafik submission →
+Antrian follow-up | Profil calon klien → Legal Check vs Checklist Dokumen →
+Pengunjung website → Halaman terpopuler | Sumber pengunjung.
+- Warna tool dikunci di semua grafik/legenda: Legal Check `--blue`, Checklist
+  `--cyan`, terkirim `--mint`, lewat 24 jam `--danger`, traffic `--navy`.
+- Grafik submission = SVG digambar dari data: batang bertumpuk per hari (per
+  minggu di 90 hari), bagian **pudar = belum dikirim**, hari tanpa submission
+  diberi penanda nol abu-abu (bukan dikosongkan). Hover/tap/panah keyboard →
+  tooltip; tabel `sr-only` memuat semua angka.
+- Satu kontrol periode (7/30/90 hari) mengatur semua kartu. Satu kontrol
+  per konteks lain: tab profil (bentuk/kategori/layanan) dengan bar selalu biru.
+- Antrian: paling lama menunggu di atas, meter berskala 7 hari dengan penanda
+  batas 24 jam, aksi WhatsApp / PDF / tandai dikirim.
+- Traffic dibaca server-side dari **GA4 Data API** lewat `/api/analytics`
+  (env `GA4_PROPERTY_ID`, `GA4_CLIENT_EMAIL`, `GA4_PRIVATE_KEY`; cache 10
+  menit). Belum terhubung → kartu langkah setup (503 `not_configured`),
+  bukan angka. `DEMO_LEADS=1` → data contoh berlabel "Data contoh" (header
+  `X-Demo-Data`). Data demo digenerate saat request, **bukan** di top-level
+  modul (Date.now() di runtime Workers beku di 1970 saat inisialisasi).
+- Teks sekunder dashboard memakai `--muted:#6B7182` (4.9:1), bukan #8A90A0.
+- Menu admin: "Legal Check" (dulu "Leads") dan "Checklist Dokumen"; label
+  tombol hapus cukup "Hapus".
 
 ## Halaman Pendukung (Tentang Kami, Kontak, Kebijakan Privasi, Tanya AI)
 

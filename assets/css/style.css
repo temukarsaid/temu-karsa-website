@@ -2508,11 +2508,15 @@ a.nav__dd-title:hover { color: var(--blue); }
 #artikel-intro { padding-top: 180px; padding-bottom: 0; }
 #artikel-daftar { padding-top: 64px; }
 #kuis-intro { padding-top: 180px; padding-bottom: 0; }
-/* Beda dari #kuis-intro: kalkulator-modal-usaha.html & panduan-struktur-usaha.html
-   TIDAK punya section lain di bawahnya (CTA-nya di-takeout, 2026-09-30) —
-   jadi padding-bottom dibiarkan bawaan .section (--section-y), bukan 0,
-   supaya judul nggak nempel ke footer. */
-#kalkulator-intro, #struktur-intro { padding-top: 180px; }
+/* Beda dari #kuis-intro: kalkulator-modal-usaha.html TIDAK punya section
+   lain di bawahnya (CTA-nya di-takeout, 2026-09-30) — jadi padding-bottom
+   dibiarkan bawaan .section (--section-y), bukan 0, supaya judul nggak
+   nempel ke footer. */
+#kalkulator-intro { padding-top: 180px; }
+/* #checklist-intro BEDA LAGI dari #kalkulator-intro (2026-10-01): sekarang
+   punya section kuis (#checklist-daftar) di bawahnya, sama kayak #kuis-intro
+   Legal Check — jadi padding-bottom:0 lagi biar gak dobel jarak. */
+#checklist-intro { padding-top: 180px; padding-bottom: 0; }
 /* Judul legal-check.html dua kalimat (bold+abu-abu gaya .intro-heading),
    jauh lebih panjang dari judul L2 lain — batas 18ch bawaan
    .service-single__title (dipakai L2 legalitas/workspace yang judulnya
@@ -2520,11 +2524,11 @@ a.nav__dd-title:hover { color: var(--blue); }
    Ukuran font juga diturunin ke ukuran .intro-heading ("Bukan sekadar
    mengurus dokumen" dll) — <h1> default (clamp 2.4rem–4.1rem) kegedean
    buat 2 kalimat sepanjang ini. Selector sama dipakai juga oleh
-   #kalkulator-intro & #struktur-intro (kalkulator-modal-usaha.html,
-   panduan-struktur-usaha.html) — judulnya pola sama persis (2 kalimat). */
+   #kalkulator-intro & #checklist-intro (kalkulator-modal-usaha.html,
+   checklist-dokumen-usaha.html) — judulnya pola sama persis (2 kalimat). */
 #kuis-intro .service-single__top .section-kicker,
 #kalkulator-intro .service-single__top .section-kicker,
-#struktur-intro .service-single__top .section-kicker {
+#checklist-intro .service-single__top .section-kicker {
   /* .service-single__top ngasih gap:28px rata ke semua anak (buat jarak
      breadcrumb→judul aslinya, ditambah margin-bottom:16px bawaan
      .breadcrumb sendiri = 44px total) — begitu .section-kicker disisipkan
@@ -2542,16 +2546,16 @@ a.nav__dd-title:hover { color: var(--blue); }
    sama kayak "Kenapa Pilih Kami" dkk. */
 #kuis-intro .service-single__top,
 #kalkulator-intro .service-single__top,
-#struktur-intro .service-single__top { max-width: none; }
+#checklist-intro .service-single__top { max-width: none; }
 #kuis-intro .service-single__title,
 #kalkulator-intro .service-single__title,
-#struktur-intro .service-single__title {
+#checklist-intro .service-single__title {
   max-width: none;
   font-size: clamp(1.5rem, 2.6vw, 2.1rem);
   line-height: 1.4;
   font-weight: 700;
 }
-#kuis-daftar { padding-top: 64px; }
+#kuis-daftar, #checklist-daftar { padding-top: 64px; }
 /* Breadcrumb kontak.html ada DI DALAM #kontak (bukan section #kontak-intro
    terpisah lagi). Latar putih TIDAK boleh sampai paling atas — backdrop di
    belakang navbar harus tetap abu-abu (var(--canvas)) kayak semua halaman
@@ -3150,7 +3154,7 @@ main > #kontak:first-child {
 }
 .footer__top {
   display: grid;
-  grid-template-columns: minmax(0, 1.3fr) repeat(3, minmax(0, .8fr));
+  grid-template-columns: minmax(0, 1.3fr) repeat(4, minmax(0, .8fr));
   gap: 50px;
   padding-bottom: 50px;
   border-bottom: 1px solid rgba(255, 255, 255, .12);
@@ -3437,6 +3441,20 @@ main > #kontak:first-child {
 .quiz-option__text { display: flex; flex-direction: column; gap: 4px; }
 .quiz-option__label { font-weight: 700; color: var(--ink); transition: color .25s; }
 .quiz-option__desc { font-size: .86rem; color: var(--muted); }
+/* Checklist Dokumen Usaha (2026-10-01): .quiz-option dipakai sebagai
+   <label> membungkus <input type="radio"> asli (bukan <button> kosong
+   kayak kuis Legal Check) — biar semantik radio-button beneran kepake,
+   sesuai revisi. Input-nya disembunyikan visual tapi tetap di DOM/tab
+   order, tampilan radio custom tetap pakai .quiz-option__radio yang sama. */
+.quiz-option__input {
+  position: absolute;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
 
 /* varian checkbox — dipakai pertanyaan grup yang "boleh pilih lebih dari
    satu" (lihat quiz-data.js: group.multi). Sama persis kayak radio, cuma
@@ -3460,6 +3478,61 @@ main > #kontak:first-child {
   margin-bottom: 8px;
 }
 .quiz-group__hint { font-size: .8rem; font-weight: 500; color: var(--muted); }
+
+/* ------------------------------------------- Checklist Dokumen Usaha: step
+   data diri pendiri/pemegang saham (2026-10-01) — form berulang, beda dari
+   .quiz-group (pilihan) karena isinya <input> field asli (.field, dipakai
+   bareng sama form kontak.html), bukan pilihan opsi. Satu blok per orang,
+   dipisah garis sama persis pola .quiz-group + .quiz-group di atas. */
+.checklist-persons { display: flex; flex-direction: column; }
+.checklist-person + .checklist-person { margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--line); }
+.checklist-person__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.checklist-person__title { font-weight: 700; color: var(--ink); }
+/* Satu field per baris (bukan .form-grid 2 kolom) — Nama/NIK/Alamat
+   ditumpuk, bukan Nama+NIK sejajar (2026-10-01, revisi). */
+.checklist-person__fields { display: flex; flex-direction: column; gap: 18px; }
+/* Step 6 (modal & saham): daftar jumlah saham per pendiri dipisah dari
+   field modal dasar/disetor di atasnya pakai garis yang sama persis pola
+   .checklist-person + .checklist-person. */
+.checklist-shareholders { margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--line); }
+.checklist-person__remove {
+  display: grid;
+  place-items: center;
+  width: 32px; height: 32px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(220, 38, 38, .08);
+  color: #DC2626;
+  cursor: pointer;
+  transition: background-color .25s;
+}
+.checklist-person__remove svg { width: 16px; height: 16px; }
+.checklist-person__remove:hover { background: rgba(220, 38, 38, .16); }
+/* Tombol "+ Tambah" — teks polos tanpa fill/border sama sekali (2026-10-01,
+   revisi dari versi .btn--ghost yang kebanyakan "nonjol"), biar kebaca
+   sebagai aksi sekunder/opsional, bukan tombol aksi utama. */
+.checklist-add-person {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 24px;
+  padding: 10px 0;
+  border: 0;
+  background: none;
+  font-size: .89rem;
+  font-weight: 600;
+  color: var(--blue);
+  cursor: pointer;
+}
+.checklist-add-person svg { width: 18px; height: 18px; }
+.checklist-add-person:hover { color: var(--navy); }
 
 /* "Kembali" & "Lanjut" nempel bareng rata kanan — di pertanyaan pertama
    "Kembali" gak dirender sama sekali jadi "Lanjut" otomatis sendirian */
@@ -3491,7 +3564,9 @@ main > #kontak:first-child {
 .quiz-restart,
 .quiz-wa-link,
 #quizLeadRetry,
-#quizLeadSubmit:disabled { padding: 10px 21px; }
+#checklistRetry,
+#quizLeadSubmit:disabled,
+#checklistSubmit:disabled { padding: 10px 21px; }
 
 /* --------------------------------------------------------- Layar akhir
    Ganti nampilin hasil rekomendasi langsung — user cuma ditagih kontak
@@ -3715,10 +3790,10 @@ main > #kontak:first-child {
     transform-origin: 16% 22%;
   }
   /* brand (isinya field newsletter) span full lebar di baris sendiri —
-     biar field-nya bisa selebar .footer__map di bawah — TAPI 3 kolom
-     link (Legalitas/Workspace/Perusahaan) tetap sebaris 3 kolom kayak
-     semula, bukan ikut ditumpuk 1 kolom. */
-  .footer__top { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 38px; }
+     biar field-nya bisa selebar .footer__map di bawah — 4 kolom link
+     (Legalitas/Workspace/KarsaBiz/Perusahaan) dibikin 2x2 (2026-10-01,
+     nambah kolom KarsaBiz) biar gak numpuk 4 sebaris yang jadi sempit. */
+  .footer__top { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 38px; }
   .footer__brand { grid-column: 1 / -1; }
   /* padding atas footer disamakan dengan padding bawah (32px) — 84px
      bawaan desktop kejauhan dari card di atasnya begitu layout tablet */

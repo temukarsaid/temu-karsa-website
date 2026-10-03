@@ -3,16 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Legal Check KarsaBiz — Admin</title>
+<title>Checklist Dokumen Usaha — Admin</title>
 <link rel="icon" type="image/png" href="/assets/img/favicon-mark.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../shell.css">
 <style>
-  /* Tabel, chip status, panel, skeleton, dan state kosong diambil dari
-     shell.css — di sini cuma sisa yang khusus halaman ini: overlay detail
-     dan lembar cetak PDF-nya. */
+  /* Sama persis admin/leads/index.html — tabel, chip status, panel,
+     skeleton, state kosong dari shell.css; sisanya overlay detail/cetak. */
   :root { --sh-md: 0 14px 40px rgba(8,21,47,.08); }
 
   .wrap { margin: 0; padding: 0; }
@@ -25,7 +24,6 @@
   }
   .btn--ghost { background: var(--canvas-alt); color: var(--ink); }
 
-  /* ---------------------------------------------------------- Detail/print overlay */
   #detailOverlay { display: none; position: fixed; inset: 0; background: var(--canvas); z-index: 20; overflow-y: auto; }
   #detailOverlay.is-open { display: block; }
   .detail-bar {
@@ -48,32 +46,25 @@
 
   .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; padding: 22px 0; border-bottom: 1px solid var(--line); }
   .meta-label { font-size: .7rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); margin: 0 0 8px; }
-  .meta-name { margin: 0 0 3px; font-weight: 700; }
-  .meta-line { margin: 0; font-size: .84rem; color: var(--body-c); line-height: 1.6; }
   .profile-item { display: flex; justify-content: space-between; gap: 10px; font-size: .82rem; padding: 3px 0; }
   .profile-item dt { color: var(--muted); margin: 0; }
   .profile-item dd { margin: 0; font-weight: 600; }
+  /* Nilai tunggal tanpa pasangan dt (Jenis Layanan, Alamat Kedudukan Usaha)
+     — bukan <dd>, biar gak kena margin-inline-start:40px bawaan browser
+     yang bikin keliatan ketengah/geser dari judulnya di atas. */
+  .meta-value { margin: 0; font-weight: 700; }
+  .body-text { margin: 0; font-size: .9rem; line-height: 1.6; color: var(--body-c); }
 
   .section-label { display: flex; justify-content: space-between; align-items: baseline; margin: 26px 0 14px; }
   .section-label h2 { margin: 0; font-size: .9rem; font-weight: 800; }
   .section-label span { font-size: .74rem; color: var(--muted); }
 
-  .rec { display: grid; grid-template-columns: 4px 1fr auto; gap: 16px; padding: 14px 2px; border-bottom: 1px solid var(--line); }
-  .rec:last-child { border-bottom: 0; }
-  .rec__stripe { border-radius: 2px; }
-  .rec--wajib .rec__stripe { background: var(--mint); }
-  .rec--kondisional .rec__stripe { background: var(--gold); }
-  .rec--disarankan .rec__stripe { background: var(--blue); }
-  .rec__title { margin: 0 0 4px; font-size: .92rem; font-weight: 700; }
-  .rec__desc { margin: 0; font-size: .8rem; color: var(--body-c); line-height: 1.6; }
-  .rec__status { align-self: start; white-space: nowrap; padding: 4px 11px; border-radius: 999px; font-size: .7rem; font-weight: 700; }
-  .rec--wajib .rec__status { background: var(--mint-soft); color: #026248; }
-  .rec--kondisional .rec__status { background: var(--gold-soft); color: var(--gold); }
-  .rec--disarankan .rec__status { background: var(--blue-soft); color: var(--blue); }
-
-  .kbli-row { display: flex; gap: 14px; align-items: baseline; padding: 6px 0; font-size: .8rem; }
-  .kbli-code { font-weight: 700; color: var(--navy); background: var(--canvas-alt); padding: 2px 8px; border-radius: 6px; white-space: nowrap; }
-  .kbli-title { color: var(--body-c); }
+  /* Satu blok per pendiri/NPWP/pilihan nama — reuse pola .rec dari leads
+     tapi tanpa stripe warna status (gak ada status wajib/kondisional di
+     sini), cukup kartu abu-abu tipis dipisah garis. */
+  .entry { padding: 14px 2px; border-bottom: 1px solid var(--line); }
+  .entry:last-child { border-bottom: 0; }
+  .entry__title { margin: 0 0 6px; font-size: .88rem; font-weight: 700; }
 
   .disclaimer { margin-top: 28px; padding-top: 18px; border-top: 1px solid var(--line); font-size: .72rem; line-height: 1.6; color: var(--muted); }
 
@@ -96,47 +87,25 @@
   .pagination__ellipsis { padding: 0 4px; color: var(--muted); font-size: .84rem; }
 
   @media print {
-    @page {
-      size: A4 portrait;
-      margin: 12mm 15mm;
-    }
+    @page { size: A4 portrait; margin: 12mm 15mm; }
     html, body {
-      background: #fff !important;
-      color: #000 !important;
-      margin: 0 !important;
-      padding: 0 !important;
-      height: auto !important;
-      overflow: visible !important;
+      background: #fff !important; color: #000 !important;
+      margin: 0 !important; padding: 0 !important; height: auto !important; overflow: visible !important;
     }
     .shell, .shell__sidebar, .shell__topbar, .shell__burger, .shell__scrim,
     .detail-bar, .wrap, .page-header, .pagination, .panel, .panel__body {
       display: none !important;
     }
     #detailOverlay {
-      display: block !important;
-      position: static !important;
-      background: transparent !important;
-      padding: 0 !important;
-      margin: 0 !important;
-      overflow: visible !important;
+      display: block !important; position: static !important; background: transparent !important;
+      padding: 0 !important; margin: 0 !important; overflow: visible !important;
     }
     .sheet {
-      box-shadow: none !important;
-      margin: 0 !important;
-      padding: 0 !important;
-      width: 100% !important;
-      max-width: none !important;
-      border: 0 !important;
-      background: transparent !important;
+      box-shadow: none !important; margin: 0 !important; padding: 0 !important;
+      width: 100% !important; max-width: none !important; border: 0 !important; background: transparent !important;
     }
-    .rec, .profile-item, .kbli-row {
-      page-break-inside: avoid;
-    }
-    .rule {
-      background: #0d6efd !important;
-      -webkit-print-color-adjust: exact;
-      print-color-adjust: exact;
-    }
+    .entry, .profile-item { page-break-inside: avoid; }
+    .rule { background: #0d6efd !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   }
 </style>
 </head>
@@ -168,11 +137,11 @@
         Artikel
       </a>
       <div class="shell__group-label">KarsaBiz</div>
-      <a class="shell__link is-active" href="/admin/leads/">
+      <a class="shell__link" href="/admin/leads/">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
         Legal Check
       </a>
-      <a class="shell__link" href="/admin/checklist/">
+      <a class="shell__link is-active" href="/admin/checklist/">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
         Checklist Dokumen
       </a>
@@ -189,22 +158,22 @@
     <div class="shell__main">
       <div class="page-header">
         <div>
-          <h1 class="page-header__title">Legal Check KarsaBiz</h1>
-          <p class="page-header__sub">Semua yang submit kuis diagnostic legalitas — klik satu baris buat lihat detail &amp; download PDF</p>
+          <h1 class="page-header__title">Checklist Dokumen Usaha</h1>
+          <p class="page-header__sub">Semua yang submit Checklist Dokumen Usaha KarsaBiz — klik satu baris buat lihat detail &amp; download PDF</p>
         </div>
-        <input type="search" id="leadsSearch" class="panel__search" placeholder="Cari nama atau email...">
+        <input type="search" id="listSearch" class="panel__search" placeholder="Cari nama atau email...">
       </div>
       <div class="wrap" id="listView">
         <section class="panel">
           <div class="table-scroll">
-            <table id="leadsTable" class="cards-mobile" hidden>
+            <table id="listTable" class="cards-mobile" hidden>
               <colgroup>
-                <col style="width:18%"><col style="width:24%"><col style="width:19%"><col style="width:15%"><col style="width:24%"><col style="width:48px">
+                <col style="width:18%"><col style="width:22%"><col style="width:17%"><col style="width:14%"><col style="width:19%"><col style="width:16%"><col style="width:48px">
               </colgroup>
               <thead>
-                <tr><th>Nama</th><th>Email</th><th>No. WhatsApp</th><th>Tanggal</th><th style="text-align:center">Status</th><th></th></tr>
+                <tr><th>Nama Pendiri</th><th>Email</th><th>No. WhatsApp</th><th>Tanggal</th><th>Jenis Layanan</th><th style="text-align:center">Status</th><th></th></tr>
               </thead>
-              <tbody id="leadsBody"></tbody>
+              <tbody id="listBody"></tbody>
             </table>
           </div>
           <div class="skeleton" id="stateMsg">
@@ -230,30 +199,22 @@
 
 <script src="../shell.js"></script>
 <script>
-  var STATUS_LABEL = { wajib: 'Perlu dimiliki', kondisional: 'Perlu diperiksa', disarankan: 'Disarankan' };
-  var ANSWER_LABELS = {
-    perorangan: 'Usaha Perorangan / UMKM Mandiri', cv: 'CV', pt: 'PT Perorangan / Umum', yayasan: 'Yayasan / Koperasi',
-    makanan: 'Makanan & Minuman Olahan', dagang: 'Perdagangan Barang Umum', jasa: 'Jasa / Layanan Profesional',
-    manufaktur: 'Manufaktur / Produksi Pabrikan', akomodasi: 'Akomodasi & Pariwisata',
-    rumahan: 'Skala rumahan', industri: 'Skala industri/pabrik',
-    daging: 'Mengandung daging', susu: 'Mengandung susu', kering: 'Kering / non-daging', alkohol: 'Beralkohol/pengawet',
-    kosmetik: 'Kosmetik', obat: 'Obat/Suplemen', fashion: 'Fashion',
-    konsultasi: 'Konsultasi Bisnis & Manajemen', kreatif: 'Agensi Kreatif/Desain', it: 'IT/Software',
-    laundry: 'Laundry', kecantikan: 'Kecantikan/Salon', tekstil: 'Tekstil/Garmen', furnitur: 'Furnitur', plastik: 'Plastik',
-    logam: 'Logam', elektronik: 'Elektronik', lainnya: 'Lainnya',
-    rumah: 'Dapur rumah (SOHO)', komersial: 'Tempat komersial', pabrik: 'Pabrik/Gudang', digital: 'Digital murni',
-    lokal: 'Lokal', nasional: 'Seluruh Indonesia', 'ekspor-impor': 'Ekspor/Impor',
-    berdampak: 'Ya, ada dampak lingkungan', 'tidak-berdampak': 'Tidak ada dampak lingkungan'
+  var JENIS_LAYANAN_LABEL = {
+    'pendirian-pt': 'Pendirian PT',
+    'pendirian-cv': 'Pendirian CV',
+    'nib-perizinan': 'NIB & Perizinan Berusaha',
+    'legalitas-pertanahan': 'Legalitas Pertanahan',
   };
-  function labelFor(v) {
-    if (Array.isArray(v)) return v.map(labelFor).join(', ') || '—';
-    if (v == null) return '—';
-    return ANSWER_LABELS[v] || v;
-  }
+  function jenisLabel(v) { return JENIS_LAYANAN_LABEL[v] || v || '—'; }
+
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
+  }
+  function rupiah(v) {
+    var n = Number(v || 0);
+    return 'Rp' + n.toLocaleString('id-ID');
   }
 
   var DOTS_ICON = '<svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg>';
@@ -304,14 +265,14 @@
     } else if (action === 'mailto') {
       window.location.href = 'mailto:' + arg;
     } else if (action === 'delete') {
-      if (!window.confirm('Hapus lead ini? Aksi ini gak bisa dibatalkan.')) return;
-      fetch('/api/leads?id=' + encodeURIComponent(arg), { method: 'DELETE' })
+      if (!window.confirm('Hapus submission ini? Aksi ini gak bisa dibatalkan.')) return;
+      fetch('/api/checklist-leads?id=' + encodeURIComponent(arg), { method: 'DELETE' })
         .then(function (r) { return r.json().then(function (data) { return { ok: r.ok, data: data }; }); })
         .then(function (res) { if (!res.ok) throw new Error(res.data.error || 'Gagal menghapus'); loadList(); })
         .catch(function (err) { window.alert(err.message); });
     } else if (action === 'mark-sent' || action === 'mark-unsent') {
       var newStatus = action === 'mark-sent' ? 'pdf_siap' : 'baru';
-      fetch('/api/leads?id=' + encodeURIComponent(arg), {
+      fetch('/api/checklist-leads?id=' + encodeURIComponent(arg), {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus }),
@@ -322,10 +283,9 @@
     }
   }
 
-  var leadsBody = document.getElementById('leadsBody');
-  var leadsTable = document.getElementById('leadsTable');
+  var listBody = document.getElementById('listBody');
+  var listTable = document.getElementById('listTable');
   var stateMsg = document.getElementById('stateMsg');
-  var listView = document.getElementById('listView');
   var detailOverlay = document.getElementById('detailOverlay');
   var sheetContent = document.getElementById('sheetContent');
 
@@ -339,36 +299,35 @@
     stateMsg.innerHTML = '<p class="empty-state__title">' + esc(title) + '</p><p class="empty-state__hint">' + esc(hint) + '</p>';
   }
 
-  var allLeads = [];
+  var allRows = [];
   var currentList = [];
   var currentPage = 1;
-  var PAGE_SIZE = 10; // sama kayak daftar Artikel — muat ~7-9 baris 1 layar
-                       // tanpa scroll di laptop biasa, 10 angka bulat.
+  var PAGE_SIZE = 10;
   var pagination = document.getElementById('pagination');
   var paginationInfo = document.getElementById('paginationInfo');
   var paginationNav = document.getElementById('paginationNav');
 
-  function renderLeadsRows(rows, resetPage) {
+  function renderRows(rows, resetPage) {
     currentList = rows;
     if (resetPage) currentPage = 1;
 
     if (!rows.length) {
-      leadsTable.hidden = true;
+      listTable.hidden = true;
       pagination.hidden = true;
-      var msg = allLeads.length ? 'Tidak ada lead yang cocok' : 'Belum ada lead masuk';
-      var hint = allLeads.length ? 'Coba kata kunci lain, atau kosongkan kolom pencarian.' : 'Lead muncul di sini otomatis begitu ada yang menyelesaikan kuis KarsaBiz di website.';
+      var msg = allRows.length ? 'Tidak ada yang cocok' : 'Belum ada checklist masuk';
+      var hint = allRows.length ? 'Coba kata kunci lain, atau kosongkan kolom pencarian.' : 'Submission muncul di sini otomatis begitu ada yang menyelesaikan Checklist Dokumen Usaha di website.';
       showState('empty', msg, hint);
       return;
     }
     stateMsg.hidden = true;
-    leadsTable.hidden = false;
+    listTable.hidden = false;
 
     var totalPages = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
     if (currentPage > totalPages) currentPage = totalPages;
     var start = (currentPage - 1) * PAGE_SIZE;
     var pageItems = rows.slice(start, start + PAGE_SIZE);
 
-    leadsBody.innerHTML = pageItems.map(function (row) {
+    listBody.innerHTML = pageItems.map(function (row) {
       var statusClass = row.status === 'pdf_siap' ? 'status-pdf_siap' : 'status-baru';
       var statusText = row.status === 'pdf_siap' ? 'Sudah dikirim' : 'Belum diproses';
       return (
@@ -377,6 +336,7 @@
           '<td class="cell-muted" data-label="Email">' + esc(row.email) + '</td>' +
           '<td class="cell-muted cell-num" data-label="No. WhatsApp">' + esc(row.whatsapp) + '</td>' +
           '<td class="cell-muted" data-label="Tanggal">' + fmtDate(row.created_at) + '</td>' +
+          '<td class="cell-muted" data-label="Jenis Layanan">' + esc(jenisLabel(row.jenisLayanan)) + '</td>' +
           '<td style="text-align:center" data-label="Status"><span class="status-chip ' + statusClass + '">' + esc(statusText) + '</span></td>' +
           actionsCell([
             { action: 'view-pdf', arg: row.id, label: 'Lihat & download PDF', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>' },
@@ -390,7 +350,7 @@
         '</tr>'
       );
     }).join('');
-    Array.prototype.forEach.call(leadsBody.querySelectorAll('tr'), function (tr) {
+    Array.prototype.forEach.call(listBody.querySelectorAll('tr'), function (tr) {
       tr.addEventListener('click', function (e) {
         if (e.target.closest('.row-actions')) return;
         openDetail(tr.dataset.id);
@@ -403,7 +363,7 @@
   function renderPagination(totalPages, totalItems, start, shownCount) {
     if (totalPages <= 1) { pagination.hidden = true; return; }
     pagination.hidden = false;
-    paginationInfo.textContent = 'Menampilkan ' + (start + 1) + '-' + (start + shownCount) + ' dari ' + totalItems + ' lead';
+    paginationInfo.textContent = 'Menampilkan ' + (start + 1) + '-' + (start + shownCount) + ' dari ' + totalItems + ' submission';
 
     var btns = [];
     btns.push('<button type="button" class="pagination__btn" data-page="' + (currentPage - 1) + '"' + (currentPage === 1 ? ' disabled' : '') + ' aria-label="Halaman sebelumnya">&lsaquo;</button>');
@@ -425,20 +385,20 @@
     var btn = e.target.closest('[data-page]');
     if (!btn || btn.disabled) return;
     currentPage = Number(btn.dataset.page);
-    renderLeadsRows(currentList);
+    renderRows(currentList);
     document.querySelector('.panel').scrollIntoView({ block: 'start', behavior: 'smooth' });
   });
 
-  document.getElementById('leadsSearch').addEventListener('input', function (e) {
+  document.getElementById('listSearch').addEventListener('input', function (e) {
     var q = e.target.value.trim().toLowerCase();
-    var filtered = !q ? allLeads : allLeads.filter(function (l) {
+    var filtered = !q ? allRows : allRows.filter(function (l) {
       return (l.nama || '').toLowerCase().indexOf(q) !== -1 || (l.email || '').toLowerCase().indexOf(q) !== -1;
     });
-    renderLeadsRows(filtered, true);
+    renderRows(filtered, true);
   });
 
   function loadList() {
-    fetch('/api/leads').then(function (res) {
+    fetch('/api/checklist-leads').then(function (res) {
       if (res.status === 401) {
         window.location.href = '/admin/';
         return null;
@@ -446,65 +406,59 @@
       return res.json();
     }).then(function (data) {
       if (!data) return;
-      if (data.error) { showState('error', 'Data lead gagal dimuat', data.error); return; }
-      allLeads = data;
-      renderLeadsRows(allLeads);
-    }).catch(function (err) { showState('error', 'Data lead gagal dimuat', String(err)); });
+      if (data.error) { showState('error', 'Data gagal dimuat', data.error); return; }
+      allRows = data;
+      renderRows(allRows);
+    }).catch(function (err) { showState('error', 'Data gagal dimuat', String(err)); });
   }
 
-  function renderRecommendations(items) {
-    if (!items || !items.length) return '';
+  function renderPersons(persons) {
+    if (!persons || !persons.length) return '';
     return (
-      '<div class="section-label"><h2>Rekomendasi Legalitas</h2><span>' + items.length + ' item ditemukan</span></div>' +
-      items.map(function (item) {
+      '<div class="section-label"><h2>Pendiri / Pemegang Saham</h2><span>' + persons.length + ' orang</span></div>' +
+      persons.map(function (p, i) {
         return (
-          '<div class="rec rec--' + esc(item.status) + '">' +
-            '<div class="rec__stripe"></div>' +
-            '<div><p class="rec__title">' + esc(item.label) + '</p><p class="rec__desc">' + esc(item.description) + '</p></div>' +
-            '<span class="rec__status">' + esc(item.statusLabel || STATUS_LABEL[item.status] || '') + '</span>' +
+          '<div class="entry">' +
+            '<p class="entry__title">' + (i + 1) + '. ' + esc(p.nama) + (p.saham ? ' — ' + esc(p.saham) + ' lembar saham' : '') + '</p>' +
+            '<div class="profile-item"><dt>NIK</dt><dd>' + esc(p.nik) + '</dd></div>' +
+            '<div class="profile-item"><dt>Alamat</dt><dd>' + esc(p.alamat) + '</dd></div>' +
           '</div>'
         );
       }).join('')
     );
   }
 
-  function renderKbli(rows) {
-    if (!rows || !rows.length) return '';
+  function renderNpwp(npwpList) {
+    if (!npwpList || !npwpList.length) return '';
     return (
-      '<div class="section-label"><h2>Referensi KBLI 2025</h2><span>BPS, Katalog 1302017</span></div>' +
-      rows.map(function (r) {
-        return '<div class="kbli-row"><span class="kbli-code">' + esc(r.code) + '</span><span class="kbli-title">' + esc(r.title) + '</span></div>';
+      '<div class="section-label"><h2>NPWP Pribadi Pendiri</h2><span>' + npwpList.length + ' orang</span></div>' +
+      npwpList.map(function (n, i) {
+        return (
+          '<div class="entry">' +
+            '<div class="profile-item"><dt>' + (i + 1) + '. ' + esc(n.nama) + '</dt><dd>' + esc(n.npwp) + '</dd></div>' +
+          '</div>'
+        );
       }).join('')
     );
   }
 
-  function renderProfile(answers) {
-    answers = answers || {};
-    var rows = [['Bentuk usaha', labelFor(answers.q1)], ['Kategori', labelFor(answers.q2)]];
-    if (answers.q2 === 'makanan') {
-      rows.push(['Kemasan', labelFor(answers.kemasan)]);
-      rows.push(['Bahan utama', labelFor(answers.bahan)]);
-    } else if (answers.q2 === 'dagang') {
-      rows.push(['Produk khusus', labelFor(answers.produkKhusus)]);
-    } else if (answers.q2 === 'jasa') {
-      rows.push(['Jenis jasa', labelFor(answers['q3-jasa'])]);
-    } else if (answers.q2 === 'manufaktur') {
-      rows.push(['Produk', labelFor(answers['q3-manufaktur'])]);
-    }
-    rows.push(['Lokasi produksi', labelFor(answers.q5)]);
-    rows.push(['Distribusi', labelFor(answers.q6)]);
-    rows.push(['Dampak lingkungan', labelFor(answers.q7)]);
-    return rows.map(function (r) {
-      return '<div class="profile-item"><dt>' + esc(r[0]) + '</dt><dd>' + esc(r[1]) + '</dd></div>';
-    }).join('');
+  function renderCompanyNames(names) {
+    if (!names || !names.length) return '';
+    return (
+      '<div class="section-label"><h2>Nama PT Pilihan</h2><span>' + names.length + ' opsi</span></div>' +
+      names.map(function (n, i) {
+        return '<div class="profile-item"><dt>Pilihan ' + (i + 1) + '</dt><dd>' + esc(n) + '</dd></div>';
+      }).join('')
+    );
   }
 
   function openDetail(id) {
     sheetContent.innerHTML = '<p style="text-align:center;color:var(--muted);padding:40px 0">Memuat...</p>';
     detailOverlay.classList.add('is-open');
-    fetch('/api/leads?id=' + encodeURIComponent(id)).then(function (r) { return r.json(); }).then(function (lead) {
+    fetch('/api/checklist-leads?id=' + encodeURIComponent(id)).then(function (r) { return r.json(); }).then(function (lead) {
       if (lead.error) { sheetContent.innerHTML = '<p>Gagal memuat: ' + esc(lead.error) + '</p>'; return; }
-      var ref = 'KB-' + new Date(lead.created_at).getFullYear() + '-' + lead.id.slice(0, 6).toUpperCase();
+      var answers = lead.answers || {};
+      var ref = 'CDU-' + new Date(lead.created_at).getFullYear() + '-' + lead.id.slice(0, 6).toUpperCase();
       sheetContent.innerHTML =
         '<div class="letterhead">' +
           '<div class="letterhead__brand">' +
@@ -512,21 +466,32 @@
             '<p class="letterhead__addr">Ruko Taman Juanda, Jl. Pahlawan Blok B1 No.3,<br>Bekasi Timur, Jawa Barat 17111<br>temukarsaid@gmail.com &middot; +62 851-2155-8129</p>' +
           '</div>' +
           '<div class="letterhead__meta">' +
-            '<h1 class="letterhead__doctitle">Hasil Legal Check</h1>' +
+            '<h1 class="letterhead__doctitle">Checklist Dokumen Usaha</h1>' +
             '<p class="letterhead__row">No. Referensi: ' + esc(ref) + '</p>' +
             '<p class="letterhead__row">Tanggal: ' + fmtDate(lead.created_at) + '</p>' +
           '</div>' +
         '</div>' +
         '<div class="rule"></div>' +
-        '<div class="meta-grid" style="grid-template-columns:1fr;">' +
+        '<div class="meta-grid">' +
           '<div>' +
-            '<p class="meta-label">Ringkasan Profil Bisnis</p>' +
-            renderProfile(lead.answers) +
+            '<p class="meta-label">Jenis Layanan</p>' +
+            '<p class="meta-value">' + esc(jenisLabel(answers.jenisLayanan)) + '</p>' +
+          '</div>' +
+          '<div>' +
+            '<p class="meta-label">Kontak Aktif</p>' +
+            '<div class="profile-item"><dt>WhatsApp</dt><dd>' + esc(lead.whatsapp) + '</dd></div>' +
+            '<div class="profile-item"><dt>Email</dt><dd>' + esc(lead.email) + '</dd></div>' +
           '</div>' +
         '</div>' +
-        renderRecommendations(lead.recommendations) +
-        renderKbli(lead.kbli_matched) +
-        '<p class="disclaimer"><strong>Catatan:</strong> Dokumen ini adalah identifikasi awal berdasarkan informasi yang diberikan lewat KarsaBiz, bukan konsultasi hukum definitif.</p>';
+        renderPersons(answers.persons) +
+        renderNpwp(answers.npwpList) +
+        renderCompanyNames(answers.companyNames) +
+        '<div class="section-label"><h2>Alamat Kedudukan Usaha</h2></div>' +
+        '<p class="body-text">' + esc(answers.businessAddress) + '</p>' +
+        '<div class="section-label"><h2>Modal & Saham</h2></div>' +
+        '<div class="profile-item"><dt>Modal Dasar</dt><dd>' + rupiah(answers.modalDasar) + '</dd></div>' +
+        '<div class="profile-item"><dt>Modal Disetor</dt><dd>' + rupiah(answers.modalDisetor) + '</dd></div>' +
+        '<p class="disclaimer"><strong>Catatan:</strong> Dokumen ini adalah rangkuman isian Checklist Dokumen Usaha dari KarsaBiz, bukan dokumen legalitas resmi — tim Temu Karsa akan menghubungi untuk proses lanjutan.</p>';
     }).catch(function (err) { sheetContent.innerHTML = '<p>Gagal memuat: ' + err + '</p>'; });
   }
 

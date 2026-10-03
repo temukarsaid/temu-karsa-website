@@ -7,3 +7,6 @@ node_modules/
 
 # Wrangler local state (cache, sesi dev)
 .wrangler/
+
+# Cache lokal skill desain (jawaban kuis, tangkapan layar review, mock)
+.impeccable/

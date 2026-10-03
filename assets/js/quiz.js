@@ -289,7 +289,7 @@
             '</div>' +
           '<div class="field">' +
             '<label for="quizLeadWa">Nomor WhatsApp</label>' +
-            '<input type="tel" id="quizLeadWa" placeholder="Contoh: 08123456789" pattern="[0-9+-- ]{9,15}" title="Nomor WhatsApp harus berupa angka (min. 9 digit)" required>' +
+            '<input type="tel" id="quizLeadWa" placeholder="Contoh: 08123456789" pattern="[0-9+ \-]{9,20}" title="Nomor WhatsApp harus berupa angka (min. 9 digit)" required>' +
           '</div>' +
           '<div class="field">' +
             '<label for="quizLeadEmail">Alamat Email</label>' +
@@ -310,7 +310,7 @@
       var waInput = $('#quizLeadWa', card);
       waInput.addEventListener('input', function () {
         // Hapus karakter non-digit kecuali + / - / spasi jika diketik
-        var cleanVal = this.value.replace(/[^0-9+-- ]/g, '');
+        var cleanVal = this.value.replace(/[^0-9+ \-]/g, '');
         if (this.value !== cleanVal) this.value = cleanVal;
         
         var digitsOnly = this.value.replace(/\D/g, '');
