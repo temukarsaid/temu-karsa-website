@@ -1,0 +1,10 @@
+# Dashboard admin sering berubah. Tanpa ini, browser menyimpan JS/CSS-nya 4 jam
+# (default Cloudflare Pages) dan bisa memakai skrip lama dengan HTML baru, jadi
+# tombol baru tidak berfungsi sampai hard refresh. "no-cache" = selalu cek ke
+# server (304 kalau tidak berubah), tetap hemat bandwidth.
+/admin/*.js
+  Cache-Control: no-cache
+/admin/*.css
+  Cache-Control: no-cache
+/admin/*/*.js
+  Cache-Control: no-cache
