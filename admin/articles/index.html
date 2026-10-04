@@ -114,13 +114,13 @@
     <div class="table-scroll">
       <table id="articleListTable" class="cards-mobile" hidden>
         <colgroup>
-          <col style="width:44px"><col style="width:100px"><col style="width:47%">
+          <col style="width:44px"><col style="width:44px"><col style="width:100px"><col style="width:42%">
           <col style="width:14%"><col style="width:13%"><col style="width:13%">
           <col style="width:13%"><col style="width:48px">
         </colgroup>
         <thead>
           <tr>
-            <th>No</th><th>Thumbnail</th><th>Judul</th><th>Kategori</th>
+            <th class="col-check"><input type="checkbox" class="check" id="bulkAll" aria-label="Pilih semua baris di halaman ini"></th><th>No</th><th>Thumbnail</th><th>Judul</th><th>Kategori</th>
             <th>Waktu Baca</th><th>Tanggal</th><th style="text-align:center">Status</th><th></th>
           </tr>
         </thead>
@@ -140,6 +140,7 @@
 </div>
 
 <script src="../shell.js"></script>
+<script src="../bulk.js"></script>
 <script>
   // Gerbang login dashboard (email+password).
   fetch('/api/admin-me').then(function (r) {
@@ -247,6 +248,7 @@
     if (!list.length) {
       table.hidden = true;
       pagination.hidden = true;
+      Bulk.sync([]);
       state.hidden = false;
       state.className = 'empty-state';
       var msg = allArticles.length ? 'Gak ada artikel yang cocok' : 'Belum ada artikel';
@@ -267,6 +269,7 @@
       var statusChip = '<span class="status-chip ' + (isDraft ? 'status-baru' : 'status-pdf_siap') + '">' + (isDraft ? 'Draft' : 'Publish') + '</span>';
       return (
         '<tr>' +
+          Bulk.cell(esc(a.slug)) +
           '<td class="cell-muted cell-card-no">' + (start + i + 1) + '</td>' +
           '<td class="cell-card-media" style="text-align:center">' + thumb + '</td>' +
           '<td class="cell-name cell-card-title">' + esc(a.title) + '</td>' +
@@ -284,6 +287,7 @@
       );
     }).join('');
 
+    Bulk.sync(list.map(function (a) { return a.slug; }));
     renderPagination(totalPages, list.length, start, pageItems.length);
   }
 
@@ -355,6 +359,19 @@
       renderArticleRows(allArticles);
     }).catch(loadFallback);
   }
+  Bulk.init({
+    body: document.getElementById('articleListBody'),
+    table: document.getElementById('articleListTable'),
+    noun: 'artikel',
+    onDone: loadArticleList,
+    // Hapus lewat save-server lokal (sama seperti hapus satu artikel).
+    remove: function (slugs) {
+      return Promise.all(slugs.map(function (slug) {
+        return fetch('http://localhost:8082/articles/' + encodeURIComponent(slug), { method: 'DELETE' })
+          .then(function (r) { if (!r.ok) throw new Error('Gagal menghapus ' + slug); });
+      }));
+    },
+  });
   loadArticleList();
 })();
 </script>

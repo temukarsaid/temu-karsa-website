@@ -44,7 +44,7 @@
   }
 
   function init(opts) {
-    cfg = opts; // { body, table, endpoint, noun, onDone }
+    cfg = opts; // { body, table, noun, onDone, endpoint | remove(ids) -> Promise }
     bar = document.createElement('div');
     bar.className = 'bulk-bar';
     bar.hidden = true;
@@ -81,14 +81,11 @@
       if (!window.confirm('Hapus ' + list.length + ' ' + cfg.noun + ' terpilih? Aksi ini gak bisa dibatalkan.')) return;
       delBtn.disabled = true;
       delBtn.textContent = 'Menghapus…';
-      fetch(cfg.endpoint + '?ids=' + list.join(','), { method: 'DELETE' })
-        .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, data: d }; }); })
-        .then(function (res) {
-          if (!res.ok) throw new Error(res.data.error || 'Gagal menghapus');
-          selected = {};
-          cfg.onDone();
-        })
-        .catch(function (err) { window.alert(err.message); })
+      var job = cfg.remove ? cfg.remove(list) : fetch(cfg.endpoint + '?ids=' + list.join(','), { method: 'DELETE' })
+        .then(function (r) { return r.json().then(function (d) { if (!r.ok) throw new Error(d.error || 'Gagal menghapus'); }); });
+      job
+        .then(function () { selected = {}; cfg.onDone(); })
+        .catch(function (err) { window.alert(err.message); cfg.onDone(); })
         .then(function () { delBtn.disabled = false; delBtn.textContent = 'Hapus terpilih'; });
     });
   }

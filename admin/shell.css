@@ -499,5 +499,9 @@ body { margin: 0; background: var(--canvas); color: var(--ink); font-family: var
     position: absolute; top: 17px; left: 16px; width: auto; padding: 0; border-bottom: 0; z-index: 1;
   }
   table.cards-mobile tbody tr:has(.col-check) .cell-card-title { padding-left: 32px; }
+  /* tabel dengan thumbnail (Artikel): checkbox sejajar tengah thumbnail, judul tidak digeser */
+  table.cards-mobile:has(.cell-card-media) td.col-check { top: 29px; }
+  table.cards-mobile tbody tr:has(.col-check) .cell-card-media { padding-left: 32px; }
+  table.cards-mobile:has(.cell-card-media) tbody tr:has(.col-check) .cell-card-title { padding-left: 0; }
   .bulk-bar { margin: 0 0 12px; }
 }

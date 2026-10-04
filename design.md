@@ -923,6 +923,10 @@ Pengunjung website → Halaman terpopuler | Sumber pengunjung.
   hasil filter. API: `DELETE /api/leads?ids=a,b,c` dan
   `/api/checklist-leads?ids=...` (UUID divalidasi, maks 200). Di layar sempit
   checkbox ngambang di pojok kiri-atas kartu.
+  Tabel **Artikel** juga memakainya (id = slug; hapus lewat `remove()` →
+  `DELETE localhost:8082/articles/<slug>` per artikel, sama seperti hapus satu
+  artikel, jadi hanya jalan saat `npm run admin:save` aktif). `Bulk.init`
+  menerima `endpoint` (hapus via `?ids=`) atau `remove(ids)` kustom.
 - Teks sekunder dashboard memakai `--muted:#6B7182` (4.9:1), bukan #8A90A0.
 - Menu admin: "Legal Check" (dulu "Leads") dan "Checklist Dokumen"; label
   tombol hapus cukup "Hapus".
