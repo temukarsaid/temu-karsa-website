@@ -899,6 +899,16 @@ Pengunjung website → Halaman terpopuler | Sumber pengunjung.
   bukan angka. `DEMO_LEADS=1` → data contoh berlabel "Data contoh" (header
   `X-Demo-Data`). Data demo digenerate saat request, **bukan** di top-level
   modul (Date.now() di runtime Workers beku di 1970 saat inisialisasi).
+- **Klik "Konsultasi Gratis"** (2026-10-04): `assets/js/main.js` punya satu
+  listener klik global (capture) yang mengirim event GA4
+  `konsultasi_gratis_click` untuk setiap `<a>` ber-teks persis "Konsultasi
+  Gratis" (header, hero, CTA, dll — tombol baru otomatis ikut terhitung).
+  `/api/analytics` mengembalikan `clicks` via `runReport` terpisah (batch
+  dibatasi 5 request): **all** = `eventCount`, **unique** = `totalUsers`.
+  Panel "Klik tombol Konsultasi Gratis" di dashboard menampilkan dua bar
+  (Semua klik, Klik per pengunjung unik) + persen pengunjung yang klik. Data
+  baru terkumpul setelah deploy; GA bisa telat beberapa jam. Kosong → pesan
+  kosong, bukan angka 0 palsu.
 - Teks sekunder dashboard memakai `--muted:#6B7182` (4.9:1), bukan #8A90A0.
 - Menu admin: "Legal Check" (dulu "Leads") dan "Checklist Dokumen"; label
   tombol hapus cukup "Hapus".

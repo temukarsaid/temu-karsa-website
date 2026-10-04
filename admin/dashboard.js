@@ -469,8 +469,52 @@
   function renderTrafficAll() {
     renderTrafficSummary();
     renderTrafficChart();
+    renderCta();
     renderPages();
     renderSources();
+  }
+
+  /* ======================================================= Klik Konsultasi */
+  // Dua angka sesuai permintaan: klik per pengunjung unik & semua klik.
+  function renderCta() {
+    var t = state.traffic, ul = $('ctaBars'), sum = $('ctaSummary'), chip = $('ctaSource');
+    chip.hidden = true;
+    if (state.trafficLoading || !t) { sum.textContent = 'Memuat data klik…'; ul.innerHTML = ''; return; }
+    if (t.notConfigured) { sum.textContent = 'Muncul setelah Google Analytics terhubung.'; ul.innerHTML = ''; return; }
+    if (t.error) { sum.textContent = 'Data klik gagal dimuat.'; ul.innerHTML = ''; return; }
+    if (!t.clicks) { sum.textContent = 'Data klik belum tersedia dari Google Analytics.'; ul.innerHTML = ''; return; }
+
+    chip.hidden = false;
+    chip.textContent = t.demo ? 'Data contoh' : 'Google Analytics';
+    chip.className = 'source-chip' + (t.demo ? ' demo-chip' : '');
+
+    var c = t.clicks.current, p = t.clicks.previous;
+    var visitors = (t.totals.current && t.totals.current.users) || 0;
+    if (!c.all) {
+      sum.textContent = 'Belum ada klik tercatat dalam ' + state.days + ' hari terakhir. Pencatatan mulai dihitung sejak tombol dilacak, jadi angkanya naik seiring pengunjung menekan tombol.';
+      ul.innerHTML = '';
+      return;
+    }
+    var delta = '';
+    if (p && p.all) {
+      var ch = Math.round(((c.all - p.all) / p.all) * 100);
+      delta = ch === 0 ? '' : ' <span class="delta ' + (ch > 0 ? 'delta--up' : 'delta--down') + '">' + (ch > 0 ? 'naik ' : 'turun ') + Math.abs(ch) + '% dari ' + state.days + ' hari sebelumnya</span>';
+    }
+    sum.innerHTML = '<b>' + num(c.all) + '</b> klik dari <b>' + num(c.unique) + '</b> pengunjung unik dalam ' + state.days + ' hari terakhir' + delta +
+      (visitors ? ' · <b>' + pct(c.unique, visitors) + '%</b> pengunjung website menekan tombol' : '') +
+      ' · rata-rata <b>' + (c.all / c.unique).toFixed(1).replace('.', ',') + '</b> klik per pengunjung';
+    ul.innerHTML = [
+      { label: 'Semua klik', n: c.all },
+      { label: 'Klik per pengunjung unik', n: c.unique },
+    ].map(function (e) {
+      return (
+        '<li class="bar-row">' +
+          '<span class="bar-row__label">' + e.label + '</span>' +
+          '<span class="bar-row__val"><b>' + num(e.n) + '</b></span>' +
+          '<span class="bar-row__track"><span class="bar-row__fill" style="transform:scaleX(' + (e.n / c.all).toFixed(3) + ')"></span></span>' +
+        '</li>'
+      );
+    }).join('');
   }
 
   function renderTrafficSummary() {

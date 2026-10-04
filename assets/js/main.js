@@ -727,6 +727,22 @@
     $('#year') && ($('#year').textContent = new Date().getFullYear());
   }
 
+  /* Klik tombol "Konsultasi Gratis" (header, hero, CTA — semua halaman)
+     dicatat sebagai event GA4 `konsultasi_gratis_click`, dibaca dashboard
+     admin (functions/api/analytics.js). Dikenali dari teks tautannya, jadi
+     tombol baru yang bertuliskan sama otomatis ikut terhitung. Tombol
+     membuka WhatsApp di tab baru, jadi tidak ada risiko event hilang karena
+     halaman keburu pindah. */
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a');
+    if (!a || !/^\s*konsultasi\s+gratis\s*$/i.test(a.textContent)) return;
+    if (typeof window.gtag !== 'function') return;
+    window.gtag('event', 'konsultasi_gratis_click', {
+      page_path: location.pathname,
+      transport_type: 'beacon',
+    });
+  }, true);
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', boot);
   } else {

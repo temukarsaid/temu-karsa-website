@@ -78,10 +78,35 @@ function range(days, offset) {
 function rowsOf(report) { return (report && report.rows) || []; }
 function val(row, i) { return Number(row.metricValues[i].value) || 0; }
 
+// Klik tombol "Konsultasi Gratis" (event dikirim assets/js/main.js).
+// eventCount = semua klik; totalUsers = pengunjung unik yang pernah klik.
+const CTA_EVENT = 'konsultasi_gratis_click';
+
+async function fetchClicks(env, token, cur, prev) {
+  const res = await fetch('https://analyticsdata.googleapis.com/v1beta/properties/' + env.GA4_PROPERTY_ID + ':runReport', {
+    method: 'POST',
+    headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      dateRanges: [cur, prev],
+      metrics: [{ name: 'eventCount' }, { name: 'totalUsers' }],
+      dimensionFilter: { filter: { fieldName: 'eventName', stringFilter: { matchType: 'EXACT', value: CTA_EVENT } } },
+    }),
+  });
+  const data = await res.json();
+  if (!res.ok) return null; // klik opsional — kegagalan di sini jangan menjatuhkan seluruh kartu traffic
+  const out = { current: { all: 0, unique: 0 }, previous: null };
+  (data.rows || []).forEach(function (row) {
+    const which = row.dimensionValues && row.dimensionValues[0] && row.dimensionValues[0].value === 'date_range_1' ? 'previous' : 'current';
+    out[which] = { all: val(row, 0), unique: val(row, 1) };
+  });
+  return out;
+}
+
 async function fetchGa(env, days) {
   const token = await accessToken(env);
   const cur = range(days, 0);
   const prev = range(days, days);
+  const clicksPromise = fetchClicks(env, token, cur, prev).catch(function () { return null; });
   const res = await fetch('https://analyticsdata.googleapis.com/v1beta/properties/' + env.GA4_PROPERTY_ID + ':batchRunReports', {
     method: 'POST',
     headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
@@ -124,7 +149,7 @@ async function fetchGa(env, days) {
     if (p.indexOf('checklist-dokumen-usaha') !== -1) toolVisitors.cl += val(row, 0);
   });
 
-  return { source: 'ga4', days: days, daily: daily, totals: totals, pages: pages, sources: sources, toolVisitors: toolVisitors };
+  return { source: 'ga4', days: days, daily: daily, totals: totals, pages: pages, sources: sources, toolVisitors: toolVisitors, clicks: await clicksPromise };
 }
 
 /* ------------------------------------------------------------- Demo data */
@@ -178,6 +203,10 @@ function demoTraffic(days) {
     sources: [['Organic Search', 0.48], ['Direct', 0.24], ['Organic Social', 0.15], ['Referral', 0.08], ['Unassigned', 0.05]]
       .map(function (s) { return { channel: s[0], sessions: Math.round(sessions * s[1]) }; }),
     toolVisitors: { lc: Math.round(users * 0.14), cl: Math.round(users * 0.06) },
+    clicks: (function () {
+      const make = function (u) { const unique = Math.round(u * 0.085); return { all: Math.round(unique * 1.55), unique: unique }; };
+      return { current: make(users), previous: make(total(all.slice(0, days)).users) };
+    })(),
   };
 }
 
