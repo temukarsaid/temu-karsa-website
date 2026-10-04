@@ -105,7 +105,9 @@ export async function onRequestDelete({ request, env }) {
 
   const url = new URL(request.url);
   const id = url.searchParams.get('id');
-  if (!id) {
+  // Hapus massal: ?ids=<uuid>,<uuid>,...
+  const idsParam = url.searchParams.get('ids');
+  if (!id && !idsParam) {
     return new Response(JSON.stringify({ error: 'id wajib diisi' }), {
       status: 400,
       headers: { 'Content-Type': 'application/json' },
@@ -125,13 +127,26 @@ export async function onRequestDelete({ request, env }) {
     });
   }
 
+  let idFilter = `eq.${id}`;
+  if (idsParam) {
+    const idList = idsParam.split(',').map((x) => x.trim());
+    const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!idList.length || idList.length > 200 || !idList.every((x) => UUID.test(x))) {
+      return new Response(JSON.stringify({ error: 'ids tidak valid (maks 200 UUID)' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+    idFilter = `in.(${idList.join(',')})`;
+  }
+
   const supaHeaders = {
     apikey: env.SUPABASE_SERVICE_ROLE_KEY,
     Authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}`,
   };
 
   const restUrl = new URL(`${env.SUPABASE_URL}/rest/v1/leads`);
-  restUrl.searchParams.set('id', `eq.${id}`);
+  restUrl.searchParams.set('id', idFilter);
 
   const res = await fetch(restUrl, { method: 'DELETE', headers: supaHeaders });
   if (!res.ok) {

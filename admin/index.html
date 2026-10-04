@@ -181,6 +181,11 @@
           <ul class="legend legend--inline" aria-hidden="true" id="trafficLegend">
             <li><span class="legend__area"></span>Pengunjung per hari</li>
           </ul>
+          <div class="seg" role="radiogroup" aria-label="Periode pengunjung website" id="webSeg">
+            <button type="button" class="seg__btn" role="radio" aria-checked="false" data-days="7">7 hari</button>
+            <button type="button" class="seg__btn" role="radio" aria-checked="true" data-days="30">30 hari</button>
+            <button type="button" class="seg__btn" role="radio" aria-checked="false" data-days="90">90 hari</button>
+          </div>
         </div>
         <div class="chart chart--area" id="trafficChart" tabindex="0" role="group" aria-label="Grafik pengunjung website per hari. Pakai panah kiri dan kanan untuk melihat rincian tiap hari; angka lengkapnya ada di tabel setelah grafik."></div>
         <div class="chart-tip" id="trafficTip" role="status" hidden></div>
@@ -193,16 +198,6 @@
             <li>Di Cloudflare Pages → Settings → Environment variables, isi <code>GA4_PROPERTY_ID</code> (angka property id, bukan G-XXXX), <code>GA4_CLIENT_EMAIL</code>, dan <code>GA4_PRIVATE_KEY</code> dari file JSON tadi.</li>
           </ol>
         </div>
-      </section>
-
-      <section class="panel" aria-labelledby="ctaTitle">
-        <div class="dash-head">
-          <div>
-            <h2 id="ctaTitle">Klik tombol "Konsultasi Gratis" <span class="source-chip" id="ctaSource" hidden></span></h2>
-            <p class="panel__sub" id="ctaSummary">Memuat data klik…</p>
-          </div>
-        </div>
-        <ul class="bars" id="ctaBars"></ul>
       </section>
 
       <div class="duo">
@@ -225,6 +220,21 @@
           <ul class="bars" id="sourcesBars"></ul>
         </section>
       </div>
+
+      <section class="panel" aria-labelledby="ctaTitle">
+        <div class="dash-head">
+          <div>
+            <h2 id="ctaTitle">Klik tombol "Konsultasi Gratis" <span class="source-chip" id="ctaSource" hidden></span></h2>
+            <p class="panel__sub" id="ctaSummary">Memuat data klik…</p>
+          </div>
+          <div class="seg" role="radiogroup" aria-label="Periode klik Konsultasi Gratis" id="ctaSeg">
+            <button type="button" class="seg__btn" role="radio" aria-checked="false" data-days="7">7 hari</button>
+            <button type="button" class="seg__btn" role="radio" aria-checked="true" data-days="30">30 hari</button>
+            <button type="button" class="seg__btn" role="radio" aria-checked="false" data-days="90">90 hari</button>
+          </div>
+        </div>
+        <ul class="bars" id="ctaBars"></ul>
+      </section>
 
     </main>
   </div>

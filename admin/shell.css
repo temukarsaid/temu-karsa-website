@@ -456,3 +456,48 @@ body { margin: 0; background: var(--canvas); color: var(--ink); font-family: var
 .login-card .btn:hover { background: var(--navy); }
 .login-card .btn[disabled] { background: var(--muted); cursor: progress; }
 .login-card .error { color: var(--danger); font-size: .82rem; margin: 14px 0 0; }
+
+/* ------------------------------------------------ Pilih banyak + hapus massal */
+.panel th.col-check, .panel td.col-check { width: 44px; padding-right: 0; overflow: visible; }
+.check {
+  appearance: none; -webkit-appearance: none; display: block; margin: 0;
+  width: 18px; height: 18px; border: 1.5px solid #B4BAC8; border-radius: 5px;
+  background: var(--surface); cursor: pointer;
+  transition: background-color .15s, border-color .15s;
+}
+.check:hover { border-color: var(--blue); }
+.check:focus-visible { outline: 0; box-shadow: 0 0 0 4px rgba(0, 88, 255, .18); border-color: var(--blue); }
+.check:checked, .check:indeterminate {
+  background: var(--blue) center / 12px no-repeat; border-color: var(--blue);
+}
+.check:checked {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7'/%3E%3C/svg%3E");
+}
+.check:indeterminate {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.4' stroke-linecap='round'%3E%3Cpath d='M6 12h12'/%3E%3C/svg%3E");
+}
+.panel tbody tr.is-selected td { background: rgba(0, 88, 255, .045); }
+.bulk-bar {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  margin: 0 12px 10px; padding: 10px 14px; border-radius: 12px; background: var(--blue-soft, #EAF1FF);
+}
+.bulk-bar[hidden] { display: none; }
+.bulk-bar__count { font-size: .86rem; font-weight: 700; color: var(--ink); }
+.bulk-bar__actions { display: flex; gap: 8px; }
+.bulk-bar__btn {
+  font: inherit; font-size: .82rem; font-weight: 700; padding: 8px 16px; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--line); background: var(--surface); color: var(--body-c);
+}
+.bulk-bar__btn:hover { border-color: var(--blue); color: var(--blue); }
+.bulk-bar__btn--danger { background: var(--danger, #D92D20); border-color: var(--danger, #D92D20); color: #fff; }
+.bulk-bar__btn--danger:hover { background: #B42318; border-color: #B42318; color: #fff; }
+.bulk-bar__btn:disabled { opacity: .6; cursor: default; }
+.bulk-bar__btn:focus-visible { outline: 0; box-shadow: 0 0 0 4px rgba(0, 88, 255, .18); }
+@media (max-width: 900px) {
+  /* kartu mobile: checkbox ngambang di pojok kiri-atas, judul digeser */
+  table.cards-mobile td.col-check {
+    position: absolute; top: 17px; left: 16px; width: auto; padding: 0; border-bottom: 0; z-index: 1;
+  }
+  table.cards-mobile tbody tr:has(.col-check) .cell-card-title { padding-left: 32px; }
+  .bulk-bar { margin: 0 0 12px; }
+}

@@ -199,10 +199,10 @@
           <div class="table-scroll">
             <table id="leadsTable" class="cards-mobile" hidden>
               <colgroup>
-                <col style="width:18%"><col style="width:24%"><col style="width:19%"><col style="width:15%"><col style="width:24%"><col style="width:48px">
+                <col style="width:44px"><col style="width:17%"><col style="width:22%"><col style="width:18%"><col style="width:14%"><col style="width:22%"><col style="width:48px">
               </colgroup>
               <thead>
-                <tr><th>Nama</th><th>Email</th><th>No. WhatsApp</th><th>Tanggal</th><th style="text-align:center">Status</th><th></th></tr>
+                <tr><th class="col-check"><input type="checkbox" class="check" id="bulkAll" aria-label="Pilih semua baris di halaman ini"></th><th>Nama</th><th>Email</th><th>No. WhatsApp</th><th>Tanggal</th><th style="text-align:center">Status</th><th></th></tr>
               </thead>
               <tbody id="leadsBody"></tbody>
             </table>
@@ -229,6 +229,7 @@
 </div>
 
 <script src="../shell.js"></script>
+<script src="../bulk.js"></script>
 <script>
   var STATUS_LABEL = { wajib: 'Perlu dimiliki', kondisional: 'Perlu diperiksa', disarankan: 'Disarankan' };
   var ANSWER_LABELS = {
@@ -347,6 +348,7 @@
   var pagination = document.getElementById('pagination');
   var paginationInfo = document.getElementById('paginationInfo');
   var paginationNav = document.getElementById('paginationNav');
+  Bulk.init({ body: leadsBody, table: leadsTable, endpoint: '/api/leads', noun: 'lead', onDone: loadList });
 
   function renderLeadsRows(rows, resetPage) {
     currentList = rows;
@@ -355,6 +357,7 @@
     if (!rows.length) {
       leadsTable.hidden = true;
       pagination.hidden = true;
+      Bulk.sync([]);
       var msg = allLeads.length ? 'Tidak ada lead yang cocok' : 'Belum ada lead masuk';
       var hint = allLeads.length ? 'Coba kata kunci lain, atau kosongkan kolom pencarian.' : 'Lead muncul di sini otomatis begitu ada yang menyelesaikan kuis KarsaBiz di website.';
       showState('empty', msg, hint);
@@ -373,6 +376,7 @@
       var statusText = row.status === 'pdf_siap' ? 'Sudah dikirim' : 'Belum diproses';
       return (
         '<tr class="is-clickable" data-id="' + esc(row.id) + '">' +
+          Bulk.cell(esc(row.id)) +
           '<td class="cell-name cell-card-title">' + esc(row.nama) + '</td>' +
           '<td class="cell-muted" data-label="Email">' + esc(row.email) + '</td>' +
           '<td class="cell-muted cell-num" data-label="No. WhatsApp">' + esc(row.whatsapp) + '</td>' +
@@ -392,11 +396,12 @@
     }).join('');
     Array.prototype.forEach.call(leadsBody.querySelectorAll('tr'), function (tr) {
       tr.addEventListener('click', function (e) {
-        if (e.target.closest('.row-actions')) return;
+        if (e.target.closest('.row-actions, .col-check')) return;
         openDetail(tr.dataset.id);
       });
     });
 
+    Bulk.sync(rows.map(function (r) { return r.id; }));
     renderPagination(totalPages, rows.length, start, pageItems.length);
   }
 

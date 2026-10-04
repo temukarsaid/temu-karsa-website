@@ -18,7 +18,7 @@
   var ICON_DOC = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>';
   var ICON_CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
 
-  var state = { days: 30, profile: 'bentuk', leads: [], checklist: [], loaded: false, error: null, traffic: null, trafficLoading: false };
+  var state = { days: 30, profile: 'bentuk', leads: [], checklist: [], loaded: false, error: null, traffic: null, trafficLoading: false, webDays: 30, web: null, webLoading: false, ctaDays: 30, cta: null, ctaLoading: false };
 
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
@@ -445,7 +445,7 @@
   function loadTraffic() {
     var asked = state.days;
     state.trafficLoading = true;
-    renderTrafficAll();
+    renderCompare();
     fetch('/api/analytics?days=' + asked).then(function (r) {
       var demo = r.headers.get('X-Demo-Data') === '1';
       return r.json().then(function (d) { return { status: r.status, d: d, demo: demo }; });
@@ -455,31 +455,73 @@
       if (res.status === 503 && res.d.error === 'not_configured') { state.traffic = { notConfigured: true }; }
       else if (res.d.error) { state.traffic = { error: res.d.error }; }
       else { state.traffic = res.d; state.traffic.demo = res.demo; }
-      renderTrafficAll();
       renderCompare();
     }).catch(function (err) {
       if (asked !== state.days) return;
       state.trafficLoading = false;
       state.traffic = { error: String(err.message || err) };
-      renderTrafficAll();
       renderCompare();
+    });
+  }
+
+  function loadWeb() {
+    var asked = state.webDays;
+    state.webLoading = true;
+    renderTrafficAll();
+    fetch('/api/analytics?days=' + asked).then(function (r) {
+      var demo = r.headers.get('X-Demo-Data') === '1';
+      return r.json().then(function (d) { return { status: r.status, d: d, demo: demo }; });
+    }).then(function (res) {
+      if (asked !== state.webDays) return; // periode sudah diganti lagi
+      state.webLoading = false;
+      if (res.status === 503 && res.d.error === 'not_configured') { state.web = { notConfigured: true }; }
+      else if (res.d.error) { state.web = { error: res.d.error }; }
+      else { state.web = res.d; state.web.demo = res.demo; }
+      renderTrafficAll();
+    }).catch(function (err) {
+      if (asked !== state.webDays) return;
+      state.webLoading = false;
+      state.web = { error: String(err.message || err) };
+      renderTrafficAll();
     });
   }
 
   function renderTrafficAll() {
     renderTrafficSummary();
     renderTrafficChart();
-    renderCta();
     renderPages();
     renderSources();
   }
 
   /* ======================================================= Klik Konsultasi */
   // Dua angka sesuai permintaan: klik per pengunjung unik & semua klik.
+  // Periode kartu ini punya kontrol sendiri (state.ctaDays), terpisah dari periode Submission.
+  function loadCta() {
+    var asked = state.ctaDays;
+    state.ctaLoading = true;
+    renderCta();
+    fetch('/api/analytics?days=' + asked).then(function (r) {
+      var demo = r.headers.get('X-Demo-Data') === '1';
+      return r.json().then(function (d) { return { status: r.status, d: d, demo: demo }; });
+    }).then(function (res) {
+      if (asked !== state.ctaDays) return;
+      state.ctaLoading = false;
+      if (res.status === 503 && res.d.error === 'not_configured') { state.cta = { notConfigured: true }; }
+      else if (res.d.error) { state.cta = { error: res.d.error }; }
+      else { state.cta = res.d; state.cta.demo = res.demo; }
+      renderCta();
+    }).catch(function (err) {
+      if (asked !== state.ctaDays) return;
+      state.ctaLoading = false;
+      state.cta = { error: String(err.message || err) };
+      renderCta();
+    });
+  }
+
   function renderCta() {
-    var t = state.traffic, ul = $('ctaBars'), sum = $('ctaSummary'), chip = $('ctaSource');
+    var t = state.cta, ul = $('ctaBars'), sum = $('ctaSummary'), chip = $('ctaSource');
     chip.hidden = true;
-    if (state.trafficLoading || !t) { sum.textContent = 'Memuat data klik…'; ul.innerHTML = ''; return; }
+    if (state.ctaLoading || !t) { sum.textContent = 'Memuat data klik…'; ul.innerHTML = ''; return; }
     if (t.notConfigured) { sum.textContent = 'Muncul setelah Google Analytics terhubung.'; ul.innerHTML = ''; return; }
     if (t.error) { sum.textContent = 'Data klik gagal dimuat.'; ul.innerHTML = ''; return; }
     if (!t.clicks) { sum.textContent = 'Data klik belum tersedia dari Google Analytics.'; ul.innerHTML = ''; return; }
@@ -491,16 +533,16 @@
     var c = t.clicks.current, p = t.clicks.previous;
     var visitors = (t.totals.current && t.totals.current.users) || 0;
     if (!c.all) {
-      sum.textContent = 'Belum ada klik tercatat dalam ' + state.days + ' hari terakhir. Pencatatan mulai dihitung sejak tombol dilacak, jadi angkanya naik seiring pengunjung menekan tombol.';
+      sum.textContent = 'Belum ada klik tercatat dalam ' + state.ctaDays + ' hari terakhir. Pencatatan mulai dihitung sejak tombol dilacak, jadi angkanya naik seiring pengunjung menekan tombol.';
       ul.innerHTML = '';
       return;
     }
     var delta = '';
     if (p && p.all) {
       var ch = Math.round(((c.all - p.all) / p.all) * 100);
-      delta = ch === 0 ? '' : ' <span class="delta ' + (ch > 0 ? 'delta--up' : 'delta--down') + '">' + (ch > 0 ? 'naik ' : 'turun ') + Math.abs(ch) + '% dari ' + state.days + ' hari sebelumnya</span>';
+      delta = ch === 0 ? '' : ' <span class="delta ' + (ch > 0 ? 'delta--up' : 'delta--down') + '">' + (ch > 0 ? 'naik ' : 'turun ') + Math.abs(ch) + '% dari ' + state.ctaDays + ' hari sebelumnya</span>';
     }
-    sum.innerHTML = '<b>' + num(c.all) + '</b> klik dari <b>' + num(c.unique) + '</b> pengunjung unik dalam ' + state.days + ' hari terakhir' + delta +
+    sum.innerHTML = '<b>' + num(c.all) + '</b> klik dari <b>' + num(c.unique) + '</b> pengunjung unik dalam ' + state.ctaDays + ' hari terakhir' + delta +
       (visitors ? ' · <b>' + pct(c.unique, visitors) + '%</b> pengunjung website menekan tombol' : '') +
       ' · rata-rata <b>' + (c.all / c.unique).toFixed(1).replace('.', ',') + '</b> klik per pengunjung';
     ul.innerHTML = [
@@ -518,12 +560,12 @@
   }
 
   function renderTrafficSummary() {
-    var t = state.traffic, chip = $('trafficSource'), sum = $('trafficSummary');
+    var t = state.web, chip = $('trafficSource'), sum = $('trafficSummary');
     var setup = !!(t && t.notConfigured);
     $('trafficSetup').hidden = !setup;
     $('trafficChart').hidden = setup;
     $('trafficLegend').hidden = setup;
-    if (state.trafficLoading || !t) { sum.textContent = 'Memuat data pengunjung…'; chip.hidden = true; return; }
+    if (state.webLoading || !t) { sum.textContent = 'Memuat data pengunjung…'; chip.hidden = true; return; }
     if (setup) { sum.textContent = 'Belum terhubung ke Google Analytics.'; chip.hidden = true; return; }
     if (t.error) { sum.textContent = 'Data pengunjung gagal dimuat: ' + t.error; chip.hidden = true; return; }
 
@@ -537,10 +579,10 @@
     if (prev && prev.users) {
       var ch = Math.round(((cur.users - prev.users) / prev.users) * 100);
       delta = ch === 0
-        ? ' <span class="delta">sama dengan ' + state.days + ' hari sebelumnya</span>'
-        : ' <span class="delta ' + (ch > 0 ? 'delta--up' : 'delta--down') + '">' + (ch > 0 ? 'naik ' : 'turun ') + Math.abs(ch) + '% dari ' + state.days + ' hari sebelumnya</span>';
+        ? ' <span class="delta">sama dengan ' + state.webDays + ' hari sebelumnya</span>'
+        : ' <span class="delta ' + (ch > 0 ? 'delta--up' : 'delta--down') + '">' + (ch > 0 ? 'naik ' : 'turun ') + Math.abs(ch) + '% dari ' + state.webDays + ' hari sebelumnya</span>';
     }
-    sum.innerHTML = '<b>' + num(cur.users) + '</b> pengunjung dalam ' + state.days + ' hari terakhir' + delta +
+    sum.innerHTML = '<b>' + num(cur.users) + '</b> pengunjung dalam ' + state.webDays + ' hari terakhir' + delta +
       ' · <b>' + num(cur.newUsers) + '</b> pengunjung baru · <b>' + num(cur.sessions) + '</b> sesi · <b>' + num(cur.views) + '</b> page views';
   }
 
@@ -549,11 +591,11 @@
 
   function renderTrafficChart() {
     var host = $('trafficChart');
-    var t = state.traffic;
+    var t = state.web;
     host.innerHTML = '';
     trafficGeom = null;
     $('trafficTip').hidden = true;
-    if (state.trafficLoading) { host.innerHTML = '<div class="chart__empty">Memuat…</div>'; return; }
+    if (state.webLoading) { host.innerHTML = '<div class="chart__empty">Memuat…</div>'; return; }
     if (!t || t.notConfigured || t.error) return;
     var days = t.daily || [];
     if (!days.length) { host.innerHTML = '<div class="chart__empty">Belum ada kunjungan di periode ini.</div>'; return; }
@@ -602,7 +644,7 @@
     hit.addEventListener('pointerleave', function (e) { if (e.pointerType === 'mouse') hideTrafficTip(); });
 
     $('trafficTable').innerHTML =
-      '<caption>Pengunjung website per hari, ' + state.days + ' hari terakhir</caption>' +
+      '<caption>Pengunjung website per hari, ' + state.webDays + ' hari terakhir</caption>' +
       '<thead><tr><th scope="col">Tanggal</th><th scope="col">Pengunjung</th><th scope="col">Sesi</th><th scope="col">Page views</th></tr></thead>' +
       '<tbody>' + days.map(function (d) {
         return '<tr><th scope="row">' + longDate(parseDay(d.date)) + '</th><td>' + d.users + '</td><td>' + d.sessions + '</td><td>' + d.views + '</td></tr>';
@@ -658,8 +700,8 @@
   });
 
   function trafficListState(ul) {
-    var t = state.traffic;
-    if (state.trafficLoading || !t) { ul.innerHTML = '<li class="skeleton"><div class="skeleton__row"></div><div class="skeleton__row"></div><div class="skeleton__row"></div></li>'; return true; }
+    var t = state.web;
+    if (state.webLoading || !t) { ul.innerHTML = '<li class="skeleton"><div class="skeleton__row"></div><div class="skeleton__row"></div><div class="skeleton__row"></div></li>'; return true; }
     if (t.notConfigured) { ul.innerHTML = emptyLi('Menunggu Google Analytics', 'Muncul otomatis setelah Google Analytics terhubung (langkahnya ada di kartu Pengunjung website).'); return true; }
     if (t.error) { ul.innerHTML = emptyLi('Gagal dimuat', t.error, true); return true; }
     return false;
@@ -668,9 +710,9 @@
   function renderPages() {
     var ul = $('pagesBars');
     if (trafficListState(ul)) return;
-    var t = state.traffic;
+    var t = state.web;
     var total = (t.totals.current && t.totals.current.views) || 0;
-    $('pagesSub').textContent = 'Page views per halaman dalam ' + state.days + ' hari terakhir.';
+    $('pagesSub').textContent = 'Page views per halaman dalam ' + state.webDays + ' hari terakhir.';
     // GA mencatat /karsabiz dan /karsabiz.html (dan / vs /index.html) sebagai
     // halaman beda — digabung dulu biar satu halaman = satu baris.
     var merged = {};
@@ -686,9 +728,9 @@
   function renderSources() {
     var ul = $('sourcesBars');
     if (trafficListState(ul)) return;
-    var t = state.traffic;
+    var t = state.web;
     var total = (t.totals.current && t.totals.current.sessions) || 0;
-    $('sourcesSub').textContent = 'Asal sesi kunjungan dalam ' + state.days + ' hari terakhir.';
+    $('sourcesSub').textContent = 'Asal sesi kunjungan dalam ' + state.webDays + ' hari terakhir.';
     var entries = (t.sources || []).map(function (s) { return { label: CHANNEL_LABEL[s.channel] || s.channel, n: s.sessions }; });
     ul.innerHTML = entries.length ? barsHtml(entries, total) : emptyLi('Belum ada data', 'Belum ada sesi kunjungan di periode ini.');
   }
@@ -751,13 +793,15 @@
       next.click(); next.focus();
     });
   }
-  // Satu kontrol periode (di kartu Submission) mengatur semua kartu, termasuk traffic.
+  // Periode Submission mengatur Submission, Antrian-profil, dan tabel perbandingan; Pengunjung website (+ halaman & sumber) dan Klik Konsultasi Gratis punya kontrol sendiri.
   bindSeg('periodSeg', 'days', function (v) {
     state.days = Number(v);
-    hideTip(); hideTrafficTip();
+    hideTip();
     renderTrend(true); renderProfile(); renderCompare();
     loadTraffic();
   });
+  bindSeg('webSeg', 'days', function (v) { state.webDays = Number(v); hideTrafficTip(); loadWeb(); });
+  bindSeg('ctaSeg', 'days', function (v) { state.ctaDays = Number(v); loadCta(); });
   bindSeg('profileSeg', 'profile', function (v) { state.profile = v; renderProfile(); });
 
   var resizeTimer;
@@ -792,6 +836,8 @@
       renderTrend(false); renderQueue();
     });
     loadTraffic();
+    loadWeb();
+    loadCta();
     loadArticleCount();
   }
 

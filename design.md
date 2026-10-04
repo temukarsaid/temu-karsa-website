@@ -909,6 +909,20 @@ Pengunjung website → Halaman terpopuler | Sumber pengunjung.
   (Semua klik, Klik per pengunjung unik) + persen pengunjung yang klik. Data
   baru terkumpul setelah deploy; GA bisa telat beberapa jam. Kosong → pesan
   kosong, bukan angka 0 palsu.
+- **Periode per kartu** (2026-10-04): tiga kontrol 7/30/90 hari yang berdiri
+  sendiri — (1) Submission harian → Submission, Antrian/Profil, tabel Legal
+  Check vs Checklist; (2) Pengunjung website → juga Halaman terpopuler &
+  Sumber pengunjung (`state.webDays`, `loadWeb()`); (3) Klik Konsultasi
+  Gratis (`state.ctaDays`, `loadCta()`). Kartu klik ada di paling bawah.
+  Semua memanggil `/api/analytics?days=N` (cache 10 menit di server).
+- **Pilih banyak + hapus massal** (`admin/bulk.js`, gaya `.check`/`.bulk-bar`
+  di `shell.css`): kolom checkbox paling kiri di tabel Legal Check &
+  Checklist Dokumen, checkbox header (pilih satu halaman, state setengah),
+  bar "N dipilih · Batal pilih · Hapus terpilih" dengan konfirmasi. Pilihan
+  bertahan antar halaman pagination tapi dibuang untuk baris yang keluar dari
+  hasil filter. API: `DELETE /api/leads?ids=a,b,c` dan
+  `/api/checklist-leads?ids=...` (UUID divalidasi, maks 200). Di layar sempit
+  checkbox ngambang di pojok kiri-atas kartu.
 - Teks sekunder dashboard memakai `--muted:#6B7182` (4.9:1), bukan #8A90A0.
 - Menu admin: "Legal Check" (dulu "Leads") dan "Checklist Dokumen"; label
   tombol hapus cukup "Hapus".
