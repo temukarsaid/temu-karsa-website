@@ -188,6 +188,8 @@
     }
     if (openMenu && !e.target.closest('.row-actions__menu')) openMenu.classList.remove('is-open');
   });
+  var SAVE_SERVER = (window.location.port && window.location.port !== '8082') ? window.location.origin : 'http://localhost:8082';
+
   function runArticleAction(action, arg) {
     if (action === 'edit') {
       window.location.href = 'edit.html?slug=' + encodeURIComponent(arg);
@@ -197,7 +199,7 @@
       if (navigator.clipboard) navigator.clipboard.writeText(window.location.origin + '/' + arg + '.html').catch(function () {});
     } else if (action === 'delete') {
       if (!window.confirm('Hapus artikel ini? Aksi ini gak bisa dibatalkan.')) return;
-      fetch('http://localhost:8082/articles/' + encodeURIComponent(arg), { method: 'DELETE' })
+      fetch(SAVE_SERVER + '/articles/' + encodeURIComponent(arg), { method: 'DELETE' })
         .then(function (r) { if (!r.ok) throw new Error('Gagal menghapus'); loadArticleList(); })
         .catch(function (err) { window.alert(err.message); });
     }
@@ -351,7 +353,7 @@
   }
 
   function loadArticleList() {
-    fetch('http://localhost:8082/articles').then(function (r) {
+    fetch(SAVE_SERVER + '/articles').then(function (r) {
       if (!r.ok) throw new Error('save-server error');
       return r.json();
     }).then(function (data) {
@@ -367,7 +369,7 @@
     // Hapus lewat save-server lokal (sama seperti hapus satu artikel).
     remove: function (slugs) {
       return Promise.all(slugs.map(function (slug) {
-        return fetch('http://localhost:8082/articles/' + encodeURIComponent(slug), { method: 'DELETE' })
+        return fetch(SAVE_SERVER + '/articles/' + encodeURIComponent(slug), { method: 'DELETE' })
           .then(function (r) { if (!r.ok) throw new Error('Gagal menghapus ' + slug); });
       }));
     },

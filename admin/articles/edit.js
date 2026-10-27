@@ -8,7 +8,7 @@
    supaya eleventy/_data/articles.js (fungsi normalizeSection) tetap bisa
    baca hasilnya tanpa disentuh sama sekali. */
 (function () {
-  var SAVE_SERVER = 'http://localhost:8082';
+  var SAVE_SERVER = (window.location.port && window.location.port !== '8082') ? window.location.origin : 'http://localhost:8082';
   var CATEGORY_OPTIONS = ['Legalitas Usaha', 'Office & Workspace'];
 
   var qs = new URLSearchParams(window.location.search);
@@ -584,7 +584,7 @@
           renderHeroPreview();
           el.heroUploadStatus.textContent = 'Tersimpan: ' + res.data.path;
         }).catch(function (err) {
-          el.heroUploadStatus.textContent = 'Gagal unggah: ' + err.message + ' (pastikan "npm run admin:save" jalan)';
+          el.heroUploadStatus.textContent = 'Gagal unggah: ' + err.message;
         });
     };
     reader.readAsDataURL(file);
@@ -635,7 +635,7 @@
         window.location.href = '/admin/articles/';
       }).catch(function (err) {
         el.publishBtn.disabled = false;
-        setStatus(err.message + ' (pastikan "npm run admin:save" jalan)', 'error');
+        setStatus(err.message, 'error');
       });
   });
 
